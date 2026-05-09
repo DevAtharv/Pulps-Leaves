@@ -1,0 +1,283 @@
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5002
+Press CTRL+C to quit
+127.0.0.1 - - [09/May/2026 16:13:31] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [09/May/2026 16:13:43] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [09/May/2026 16:13:43] "GET /static/js/app.js?v=20260509-free1 HTTP/1.1" 200 -
+127.0.0.1 - - [09/May/2026 16:13:43] "GET /static/css/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/May/2026 16:13:44] "POST /api/chatbot/message HTTP/1.1" 200 -
+127.0.0.1 - - [09/May/2026 16:14:57] "POST /api/orders/PL09MY26BLR0002/edit HTTP/1.1" 200 -
+[2026-05-09 16:15:00,595] ERROR in app: Exception on /api/orders/PL09MY26BLR0002/edit [POST]
+Traceback (most recent call last):
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\app.py", line 82, in edit_order
+    responses.append(order_manager.update_address(order_id, payload["address"]))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 133, in update_address
+    return self._update_order(order_id, {"Address": new_address})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 178, in _update_order
+    order, error = self.validate_order_id(order_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 124, in validate_order_id
+    order = self.sheets.find_order(normalized)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 100, in find_order
+    for order in self.get_all_orders():
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 81, in get_all_orders
+    for worksheet in self._order_worksheets():
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 169, in _order_worksheets
+    for worksheet in self._spreadsheet.worksheets()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\spreadsheet.py", line 298, in worksheets
+    sheet_data = self.fetch_sheet_metadata()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [429]: Quota exceeded for quota metric 'Read requests' and limit 'Read requests per minute per user' of service 'sheets.googleapis.com' for consumer 'project_number:892783757182'.
+127.0.0.1 - - [09/May/2026 16:15:00] "POST /api/orders/PL09MY26BLR0002/edit HTTP/1.1" 500 -
+[2026-05-09 16:15:00,719] ERROR in app: Exception on /api/orders/PL09MY26BLR0002/edit [POST]
+Traceback (most recent call last):
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\app.py", line 82, in edit_order
+    responses.append(order_manager.update_address(order_id, payload["address"]))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 133, in update_address
+    return self._update_order(order_id, {"Address": new_address})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 181, in _update_order
+    updated = self.sheets.update_order(order["Order ID"], updates)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 115, in update_order
+    for worksheet in self._order_worksheets():
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 169, in _order_worksheets
+    for worksheet in self._spreadsheet.worksheets()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\spreadsheet.py", line 298, in worksheets
+    sheet_data = self.fetch_sheet_metadata()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [429]: Quota exceeded for quota metric 'Read requests' and limit 'Read requests per minute per user' of service 'sheets.googleapis.com' for consumer 'project_number:892783757182'.
+127.0.0.1 - - [09/May/2026 16:15:00] "POST /api/orders/PL09MY26BLR0002/edit HTTP/1.1" 500 -
+[2026-05-09 16:15:00,733] ERROR in app: Exception on /api/orders/PL09MY26BLR0002/edit [POST]
+Traceback (most recent call last):
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\app.py", line 82, in edit_order
+    responses.append(order_manager.update_address(order_id, payload["address"]))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 133, in update_address
+    return self._update_order(order_id, {"Address": new_address})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 181, in _update_order
+    updated = self.sheets.update_order(order["Order ID"], updates)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 115, in update_order
+    for worksheet in self._order_worksheets():
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 169, in _order_worksheets
+    for worksheet in self._spreadsheet.worksheets()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\spreadsheet.py", line 298, in worksheets
+    sheet_data = self.fetch_sheet_metadata()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [429]: Quota exceeded for quota metric 'Read requests' and limit 'Read requests per minute per user' of service 'sheets.googleapis.com' for consumer 'project_number:892783757182'.
+127.0.0.1 - - [09/May/2026 16:15:00] "POST /api/orders/PL09MY26BLR0002/edit HTTP/1.1" 500 -
+[2026-05-09 16:15:01,077] ERROR in app: Exception on /api/orders/PL09MY26BLR0002/edit [POST]
+Traceback (most recent call last):
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\app.py", line 82, in edit_order
+    responses.append(order_manager.update_address(order_id, payload["address"]))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 133, in update_address
+    return self._update_order(order_id, {"Address": new_address})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 181, in _update_order
+    updated = self.sheets.update_order(order["Order ID"], updates)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 115, in update_order
+    for worksheet in self._order_worksheets():
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 169, in _order_worksheets
+    for worksheet in self._spreadsheet.worksheets()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\spreadsheet.py", line 298, in worksheets
+    sheet_data = self.fetch_sheet_metadata()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [429]: Quota exceeded for quota metric 'Read requests' and limit 'Read requests per minute per user' of service 'sheets.googleapis.com' for consumer 'project_number:892783757182'.
+127.0.0.1 - - [09/May/2026 16:15:01] "POST /api/orders/PL09MY26BLR0002/edit HTTP/1.1" 500 -
+[2026-05-09 16:15:01,871] ERROR in app: Exception on /api/orders/PL09MY26BLR0002/edit [POST]
+Traceback (most recent call last):
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\app.py", line 84, in edit_order
+    responses.append(order_manager.update_phone(order_id, payload["phone"]))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 139, in update_phone
+    return self._update_order(order_id, {"Phone": phone})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 178, in _update_order
+    order, error = self.validate_order_id(order_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 124, in validate_order_id
+    order = self.sheets.find_order(normalized)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 100, in find_order
+    for order in self.get_all_orders():
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 81, in get_all_orders
+    for worksheet in self._order_worksheets():
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 169, in _order_worksheets
+    for worksheet in self._spreadsheet.worksheets()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\spreadsheet.py", line 298, in worksheets
+    sheet_data = self.fetch_sheet_metadata()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [429]: Quota exceeded for quota metric 'Read requests' and limit 'Read requests per minute per user' of service 'sheets.googleapis.com' for consumer 'project_number:892783757182'.
+127.0.0.1 - - [09/May/2026 16:15:01] "POST /api/orders/PL09MY26BLR0002/edit HTTP/1.1" 500 -
+[2026-05-09 16:15:03,686] ERROR in app: Exception on /api/orders/PL09MY26BLR0002/edit [POST]
+Traceback (most recent call last):
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\app.py", line 84, in edit_order
+    responses.append(order_manager.update_phone(order_id, payload["phone"]))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 139, in update_phone
+    return self._update_order(order_id, {"Phone": phone})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 178, in _update_order
+    order, error = self.validate_order_id(order_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 124, in validate_order_id
+    order = self.sheets.find_order(normalized)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 100, in find_order
+    for order in self.get_all_orders():
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 81, in get_all_orders
+    for worksheet in self._order_worksheets():
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 169, in _order_worksheets
+    for worksheet in self._spreadsheet.worksheets()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\spreadsheet.py", line 298, in worksheets
+    sheet_data = self.fetch_sheet_metadata()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\spreadsheet.py", line 230, in fetch_sheet_metadata
+    return self.client.fetch_sheet_metadata(self.id, params=params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\http_client.py", line 305, in fetch_sheet_metadata
+    r = self.request("get", url, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\site-packages\gspread\http_client.py", line 128, in request
+    raise APIError(response)
+gspread.exceptions.APIError: APIError: [429]: Quota exceeded for quota metric 'Read requests' and limit 'Read requests per minute per user' of service 'sheets.googleapis.com' for consumer 'project_number:892783757182'.
+127.0.0.1 - - [09/May/2026 16:15:03] "POST /api/orders/PL09MY26BLR0002/edit HTTP/1.1" 500 -
+127.0.0.1 - - [09/May/2026 16:24:30] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [09/May/2026 16:24:30] "GET /static/css/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [09/May/2026 16:24:31] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [09/May/2026 16:24:31] "GET /static/css/styles.css HTTP/1.1" 200 -

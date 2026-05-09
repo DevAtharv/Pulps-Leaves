@@ -1,0 +1,41 @@
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.7:5001
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 142-232-962
+ * Detected change in 'C:\\Users\\athar\\Desktop\\P&L\\fruit-cod-ordering\\sheets_handler.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 142-232-962
+ * Detected change in 'C:\\Users\\athar\\Desktop\\P&L\\fruit-cod-ordering\\otp_manager.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 142-232-962
+ * Detected change in 'C:\\Users\\athar\\Desktop\\P&L\\fruit-cod-ordering\\otp_manager.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 142-232-962
+ * Detected change in 'C:\\Users\\athar\\Desktop\\P&L\\fruit-cod-ordering\\sheets_handler.py', reloading
+ * Restarting with stat
+Traceback (most recent call last):
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\app.py", line 20, in <module>
+    order_manager = OrderManager()
+                    ^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\order_manager.py", line 14, in __init__
+    self.sheets = sheets_handler or SheetsHandler()
+                                    ^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 59, in __init__
+    self._worksheet = self._connect_google_sheet()
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 150, in _connect_google_sheet
+    self._headers = self._prepare_worksheet(worksheet)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 208, in _prepare_worksheet
+    self._repair_shifted_status_values(worksheet, headers)
+  File "C:\Users\athar\Desktop\P&L\fruit-cod-ordering\sheets_handler.py", line 227, in _repair_shifted_status_values
+    if not self._row_value(row, headers.index("Order ID")):
+           ^^^^^^^^^^^^^^^
+AttributeError: 'SheetsHandler' object has no attribute '_row_value'

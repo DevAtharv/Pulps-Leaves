@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Admin | Pulps & Leaves{% endblock %}
+
+{% block body %}
+<main class="admin-shell">
+  <div class="container-fluid px-0">
+    <div class="admin-header">
+      <div>
+        <p class="eyebrow text-leaf">Admin</p>
+        <h1>Orders</h1>
+        <p class="muted">Storage: {{ storage_backend }}</p>
+      </div>
+      <a class="btn btn-outline-ink" href="/"><i class="bi bi-shop"></i> Website</a>
+    </div>
+
+    <form class="filter-bar" method="get">
+      <input class="form-control" type="search" name="q" value="{{ filters.q }}" placeholder="Search order, name, phone">
+      <select class="form-select" name="city">
+        <option value="">All cities</option>
+        {% for key, city in cities.items() %}
+        <option value="{{ key }}" {% if filters.city == key %}selected{% endif %}>{{ city.label }}</option>
+        {% endfor %}
+      </select>
+      <select class="form-select" name="status">
+        <option value="">All statuses</option>
+        {% for status in statuses %}
+        <option value="{{ status }}" {% if filters.status == status %}selected{% endif %}>{{ status }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-ink" type="submit"><i class="bi bi-funnel"></i> Filter</button>
+    </form>
+
+    <div class="admin-table-wrap">
+      <table class="table align-middle admin-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Phone</th>
+            <th>City</th>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Address</th>
+            <th>Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr>
+            <td class="fw-semibold">{{ order["Order ID"] }}</td>
+            <td>{{ order["Customer Name"] }}</td>
+            <td>{{ order["Phone"] }}</td>
+            <td>{{ order["City"] }}</td>
+            <td>{{ order["Product"] }}</td>
+            <td>{{ order["Quantity"] }}</td>
+            <td>Rs {{ order["Total Amount"] }}</td>
+            <td>
+              <form method="post" action="{{ url_for('admin_update_status', order_id=order['Order ID']) }}">
+                <select class="form-select form-select-sm status-select" name="status" onchange="this.form.submit()">
+                  {% for status in statuses %}
+                  <option value="{{ status }}" {% if order["Order Status"] == status %}selected{% endif %}>{{ status }}</option>
+                  {% endfor %}
+                </select>
+              </form>
+            </td>
+            <td class="address-cell">{{ order["Address"] }}</td>
+            <td>{{ order["Updated At"] }}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="10" class="text-center py-5 text-secondary">No orders found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+{% endblock %}
