@@ -2,6 +2,11 @@
 
 import { motion } from "motion/react"
 
+const complianceDetails = [
+  { label: "GSTIN", value: "10JKIPS9038F1ZW" },
+  { label: "FSSAI", value: "20426004000341" },
+]
+
 export default function Footer() {
   return (
     <footer className="bg-[#080f08] border-t border-white/8 py-16 px-6 md:px-10">
@@ -72,6 +77,23 @@ export default function Footer() {
               </ul>
             </div>
           ))}
+        </div>
+
+        <div className="flex flex-col gap-3 py-6 border-t border-white/8">
+          <div className="text-white/60 text-[11px] font-medium tracking-[0.24em] uppercase">
+            Registrations
+          </div>
+          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3">
+            {complianceDetails.map((item) => (
+              <div
+                key={item.label}
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-white/55"
+              >
+                <span className="text-white/35">{item.label}</span>
+                <span className="font-medium tracking-[0.08em] text-white/80">{item.value}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Bottom bar */}
