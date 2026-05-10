@@ -1,12 +1,15 @@
 import re
-from datetime import datetime, timedelta
+import secrets
+import string
+from datetime import datetime
 
 from ai_parser import normalize_phone
-from delivery_config import CITIES, ORDER_STATUSES, availability_message, get_delivery_schedule, normalize_city, product_by_choice, product_record, today_order_prefix
+from delivery_config import CITIES, ORDER_STATUSES, availability_message, get_delivery_schedule, normalize_city, product_by_choice, product_record
 from sheets_handler import SheetsHandler
 
 
-ORDER_ID_PATTERN = re.compile(r"^PL\d{2}[A-Z]{2}\d{2}[A-Z]{3}\d{4}$")
+ORDER_ID_PATTERN = re.compile(r"^PL[A-Z0-9]{10}$")
+ORDER_ID_ALPHABET = string.ascii_uppercase + string.digits
 
 
 class OrderManager:
@@ -18,11 +21,7 @@ class OrderManager:
         if errors:
             return {"ok": False, "errors": errors}
 
-        duplicate = self.find_recent_duplicate(clean_data)
-        if duplicate:
-            return {"ok": True, "duplicate": True, "order": duplicate}
-
-        order_id = self.generate_order_id(clean_data["city"])
+        order_id = self.generate_order_id()
         selected_product = product_record(clean_data["product"])
         unit_price = int(selected_product["price"])
         total_amount = unit_price * int(clean_data["quantity"])
@@ -94,33 +93,16 @@ class OrderManager:
             errors,
         )
 
-    def generate_order_id(self, city):
-        prefix = today_order_prefix(city)
-        next_sequence = self.sheets.count_orders_with_prefix(prefix) + 1
+    def generate_order_id(self):
         while True:
-            candidate = f"{prefix}{next_sequence:04d}"
+            candidate = "PL" + "".join(secrets.choice(ORDER_ID_ALPHABET) for _ in range(10))
             if not self.sheets.find_order(candidate):
                 return candidate
-            next_sequence += 1
-
-    def find_recent_duplicate(self, clean_data):
-        window_start = datetime.now() - timedelta(minutes=10)
-        for order in reversed(self.sheets.get_all_orders()):
-            if order.get("Phone") != clean_data["phone"]:
-                continue
-            if order.get("Product", "").lower() != clean_data["product"].lower():
-                continue
-            if str(order.get("Quantity", "")) != str(clean_data["quantity"]):
-                continue
-            timestamp = self._parse_timestamp(order.get("Timestamp", ""))
-            if timestamp and timestamp >= window_start:
-                return order
-        return None
 
     def validate_order_id(self, order_id):
         normalized = str(order_id or "").strip().upper()
         if not ORDER_ID_PATTERN.match(normalized):
-            return None, "That Order ID format does not look right. Example: PL09MY26BLR0001."
+            return None, "That Order ID format does not look right. Example: PL7K9Q2M4XB."
         order = self.sheets.find_order(normalized)
         if not order:
             return None, "I could not find that Order ID. Please check the ID and try again."
@@ -182,10 +164,3 @@ class OrderManager:
         if not updated:
             return {"ok": False, "error": "The order could not be updated. Please try again."}
         return {"ok": True, "order_id": order["Order ID"], "updates": updates}
-
-    @staticmethod
-    def _parse_timestamp(value):
-        try:
-            return datetime.fromisoformat(str(value))
-        except ValueError:
-            return None

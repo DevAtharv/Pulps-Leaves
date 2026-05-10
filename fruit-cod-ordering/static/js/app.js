@@ -70,12 +70,10 @@ if (orderForm) {
         return;
       }
       const order = data.order;
-      const message = data.duplicate
-        ? `This looks like a duplicate. Existing Order ID: ${order["Order ID"]}`
-        : `Order placed. Order ID: ${order["Order ID"]}. Status: ${order["Order Status"]}.`;
+      const message = `Order placed. Order ID: ${order["Order ID"]}. Status: ${order["Order Status"]}.`;
       showResult("orderResult", message);
       showToast("Order saved.");
-      if (!data.duplicate) orderForm.reset();
+      orderForm.reset();
     } catch (error) {
       showResult("orderResult", `Connection failed: ${error.message}`, true);
     } finally {

@@ -38,6 +38,22 @@ a {
   backdrop-filter: blur(18px);
 }
 
+.navbar-toggler {
+  border: 1px solid rgba(36, 49, 31, 0.16);
+  padding: 0.42rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.9);
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 0.18rem rgba(183, 107, 16, 0.12);
+}
+
+.navbar-toggler-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
 .navbar-brand {
   display: inline-flex;
   align-items: center;
@@ -1038,6 +1054,7 @@ details p {
 
   .hero-product-card {
     max-width: 460px;
+    width: 100%;
   }
 
   .section-title-row {
@@ -1055,16 +1072,46 @@ details p {
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
   .site-nav {
     min-height: 60px;
   }
 
-  .nav-actions {
+  #navMenu {
     margin-top: 12px;
+    padding: 14px;
+    border: 1px solid rgba(223, 205, 179, 0.92);
+    border-radius: 18px;
+    background: rgba(255, 250, 244, 0.97);
+    box-shadow: 0 16px 40px rgba(45, 32, 20, 0.08);
+  }
+
+  .navbar-nav {
+    gap: 8px;
+  }
+
+  .nav-link {
+    padding: 10px 2px;
+  }
+
+  .nav-actions {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(223, 205, 179, 0.8);
   }
 
   .hero {
-    padding: 92px 0 58px;
+    padding: 88px 0 44px;
+  }
+
+  .hero-layout {
+    gap: 24px;
   }
 
   .floating-concierge {
@@ -1077,11 +1124,38 @@ details p {
   }
 
   .hero h1 {
-    font-size: clamp(2.7rem, 15vw, 4.2rem);
+    margin: 22px 0 14px;
+    font-size: clamp(2.45rem, 13vw, 3.6rem);
+    line-height: 0.96;
+  }
+
+  .hero p {
+    font-size: 0.98rem;
+    line-height: 1.65;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
   }
 
   .hero-mango-photo {
-    height: 300px;
+    height: 250px;
+  }
+
+  .hero-product-info {
+    flex-direction: column;
+    align-items: start;
+    margin-top: -44px;
+  }
+
+  .social-proof,
+  .hero-note-grid span {
+    font-size: 0.74rem;
   }
 
   .product-gallery,
@@ -1112,9 +1186,55 @@ details p {
     padding: 62px 0;
   }
 
+  .quality-list {
+    margin-top: 28px;
+  }
+
+  .checkout-layout,
+  .support-layout {
+    gap: 28px;
+  }
+
   .checkout-card,
   .soft-card {
     border-radius: 16px;
+  }
+
+  .checkout-card::before {
+    inset: 10px;
+    border-radius: 12px;
+  }
+
+  .checkout-card-top {
+    flex-direction: column;
+    align-items: start;
+    margin-bottom: 18px;
+  }
+
+  .chat-panel {
+    min-height: unset;
+  }
+
+  .chat-messages {
+    min-height: 260px;
+    max-height: 320px;
+  }
+
+  .benefit-row {
+    gap: 16px;
+    margin-top: 34px;
+  }
+
+  .site-footer {
+    padding: 58px 0 28px;
+  }
+
+  .footer-grid {
+    gap: 28px;
+  }
+
+  .join-row {
+    grid-template-columns: 1fr;
   }
 
   .filter-bar {
@@ -1123,5 +1243,81 @@ details p {
 
   .admin-shell {
     padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    scroll-padding-top: 68px;
+  }
+
+  .container {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .hero {
+    padding-top: 82px;
+  }
+
+  .brand-monogram {
+    width: 28px;
+    height: 28px;
+  }
+
+  .navbar-brand {
+    font-size: 0.95rem;
+  }
+
+  .location-pill,
+  .cart-pill {
+    font-size: 0.76rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.15rem, 11.5vw, 3rem);
+  }
+
+  h2 {
+    font-size: clamp(1.8rem, 8vw, 2.45rem);
+  }
+
+  .gold-image {
+    min-height: 272px;
+  }
+
+  .harvest-add {
+    top: 212px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .checkout-grid {
+    gap: 16px;
+  }
+
+  .checkout-submit {
+    min-height: 52px;
+  }
+
+  .button-text {
+    font-size: 0.92rem;
+  }
+
+  .chat-input {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-input .btn {
+    width: 100%;
+  }
+
+  .benefit-row span {
+    font-size: 0.88rem;
+  }
+
+  details {
+    padding: 16px 18px;
   }
 }

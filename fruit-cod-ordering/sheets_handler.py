@@ -43,12 +43,12 @@ ORDER_HEADERS = [
 
 class SheetsHandler:
     def __init__(self):
-        self.storage_mode = os.getenv("STORAGE_MODE", "auto").lower()
-        self.sheet_id = os.getenv("GOOGLE_SHEET_ID", "")
-        self.worksheet_name = os.getenv("GOOGLE_WORKSHEET_NAME", "Orders")
-        self.daily_worksheets = os.getenv("GOOGLE_DAILY_WORKSHEETS", "true").lower() == "true"
-        self.credentials_file = os.getenv("GOOGLE_CREDENTIALS_FILE", "credentials.json")
-        self.local_file = Path(os.getenv("LOCAL_ORDERS_FILE", "data/orders.xlsx"))
+        self.storage_mode = self._read_env("STORAGE_MODE", "auto").lower()
+        self.sheet_id = self._read_env("GOOGLE_SHEET_ID")
+        self.worksheet_name = self._read_env("GOOGLE_WORKSHEET_NAME", "Orders")
+        self.daily_worksheets = self._read_env("GOOGLE_DAILY_WORKSHEETS", "true").lower() == "true"
+        self.credentials_file = self._read_env("GOOGLE_CREDENTIALS_FILE", "credentials.json")
+        self.local_file = self._resolve_local_file()
         self._spreadsheet = None
         self._worksheet = None
         self._headers = ORDER_HEADERS.copy()
@@ -69,7 +69,13 @@ class SheetsHandler:
             self._worksheet = self._today_worksheet()
             self._headers = self._prepare_worksheet(self._worksheet)
             row = [order.get(header, "") for header in self._headers]
-            self._worksheet.append_row(row, value_input_option="USER_ENTERED")
+            next_row = self._next_available_row(self._worksheet)
+            self._worksheet.update(
+                f"A{next_row}:{rowcol_to_a1(next_row, len(self._headers))}",
+                [row],
+                value_input_option="USER_ENTERED",
+            )
+            self._style_worksheet(self._worksheet, self._headers)
             return
 
         records = self.get_all_orders()
@@ -139,10 +145,11 @@ class SheetsHandler:
         return sum(1 for order in self.get_all_orders() if str(order.get("Order ID", "")).startswith(prefix))
 
     def _can_use_sheets(self):
-        return bool(self.sheet_id and Path(self.credentials_file).exists())
+        credentials_json = self._read_env("GOOGLE_CREDENTIALS_JSON")
+        return bool(self.sheet_id and (credentials_json or Path(self.credentials_file).exists()))
 
     def _connect_google_sheet(self):
-        credentials_json = os.getenv("GOOGLE_CREDENTIALS_JSON", "")
+        credentials_json = self._read_env("GOOGLE_CREDENTIALS_JSON")
         if credentials_json:
             client = gspread.service_account_from_dict(json.loads(credentials_json))
         else:
@@ -178,6 +185,25 @@ class SheetsHandler:
             worksheets = [self._today_worksheet()]
         return worksheets
 
+    @staticmethod
+    def _resolve_local_file():
+        configured_path = SheetsHandler._read_env("LOCAL_ORDERS_FILE")
+        if configured_path:
+            return Path(configured_path)
+        if os.getenv("VERCEL"):
+            return Path("/tmp/orders.xlsx")
+        return Path("data/orders.xlsx")
+
+    @staticmethod
+    def _read_env(name, default=""):
+        value = os.getenv(name, default)
+        if value is None:
+            return default
+        cleaned = str(value).strip().lstrip("\ufeff")
+        if cleaned.startswith('"') and cleaned.endswith('"') and len(cleaned) >= 2:
+            cleaned = cleaned[1:-1]
+        return cleaned.replace("\\r\\n", "").strip()
+
     def _worksheet_title_for_date(self, value):
         if not self.daily_worksheets:
             return self.worksheet_name
@@ -199,6 +225,8 @@ class SheetsHandler:
         records = worksheet.get_all_records(default_blank="")
         normalized_rows = []
         for record in records:
+            if not str(record.get("Order ID", "")).strip():
+                continue
             normalized_rows.append([record.get(header, "") for header in canonical_headers])
 
         worksheet.clear()
@@ -211,6 +239,15 @@ class SheetsHandler:
         self._repair_shifted_status_values(worksheet, headers)
         self._style_worksheet(worksheet, headers)
         return headers
+
+    def _next_available_row(self, worksheet):
+        rows = worksheet.get_all_values()
+        last_real_row = 1
+        order_id_index = 0
+        for row_number, row in enumerate(rows[1:], start=2):
+            if self._row_value(row, order_id_index):
+                last_real_row = row_number
+        return last_real_row + 1
 
     def _repair_shifted_status_values(self, worksheet, headers):
         status_headers = ["Confirmed", "Packed", "Delivered", "Cancelled"]
@@ -263,7 +300,12 @@ class SheetsHandler:
     def _style_worksheet(self, worksheet, headers):
         sheet_id = worksheet.id
         column_count = len(headers)
-        row_count = max(worksheet.row_count, 1000)
+        rows = worksheet.get_all_values()
+        last_real_row = 1
+        for row_number, row in enumerate(rows[1:], start=2):
+            if self._row_value(row, 0):
+                last_real_row = row_number
+        row_count = max(last_real_row + 20, 200)
 
         requests = [
             {

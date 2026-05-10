@@ -65,7 +65,7 @@ class ChatbotFlow:
             return "Lovely. Which city should we deliver to?\n\n" + city_menu_text()
         if value in {"2", "edit", "edit order", "change order"}:
             session["state"] = "EDIT_ID"
-            return "Please share your Order ID. Example: PL09MY26BLR0001"
+            return "Please share your Order ID. Example: PL7K9Q2M4XB"
         if value in {"3", "delivery", "delivery date", "date"}:
             session["state"] = "DELIVERY_CITY"
             return "Which city do you want the delivery date for?\n\n" + city_menu_text()
@@ -153,9 +153,8 @@ class ChatbotFlow:
         order = result["order"]
         session["state"] = "MAIN"
         session["data"] = {}
-        prefix = "Looks like this order was already received." if result.get("duplicate") else "Order placed."
         return (
-            f"{prefix}\n"
+            "Order placed.\n"
             f"Order ID: {order['Order ID']}\n"
             f"Status: {order['Order Status']}\n"
             "Payment mode: Cash on Delivery\n\n"
