@@ -158,22 +158,22 @@ h2 {
 
 .announcement-inner {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .announcement-inner span {
-  min-height: 42px;
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 9px 12px;
+  padding: 8px 12px;
   border: 1px solid rgba(33, 79, 50, 0.16);
   border-radius: 999px;
   background: rgba(255, 250, 240, 0.82);
   box-shadow: 0 10px 22px rgba(17, 47, 32, 0.06);
-  font-size: clamp(0.72rem, 1.4vw, 0.88rem);
+  font-size: 0.78rem;
   font-weight: 1000;
   text-align: center;
   text-transform: uppercase;
@@ -207,8 +207,8 @@ h2 {
   justify-content: center;
   align-items: start;
   min-height: 0;
-  padding-top: 30px;
-  padding-bottom: 30px;
+  padding-top: 28px;
+  padding-bottom: 28px;
 }
 
 .hero-tag,
@@ -233,8 +233,8 @@ h2 {
 
 .hero-slides {
   position: relative;
-  aspect-ratio: 16 / 7;
-  min-height: 420px;
+  aspect-ratio: 16 / 6;
+  min-height: 360px;
 }
 
 .hero-slide {
@@ -305,7 +305,7 @@ h2 {
 
 .hero-slider-copy strong {
   font-family: "Playfair Display", Georgia, serif;
-  font-size: 3.6rem;
+  font-size: clamp(2.6rem, 4vw, 3.25rem);
   line-height: 0.95;
   text-wrap: balance;
 }
@@ -859,6 +859,8 @@ label span {
 
 .support-grid {
   align-items: stretch;
+  grid-template-columns: minmax(0, 680px);
+  justify-content: center;
 }
 
 .soft-card {
@@ -868,6 +870,7 @@ label span {
 
 .edit-support-card {
   align-content: start;
+  min-height: auto;
 }
 
 .edit-support-copy {
