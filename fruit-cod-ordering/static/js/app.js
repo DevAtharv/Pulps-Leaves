@@ -46,8 +46,8 @@ function errorMessageFromPayload(data, fallback) {
 }
 
 const PRODUCT_PRICES = {
-  "Malda Mango 5Kg Box": 1099,
-  "Malda Mango 3Kg Box": 659,
+  "Malda Mango 5Kg Box": 989,
+  "Malda Mango 3Kg Box": 593,
 };
 
 function initHomeSlider() {
