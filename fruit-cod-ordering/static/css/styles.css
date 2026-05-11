@@ -255,7 +255,7 @@ h2 {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .hero-slider::after {
@@ -1192,6 +1192,10 @@ label span {
     aspect-ratio: 1132 / 1382;
     max-height: none;
     min-height: 0;
+  }
+
+  .hero-slide img {
+    object-fit: cover;
   }
 
   .hero-slider::after {
