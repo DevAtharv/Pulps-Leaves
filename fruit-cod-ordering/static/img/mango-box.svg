@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 680" role="img" aria-labelledby="title desc">
+  <title id="title">Premium mango box</title>
+  <desc id="desc">Illustration of ripe mangoes in a premium Pulps and Leaves harvest box.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff8ea"/>
+      <stop offset="1" stop-color="#ead6ad"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#244f32"/>
+      <stop offset="1" stop-color="#102c1d"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2d17e"/>
+      <stop offset="1" stop-color="#b57f25"/>
+    </linearGradient>
+    <linearGradient id="mango" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd76a"/>
+      <stop offset="0.52" stop-color="#f3a92d"/>
+      <stop offset="1" stop-color="#d7682c"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#102416" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <rect width="900" height="680" rx="42" fill="url(#bg)"/>
+  <circle cx="740" cy="112" r="90" fill="#214f32" opacity="0.12"/>
+  <circle cx="126" cy="558" r="120" fill="#c89a3b" opacity="0.16"/>
+  <g filter="url(#shadow)">
+    <path d="M169 298h562l-56 232H225z" fill="#c99b54"/>
+    <path d="M205 250h490l36 48H169z" fill="#e4bd77"/>
+    <path d="M225 530h450l-30 58H255z" fill="#9a6633"/>
+    <rect x="308" y="355" width="284" height="122" rx="20" fill="url(#green)"/>
+    <text x="450" y="424" text-anchor="middle" fill="#fff8ed" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700">P<tspan fill="url(#gold)" font-size="40">&amp;</tspan>L</text>
+    <text x="450" y="456" text-anchor="middle" fill="#e6c778" font-family="Arial, sans-serif" font-size="17" font-weight="700" letter-spacing="5">MALDA MANGOES</text>
+  </g>
+  <g filter="url(#shadow)">
+    <ellipse cx="309" cy="272" rx="86" ry="62" fill="url(#mango)" transform="rotate(-18 309 272)"/>
+    <ellipse cx="411" cy="247" rx="91" ry="64" fill="url(#mango)" transform="rotate(12 411 247)"/>
+    <ellipse cx="520" cy="272" rx="90" ry="66" fill="url(#mango)" transform="rotate(-10 520 272)"/>
+    <ellipse cx="605" cy="320" rx="83" ry="61" fill="url(#mango)" transform="rotate(16 605 320)"/>
+    <ellipse cx="252" cy="337" rx="82" ry="60" fill="url(#mango)" transform="rotate(10 252 337)"/>
+    <ellipse cx="381" cy="334" rx="92" ry="66" fill="url(#mango)" transform="rotate(-8 381 334)"/>
+    <ellipse cx="497" cy="353" rx="88" ry="63" fill="url(#mango)" transform="rotate(18 497 353)"/>
+    <path d="M362 196c33-46 85-65 139-52-42 10-76 29-101 67z" fill="#285c38"/>
+    <path d="M562 232c39-21 77-17 112 7-37 1-65 9-91 30z" fill="#285c38"/>
+    <path d="M263 248c-37-20-75-14-104 15 35-5 64 1 91 20z" fill="#285c38"/>
+    <ellipse cx="279" cy="247" rx="22" ry="11" fill="#ffe596" opacity="0.52" transform="rotate(-22 279 247)"/>
+    <ellipse cx="392" cy="225" rx="24" ry="12" fill="#ffe596" opacity="0.44" transform="rotate(12 392 225)"/>
+    <ellipse cx="515" cy="250" rx="25" ry="12" fill="#ffe596" opacity="0.45" transform="rotate(-12 515 250)"/>
+  </g>
+</svg>

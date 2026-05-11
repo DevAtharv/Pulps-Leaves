@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Pulps and Leaves logo</title>
+  <desc id="desc">Premium dark green circular P and L logo with gold accent.</desc>
+  <defs>
+    <linearGradient id="gold" x1="95" y1="54" x2="423" y2="457" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f6d984"/>
+      <stop offset="0.38" stop-color="#c89435"/>
+      <stop offset="1" stop-color="#7c5a1e"/>
+    </linearGradient>
+    <radialGradient id="green" cx="60%" cy="30%" r="75%">
+      <stop offset="0" stop-color="#1f4a31"/>
+      <stop offset="0.56" stop-color="#133520"/>
+      <stop offset="1" stop-color="#0b2115"/>
+    </radialGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="-12" dy="8" stdDeviation="0" flood-color="#b9892f" flood-opacity="0.95"/>
+      <feDropShadow dx="0" dy="18" stdDeviation="17" flood-color="#0b2115" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <circle cx="256" cy="256" r="210" fill="url(#gold)" opacity="0.96"/>
+  <circle cx="268" cy="248" r="210" fill="url(#green)" filter="url(#shadow)"/>
+  <circle cx="268" cy="248" r="188" fill="none" stroke="url(#gold)" stroke-opacity="0.32" stroke-width="3"/>
+  <text x="268" y="250" text-anchor="middle" fill="#fff6e8" font-family="Georgia, 'Times New Roman', serif" font-size="162" font-weight="700">P<tspan fill="url(#gold)" font-size="118">&amp;</tspan>L</text>
+  <text x="268" y="320" text-anchor="middle" fill="#fff6e8" font-family="Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="8">PULPS &amp; LEAVES</text>
+  <line x1="160" y1="346" x2="232" y2="346" stroke="url(#gold)" stroke-width="3"/>
+  <path d="M255 346c6-8 18-8 25 0-7 8-19 8-25 0Z" fill="url(#gold)"/>
+  <line x1="304" y1="346" x2="376" y2="346" stroke="url(#gold)" stroke-width="3"/>
+  <text x="268" y="384" text-anchor="middle" fill="#d5ad5d" font-family="Georgia, 'Times New Roman', serif" font-size="23" font-style="italic">Experience Nature's Premium</text>
+</svg>
