@@ -260,6 +260,15 @@ h2 {
   object-fit: contain;
 }
 
+@media (min-width: 769px) {
+  .hero-slide img {
+    width: 68%;
+    margin-left: auto;
+    object-fit: cover;
+    object-position: center;
+  }
+}
+
 .hero-slider::after {
   content: "";
   position: absolute;
@@ -1216,6 +1225,8 @@ label span {
   }
 
   .hero-slide img {
+    width: 100%;
+    margin-left: 0;
     object-fit: cover;
   }
 
