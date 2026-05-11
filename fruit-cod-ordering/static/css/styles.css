@@ -241,14 +241,16 @@ h2 {
   position: absolute;
   inset: 0;
   margin: 0;
+  transform: scale(1.02);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 480ms ease, visibility 480ms ease;
+  transition: opacity 480ms ease, visibility 480ms ease, transform 900ms ease;
 }
 
 .hero-slide.active {
   opacity: 1;
   visibility: visible;
+  transform: scale(1);
 }
 
 .hero-slide img {
@@ -763,6 +765,25 @@ label span {
   width: 100%;
   min-height: 54px;
   margin-top: 22px;
+}
+
+.order-summary {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid #ddd1bc;
+  border-radius: 8px;
+  background: #fffaf0;
+}
+
+.order-summary strong {
+  font-size: 0.95rem;
+}
+
+.order-summary span {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
 }
 
 .result-box {

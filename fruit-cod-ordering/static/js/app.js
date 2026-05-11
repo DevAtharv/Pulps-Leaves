@@ -45,6 +45,11 @@ function errorMessageFromPayload(data, fallback) {
   return data.error || fallback;
 }
 
+const PRODUCT_PRICES = {
+  "Malda Mango 5Kg Box": 1099,
+  "Malda Mango 3Kg Box": 659,
+};
+
 function initHomeSlider() {
   const slider = document.getElementById("homeSlider");
   if (!slider) return;
@@ -96,12 +101,60 @@ function initHomeSlider() {
 
 initHomeSlider();
 
+const qty5kgInput = document.getElementById("qty5kg");
+const qty3kgInput = document.getElementById("qty3kg");
+const orderSummary = document.getElementById("orderSummary");
+
+function safeQuantity(input) {
+  if (!input) return 0;
+  const parsed = Number.parseInt(input.value || "0", 10);
+  return Number.isNaN(parsed) ? 0 : Math.max(parsed, 0);
+}
+
+function updateOrderSummary() {
+  if (!orderSummary) return;
+  const qty5kg = safeQuantity(qty5kgInput);
+  const qty3kg = safeQuantity(qty3kgInput);
+  const subtotal = qty5kg * PRODUCT_PRICES["Malda Mango 5Kg Box"] + qty3kg * PRODUCT_PRICES["Malda Mango 3Kg Box"];
+  const deliveryCharge = qty3kg > 0 && qty5kg === 0 ? 30 : 0;
+  const total = subtotal + deliveryCharge;
+
+  if (!qty5kg && !qty3kg) {
+    orderSummary.innerHTML = "<strong>Cart Summary</strong><span>Add 3Kg and/or 5Kg boxes to continue.</span>";
+    return;
+  }
+
+  const lines = [];
+  if (qty5kg) lines.push(`5Kg Box x ${qty5kg}`);
+  if (qty3kg) lines.push(`3Kg Box x ${qty3kg}`);
+
+  orderSummary.innerHTML = `
+    <strong>Cart Summary</strong>
+    <span>${lines.join(" | ")}</span>
+    <span>Subtotal: Rs ${subtotal}</span>
+    <span>Delivery: Rs ${deliveryCharge}</span>
+    <span>Total: Rs ${total}</span>
+  `;
+}
+
+document.querySelectorAll(".cart-qty").forEach((input) => {
+  input.addEventListener("input", updateOrderSummary);
+});
+
 document.querySelectorAll(".select-product").forEach((button) => {
   button.addEventListener("click", () => {
-    document.getElementById("product").value = button.dataset.product;
+    if (button.dataset.product === "Malda Mango 5Kg Box" && qty5kgInput) {
+      qty5kgInput.value = String(safeQuantity(qty5kgInput) + 1);
+    }
+    if (button.dataset.product === "Malda Mango 3Kg Box" && qty3kgInput) {
+      qty3kgInput.value = String(safeQuantity(qty3kgInput) + 1);
+    }
+    updateOrderSummary();
     document.getElementById("order").scrollIntoView({ behavior: "smooth" });
   });
 });
+
+updateOrderSummary();
 
 const orderForm = document.getElementById("orderForm");
 if (orderForm) {
@@ -121,10 +174,11 @@ if (orderForm) {
         return;
       }
       const order = data.order;
-      const message = `Order placed. Order ID: ${order["Order ID"]}. Status: ${order["Order Status"]}.`;
+      const message = `Order placed. Order ID: ${order["Order ID"]}. Total: Rs ${order["Total Amount"]}. Status: ${order["Order Status"]}.`;
       showResult("orderResult", message);
       showToast("Order saved.");
       orderForm.reset();
+      updateOrderSummary();
     } catch (error) {
       showResult("orderResult", `Connection failed: ${error.message}`, true);
     } finally {

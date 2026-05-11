@@ -41,7 +41,7 @@
     <div class="container announcement-inner">
       <span><i class="bi bi-calendar-check"></i> Pre Order open now</span>
       <span><i class="bi bi-wallet2"></i> Cash On Delivery Available</span>
-      <span><i class="bi bi-truck"></i> Delivery: 2nd-4th June (Hyd/Blr) & 10th-12th June (Mum/Pun)</span>
+      <span><i class="bi bi-truck"></i> Delivery: 2nd-4th June (Hyd/Blr)</span>
     </div>
   </div>
   <div class="container hero-grid">
@@ -106,7 +106,7 @@
       <div class="section-heading">
         <span>Fresh arrivals</span>
         <h2>Order online at best price</h2>
-        <p>Seasonal Malda mango boxes, sorted and packed for city-wise delivery.</p>
+        <p>Seasonal Malda mango boxes, now open for Bangalore and Hyderabad delivery.</p>
       </div>
 
       <div class="product-grid">
@@ -140,10 +140,10 @@
       <div class="order-copy">
         <span class="mini-label">Quick checkout</span>
         <h2>Choose item and place COD order.</h2>
-        <p>Pre Order open now. Cash On Delivery Available for the next delivery slots: 2nd-4th June (Hyd/Blr) & 10th-12th June (Mum/Pun).</p>
+        <p>Pre Order open now. Cash On Delivery Available for Bangalore and Hyderabad delivery from 2nd-4th June.</p>
         <div class="city-list">
           {% for key, city in cities.items() %}
-          {% if city.label in ["Bangalore", "Hyderabad", "Pune", "Mumbai"] %}
+          {% if city.label in ["Bangalore", "Hyderabad"] %}
           <span>{{ city.label }}</span>
           {% endif %}
           {% endfor %}
@@ -152,7 +152,7 @@
           <i class="bi bi-wallet2"></i>
           <div>
             <strong>Pay after service</strong>
-            <small>Also available in Bangalore, Hyderabad, Pune, and Mumbai.</small>
+            <small>3Kg-only orders include a flat Rs 30 delivery charge.</small>
           </div>
         </div>
       </div>
@@ -181,22 +181,21 @@
             </select>
           </label>
           <label>
-            <span>Select Variety</span>
-            <select id="product" name="product" class="form-select" required>
-              <option value="">Select Mango Box</option>
-              {% for product in products %}
-              <option value="{{ product.name }}">{{ product.display_title }} - {{ product.unit }} - Rs {{ product.price }}</option>
-              {% endfor %}
-            </select>
+            <span>5Kg Box Quantity</span>
+            <input id="qty5kg" name="qty_5kg" class="form-control cart-qty" type="number" min="0" max="50" value="0">
           </label>
           <label>
-            <span>Quantity</span>
-            <input id="quantity" name="quantity" class="form-control" type="number" min="1" max="50" value="1" required>
+            <span>3Kg Box Quantity</span>
+            <input id="qty3kg" name="qty_3kg" class="form-control cart-qty" type="number" min="0" max="50" value="0">
           </label>
           <label>
             <span>Notes</span>
             <input id="notes" name="notes" class="form-control" placeholder="Optional">
           </label>
+          <div class="order-summary span-2" id="orderSummary">
+            <strong>Cart Summary</strong>
+            <span>Add 3Kg and/or 5Kg boxes to continue.</span>
+          </div>
           <label class="span-2">
             <span>Delivery Address</span>
             <textarea id="address" name="address" class="form-control" rows="3" required></textarea>
@@ -289,7 +288,7 @@
             <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
             <strong>Premium packing</strong>
             <p>The box looked gift-ready. The fruit was cushioned well and tasted like proper summer mangoes.</p>
-            <span>Rohan, Mumbai</span>
+            <span>Rohan, Bangalore</span>
           </article>
         </div>
       </div>
@@ -327,5 +326,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/app.js') }}?v=20260511-local-slider"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}?v=20260512-cart-update"></script>
 {% endblock %}

@@ -6,21 +6,17 @@ BUSINESS_NAME = "Pulps & Leaves"
 CITIES = {
     "bangalore": {"label": "Bangalore", "code": "BLR"},
     "hyderabad": {"label": "Hyderabad", "code": "HYD"},
-    "pune": {"label": "Pune", "code": "PUN"},
-    "mumbai": {"label": "Mumbai", "code": "MUM"},
     "chennai": {"label": "Chennai", "code": "CHE"},
     "bhubaneswar": {"label": "Bhubaneswar", "code": "BBI"},
 }
 
-AVAILABLE_CITY_KEYS = ("bangalore", "hyderabad", "pune", "mumbai")
+AVAILABLE_CITY_KEYS = ("bangalore", "hyderabad")
 AVAILABLE_CITIES = {key: CITIES[key] for key in AVAILABLE_CITY_KEYS}
 
 CITY_ALIASES = {
     "bengaluru": "bangalore",
     "blr": "bangalore",
     "hyd": "hyderabad",
-    "bom": "mumbai",
-    "bombay": "mumbai",
     "madras": "chennai",
     "bbsr": "bhubaneswar",
     "bhubaneshwar": "bhubaneswar",
@@ -32,8 +28,8 @@ PRODUCTS = [
         "display_title": "Malda Mango",
         "slug": "malda-mango-5kg-box",
         "category": "Mangoes",
-        "price": 999,
-        "mrp": 1500,
+        "price": 1099,
+        "mrp": 1650,
         "unit": "5Kg Box",
         "pieces_label": "Max 20 pieces",
         "description": "5Kg Box Malda Mango",
@@ -45,8 +41,8 @@ PRODUCTS = [
         "display_title": "Malda Mango",
         "slug": "malda-mango-3kg-box",
         "category": "Mangoes",
-        "price": 599,
-        "mrp": 900,
+        "price": 659,
+        "mrp": 990,
         "unit": "3Kg Box",
         "pieces_label": "Max 12 pieces",
         "description": "3Kg Box Malda Mango",
@@ -73,8 +69,6 @@ COMING_SOON_PRODUCTS = [
 DELIVERY_SCHEDULES = {
     "bangalore": {"start": "2026-06-02", "end": "2026-06-04", "label": "2nd-4th June"},
     "hyderabad": {"start": "2026-06-02", "end": "2026-06-04", "label": "2nd-4th June"},
-    "pune": {"start": "2026-06-10", "end": "2026-06-12", "label": "10th-12th June"},
-    "mumbai": {"start": "2026-06-10", "end": "2026-06-12", "label": "10th-12th June"},
     "chennai": {"start": "2026-06-09", "end": "2026-06-12", "label": "9th-12th June"},
     "bhubaneswar": {"start": "2026-06-11", "end": "2026-06-14", "label": "11th-14th June"},
 }

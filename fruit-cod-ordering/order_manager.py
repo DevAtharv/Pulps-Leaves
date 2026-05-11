@@ -22,10 +22,12 @@ class OrderManager:
             return {"ok": False, "errors": errors}
 
         order_id = self.generate_order_id()
-        selected_product = product_record(clean_data["product"])
-        unit_price = int(selected_product["price"])
-        total_amount = unit_price * int(clean_data["quantity"])
+        unit_price = int(clean_data["subtotal"])
+        total_amount = int(clean_data["total_amount"])
         now = timestamp_local()
+        notes = clean_data.get("notes", "")
+        if clean_data.get("delivery_charge"):
+            notes = f"{notes} Delivery charge: Rs {clean_data['delivery_charge']}.".strip()
         order = {
             "Order ID": order_id,
             "Timestamp": now,
@@ -33,12 +35,12 @@ class OrderManager:
             "Phone": clean_data["phone"],
             "Address": clean_data["address"],
             "City": CITIES[clean_data["city"]]["label"],
-            "Product": clean_data["product"],
+            "Product": clean_data["product_summary"],
             "Quantity": str(clean_data["quantity"]),
             "Unit Price": str(unit_price),
             "Total Amount": str(total_amount),
             "Payment Mode": "COD",
-            "Notes": clean_data.get("notes", ""),
+            "Notes": notes,
             "Order Status": "Pending",
             "Confirmed": False,
             "Packed": False,
@@ -56,12 +58,34 @@ class OrderManager:
         address = str(payload.get("address", "")).strip()
         city = normalize_available_city(payload.get("city", ""))
         phone = normalize_phone(payload.get("phone", ""))
-        product = product_by_choice(payload.get("product", "")) or str(payload.get("product", "")).strip()
+        qty_5kg = self._parse_quantity(payload.get("qty_5kg", "0"))
+        qty_3kg = self._parse_quantity(payload.get("qty_3kg", "0"))
+        uses_cart_quantities = any(key in payload for key in ("qty_5kg", "qty_3kg"))
 
-        try:
-            quantity = int(str(payload.get("quantity", "")).strip())
-        except ValueError:
-            quantity = 0
+        if uses_cart_quantities:
+            product_lines = []
+            subtotal = 0
+            total_quantity = qty_5kg + qty_3kg
+            product_5kg = product_record("Malda Mango 5Kg Box")
+            product_3kg = product_record("Malda Mango 3Kg Box")
+
+            if qty_5kg:
+                product_lines.append(f"5Kg Box x {qty_5kg}")
+                subtotal += qty_5kg * int(product_5kg["price"])
+            if qty_3kg:
+                product_lines.append(f"3Kg Box x {qty_3kg}")
+                subtotal += qty_3kg * int(product_3kg["price"])
+
+            delivery_charge = 30 if qty_3kg > 0 and qty_5kg == 0 else 0
+            product_summary = ", ".join(product_lines)
+        else:
+            product = product_by_choice(payload.get("product", "")) or str(payload.get("product", "")).strip()
+            quantity = self._parse_quantity(payload.get("quantity", "0"))
+            selected_product = product_record(product) if product else None
+            subtotal = int(selected_product["price"]) * quantity if selected_product else 0
+            delivery_charge = 30 if product == "Malda Mango 3Kg Box" and quantity > 0 else 0
+            total_quantity = quantity
+            product_summary = product
 
         if len(name) < 2:
             errors["name"] = "Please enter the customer's full name."
@@ -70,14 +94,14 @@ class OrderManager:
         if len(address) < 8:
             errors["address"] = "Please enter a complete delivery address."
         if not city:
-            errors["city"] = "Please select Bangalore, Hyderabad, Pune, or Mumbai."
-        if not product:
+            errors["city"] = "Please select Bangalore or Hyderabad."
+        if not product_summary:
             errors["product"] = "Please choose a product from the catalog."
-        else:
+        elif not uses_cart_quantities:
             product_availability_error = availability_message(product)
             if product_availability_error:
                 errors["product"] = product_availability_error
-        if quantity < 1 or quantity > 50:
+        if total_quantity < 1 or total_quantity > 50:
             errors["quantity"] = "Quantity must be between 1 and 50."
 
         return (
@@ -86,12 +110,23 @@ class OrderManager:
                 "phone": phone,
                 "address": address,
                 "city": city,
-                "product": product,
-                "quantity": quantity,
+                "product": product_summary,
+                "product_summary": product_summary,
+                "quantity": total_quantity,
+                "subtotal": subtotal,
+                "delivery_charge": delivery_charge,
+                "total_amount": subtotal + delivery_charge,
                 "notes": str(payload.get("notes", "")).strip(),
             },
             errors,
         )
+
+    @staticmethod
+    def _parse_quantity(value):
+        try:
+            return int(str(value).strip())
+        except ValueError:
+            return 0
 
     def generate_order_id(self):
         while True:
