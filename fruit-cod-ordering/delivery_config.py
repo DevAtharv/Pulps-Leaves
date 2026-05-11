@@ -1,4 +1,4 @@
-from datetime import date
+from time_utils import today_local
 
 
 BUSINESS_NAME = "Pulps & Leaves"
@@ -164,7 +164,7 @@ def product_record(value):
 
 
 def is_product_available(product_value, on_date=None):
-    on_date = on_date or date.today()
+    on_date = on_date or today_local()
     product = product_record(product_value)
     if not product:
         return False
@@ -212,6 +212,6 @@ def get_delivery_schedule(city_key):
 
 
 def today_order_prefix(city_key, today=None):
-    today = today or date.today()
+    today = today or today_local()
     city = CITIES[normalize_city(city_key)]
     return f"PL{today:%d}{MONTH_CODES[today.month]}{today:%y}{city['code']}"

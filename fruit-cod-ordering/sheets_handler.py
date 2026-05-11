@@ -1,11 +1,13 @@
 import json
 import os
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
 
 import gspread
 import pandas as pd
 from gspread.utils import rowcol_to_a1
+
+from time_utils import timestamp_local, today_local
 
 
 STATUS_OPTIONS = [
@@ -123,7 +125,7 @@ class SheetsHandler:
             for header, value in updates.items()
             if header in ORDER_HEADERS and value is not None
         }
-        normalized_updates["Updated At"] = datetime.now().isoformat(timespec="seconds")
+        normalized_updates["Updated At"] = timestamp_local()
 
         if self._worksheet:
             for worksheet in self._order_worksheets():
@@ -173,7 +175,7 @@ class SheetsHandler:
             self._prepare_worksheet(worksheet)
 
     def _today_worksheet(self):
-        worksheet_title = self._worksheet_title_for_date(date.today())
+        worksheet_title = self._worksheet_title_for_date(today_local())
         try:
             return self._spreadsheet.worksheet(worksheet_title)
         except gspread.WorksheetNotFound:

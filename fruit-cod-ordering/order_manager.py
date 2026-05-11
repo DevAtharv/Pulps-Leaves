@@ -1,11 +1,11 @@
 import re
 import secrets
 import string
-from datetime import datetime
 
 from ai_parser import normalize_phone
 from delivery_config import CITIES, ORDER_STATUSES, availability_message, get_delivery_schedule, normalize_available_city, normalize_city, product_by_choice, product_record
 from sheets_handler import SheetsHandler
+from time_utils import timestamp_local
 
 
 ORDER_ID_PATTERN = re.compile(r"^PL[A-Z0-9]{10}$")
@@ -25,7 +25,7 @@ class OrderManager:
         selected_product = product_record(clean_data["product"])
         unit_price = int(selected_product["price"])
         total_amount = unit_price * int(clean_data["quantity"])
-        now = datetime.now().isoformat(timespec="seconds")
+        now = timestamp_local()
         order = {
             "Order ID": order_id,
             "Timestamp": now,
