@@ -116,7 +116,7 @@ function updateOrderSummary() {
   const qty5kg = safeQuantity(qty5kgInput);
   const qty3kg = safeQuantity(qty3kgInput);
   const subtotal = qty5kg * PRODUCT_PRICES["Malda Mango 5Kg Box"] + qty3kg * PRODUCT_PRICES["Malda Mango 3Kg Box"];
-  const deliveryCharge = qty3kg > 0 && qty5kg === 0 ? 30 : 0;
+  const deliveryCharge = qty3kg > 0 && qty5kg === 0 && subtotal <= 999 ? 27 : 0;
   const total = subtotal + deliveryCharge;
 
   if (!qty5kg && !qty3kg) {

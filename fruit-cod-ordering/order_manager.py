@@ -76,14 +76,14 @@ class OrderManager:
                 product_lines.append(f"3Kg Box x {qty_3kg}")
                 subtotal += qty_3kg * int(product_3kg["price"])
 
-            delivery_charge = 30 if qty_3kg > 0 and qty_5kg == 0 else 0
+            delivery_charge = 27 if qty_3kg > 0 and qty_5kg == 0 and subtotal <= 999 else 0
             product_summary = ", ".join(product_lines)
         else:
             product = product_by_choice(payload.get("product", "")) or str(payload.get("product", "")).strip()
             quantity = self._parse_quantity(payload.get("quantity", "0"))
             selected_product = product_record(product) if product else None
             subtotal = int(selected_product["price"]) * quantity if selected_product else 0
-            delivery_charge = 30 if product == "Malda Mango 3Kg Box" and quantity > 0 else 0
+            delivery_charge = 27 if product == "Malda Mango 3Kg Box" and quantity > 0 and subtotal <= 999 else 0
             total_quantity = quantity
             product_summary = product
 
