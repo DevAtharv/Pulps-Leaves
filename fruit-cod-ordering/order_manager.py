@@ -4,7 +4,7 @@ import string
 from datetime import datetime
 
 from ai_parser import normalize_phone
-from delivery_config import CITIES, ORDER_STATUSES, availability_message, get_delivery_schedule, normalize_city, product_by_choice, product_record
+from delivery_config import CITIES, ORDER_STATUSES, availability_message, get_delivery_schedule, normalize_available_city, normalize_city, product_by_choice, product_record
 from sheets_handler import SheetsHandler
 
 
@@ -54,7 +54,7 @@ class OrderManager:
         errors = {}
         name = str(payload.get("name", "")).strip()
         address = str(payload.get("address", "")).strip()
-        city = normalize_city(payload.get("city", ""))
+        city = normalize_available_city(payload.get("city", ""))
         phone = normalize_phone(payload.get("phone", ""))
         product = product_by_choice(payload.get("product", "")) or str(payload.get("product", "")).strip()
 
@@ -70,7 +70,7 @@ class OrderManager:
         if len(address) < 8:
             errors["address"] = "Please enter a complete delivery address."
         if not city:
-            errors["city"] = "Please select a supported delivery city."
+            errors["city"] = "Please select Bangalore, Hyderabad, Pune, or Mumbai."
         if not product:
             errors["product"] = "Please choose a product from the catalog."
         else:

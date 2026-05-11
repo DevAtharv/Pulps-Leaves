@@ -12,6 +12,9 @@ CITIES = {
     "bhubaneswar": {"label": "Bhubaneswar", "code": "BBI"},
 }
 
+AVAILABLE_CITY_KEYS = ("bangalore", "hyderabad", "pune", "mumbai")
+AVAILABLE_CITIES = {key: CITIES[key] for key in AVAILABLE_CITY_KEYS}
+
 CITY_ALIASES = {
     "bengaluru": "bangalore",
     "blr": "bangalore",
@@ -32,6 +35,7 @@ PRODUCTS = [
         "price": 999,
         "mrp": 1500,
         "unit": "5Kg Box",
+        "pieces_label": "Max 20 pieces",
         "description": "5Kg Box Malda Mango",
         "available_months": [4, 5, 6, 7],
         "availability_label": "Seasonal: Apr-Jul",
@@ -44,6 +48,7 @@ PRODUCTS = [
         "price": 599,
         "mrp": 900,
         "unit": "3Kg Box",
+        "pieces_label": "Max 12 pieces",
         "description": "3Kg Box Malda Mango",
         "available_months": [4, 5, 6, 7],
         "availability_label": "Seasonal: Apr-Jul",
@@ -66,10 +71,10 @@ COMING_SOON_PRODUCTS = [
 ]
 
 DELIVERY_SCHEDULES = {
-    "bangalore": {"start": "2026-06-02", "end": "2026-06-05", "label": "2nd-5th June"},
-    "hyderabad": {"start": "2026-06-04", "end": "2026-06-07", "label": "4th-7th June"},
-    "pune": {"start": "2026-06-06", "end": "2026-06-09", "label": "6th-9th June"},
-    "mumbai": {"start": "2026-06-07", "end": "2026-06-10", "label": "7th-10th June"},
+    "bangalore": {"start": "2026-06-02", "end": "2026-06-04", "label": "2nd-4th June"},
+    "hyderabad": {"start": "2026-06-02", "end": "2026-06-04", "label": "2nd-4th June"},
+    "pune": {"start": "2026-06-10", "end": "2026-06-12", "label": "10th-12th June"},
+    "mumbai": {"start": "2026-06-10", "end": "2026-06-12", "label": "10th-12th June"},
     "chennai": {"start": "2026-06-09", "end": "2026-06-12", "label": "9th-12th June"},
     "bhubaneswar": {"start": "2026-06-11", "end": "2026-06-14", "label": "11th-14th June"},
 }
@@ -108,10 +113,15 @@ def normalize_city(value):
     return cleaned if cleaned in CITIES else None
 
 
+def normalize_available_city(value):
+    normalized = normalize_city(value)
+    return normalized if normalized in AVAILABLE_CITIES else None
+
+
 def city_menu_text():
     return "\n".join(
         f"{index} - {city['label']}"
-        for index, city in enumerate(CITIES.values(), start=1)
+        for index, city in enumerate(AVAILABLE_CITIES.values(), start=1)
     )
 
 
@@ -177,14 +187,14 @@ def city_by_choice(value):
     text = str(value).strip().lower()
     if text.isdigit():
         index = int(text) - 1
-        keys = list(CITIES.keys())
+        keys = list(AVAILABLE_CITIES.keys())
         if 0 <= index < len(keys):
             return keys[index]
-    return normalize_city(text)
+    return normalize_available_city(text)
 
 
 def get_delivery_schedule(city_key):
-    normalized = normalize_city(city_key)
+    normalized = normalize_available_city(city_key)
     if not normalized:
         return None
 

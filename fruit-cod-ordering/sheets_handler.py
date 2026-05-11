@@ -54,9 +54,16 @@ class SheetsHandler:
         self._headers = ORDER_HEADERS.copy()
 
         if self.storage_mode in {"auto", "sheets"} and self._can_use_sheets():
-            self._worksheet = self._connect_google_sheet()
+            try:
+                self._worksheet = self._connect_google_sheet()
+            except Exception:
+                if self.storage_mode == "sheets" and not self._allow_local_fallback():
+                    raise
+                self._ensure_local_file()
         elif self.storage_mode == "sheets":
-            raise RuntimeError("Google Sheets mode is enabled, but sheet id or credentials are missing.")
+            if not self._allow_local_fallback():
+                raise RuntimeError("Google Sheets mode is enabled, but sheet id or credentials are missing.")
+            self._ensure_local_file()
         else:
             self._ensure_local_file()
 
@@ -193,6 +200,15 @@ class SheetsHandler:
         if os.getenv("VERCEL"):
             return Path("/tmp/orders.xlsx")
         return Path("data/orders.xlsx")
+
+    @staticmethod
+    def _allow_local_fallback():
+        if os.getenv("VERCEL"):
+            return False
+        explicit = SheetsHandler._read_env("LOCAL_PREVIEW_FALLBACK", "").lower()
+        if explicit in {"1", "true", "yes"}:
+            return True
+        return SheetsHandler._read_env("FLASK_ENV", "").lower() == "development"
 
     @staticmethod
     def _read_env(name, default=""):

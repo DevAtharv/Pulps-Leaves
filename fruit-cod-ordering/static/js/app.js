@@ -18,7 +18,7 @@ function setLoading(form, isLoading) {
   const text = button.querySelector(".button-text");
   button.disabled = isLoading;
   if (spinner) spinner.classList.toggle("d-none", !isLoading);
-  if (text) text.textContent = isLoading ? "Submitting..." : "Submit COD Order";
+  if (text) text.textContent = isLoading ? "Submitting..." : "Place Order";
 }
 
 function showResult(targetId, message, isError = false) {
@@ -44,6 +44,57 @@ function errorMessageFromPayload(data, fallback) {
   if (data.errors) return Object.values(data.errors).join(" ");
   return data.error || fallback;
 }
+
+function initHomeSlider() {
+  const slider = document.getElementById("homeSlider");
+  if (!slider) return;
+
+  const slides = Array.from(slider.querySelectorAll(".hero-slide"));
+  const dots = Array.from(slider.querySelectorAll("[data-slider-dot]"));
+  const previous = slider.querySelector("[data-slider-prev]");
+  const next = slider.querySelector("[data-slider-next]");
+  if (slides.length < 2) return;
+
+  let activeIndex = 0;
+  let timerId = null;
+
+  function showSlide(index) {
+    activeIndex = (index + slides.length) % slides.length;
+    slides.forEach((slide, slideIndex) => {
+      slide.classList.toggle("active", slideIndex === activeIndex);
+    });
+    dots.forEach((dot, dotIndex) => {
+      dot.classList.toggle("active", dotIndex === activeIndex);
+    });
+  }
+
+  function restartTimer() {
+    window.clearInterval(timerId);
+    timerId = window.setInterval(() => showSlide(activeIndex + 1), 4200);
+  }
+
+  previous?.addEventListener("click", () => {
+    showSlide(activeIndex - 1);
+    restartTimer();
+  });
+
+  next?.addEventListener("click", () => {
+    showSlide(activeIndex + 1);
+    restartTimer();
+  });
+
+  dots.forEach((dot) => {
+    dot.addEventListener("click", () => {
+      showSlide(Number(dot.dataset.sliderDot || 0));
+      restartTimer();
+    });
+  });
+
+  showSlide(0);
+  restartTimer();
+}
+
+initHomeSlider();
 
 document.querySelectorAll(".select-product").forEach((button) => {
   button.addEventListener("click", () => {
@@ -78,32 +129,6 @@ if (orderForm) {
       showResult("orderResult", `Connection failed: ${error.message}`, true);
     } finally {
       setLoading(orderForm, false);
-    }
-  });
-}
-
-const editForm = document.getElementById("editForm");
-if (editForm) {
-  editForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const payload = formToObject(editForm);
-    const orderId = payload.order_id;
-    delete payload.order_id;
-    try {
-      const response = await fetch(`/api/orders/${encodeURIComponent(orderId)}/edit`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await readJsonResponse(response);
-      if (!response.ok || !data.ok) {
-        showResult("editResult", errorMessageFromPayload(data, "Order could not be updated."), true);
-        return;
-      }
-      showResult("editResult", `Updated ${data.order_id}.`);
-      showToast("Order updated.");
-    } catch (error) {
-      showResult("editResult", `Connection failed: ${error.message}`, true);
     }
   });
 }

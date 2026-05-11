@@ -1,121 +1,104 @@
 {% extends "base.html" %}
-{% block title %}Pulps & Leaves | Farm-Fresh Mango COD{% endblock %}
+{% block title %}Pulps & Leaves | Order Fresh Mangoes Online{% endblock %}
 
 {% block body %}
 <nav class="navbar navbar-expand-lg fixed-top site-nav">
   <div class="container">
     <a class="navbar-brand" href="#">
-      <span class="brand-monogram">P&L</span>
-      <span>Pulps & Leaves</span>
+      <span class="brand-logo-wrap">
+        <img class="brand-logo" src="{{ url_for('static', filename='img/pl-logo.svg') }}?v=20260511-premium" alt="Pulps & Leaves">
+      </span>
+      <span class="brand-wordmark">
+        <strong>Pulps & Leaves</strong>
+        <small>Mango | Tea | Makhana</small>
+      </span>
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-label="Open menu">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div id="navMenu" class="collapse navbar-collapse">
-      <div class="navbar-nav mx-auto gap-lg-4">
-        <a class="nav-link active" href="#products">Harvests</a>
-        <a class="nav-link" href="#quality">Our Groves</a>
-        <a class="nav-link" href="#order">Rituals</a>
-        <a class="nav-link" href="#assistant">Concierge</a>
+      <div class="navbar-nav mx-auto">
+        <a class="nav-link active" href="#">Home</a>
+        <a class="nav-link" href="#shop">Shop</a>
+        <a class="nav-link" href="#about">About us</a>
+        <a class="nav-link" href="#testimonials">Testimonial</a>
+        <a class="nav-link" href="#contact">Social Media</a>
+        <a class="nav-link" href="#order">More</a>
       </div>
       <div class="nav-actions">
-        <span class="location-pill"><i class="bi bi-geo-alt"></i> Bangalore</span>
-        <a class="cart-pill" href="#order"><i class="bi bi-bag"></i> Cart <sup>0</sup></a>
+        <a href="#shop" aria-label="Search"><i class="bi bi-search"></i><span>Search</span></a>
+        <a class="whatsapp-action" href="https://wa.me/919835496666" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+          <i class="bi bi-whatsapp"></i><span>WhatsApp</span>
+        </a>
+        <a class="cart-action" href="#order" aria-label="Cart"><i class="bi bi-bag"></i><span>Cart</span></a>
       </div>
     </div>
   </div>
 </nav>
 
-<header class="hero">
-  <div class="container hero-layout">
-    <div class="hero-copy-block">
-      <div class="social-proof"><i class="bi bi-people-fill"></i> Trusted by 10,000+ harvest lovers</div>
-      <h1>Farm-fresh mangoes delivered city-wise.</h1>
-      <p>Cash on delivery mango boxes with smart order tracking and seamless WhatsApp support for a truly premium harvest experience.</p>
-      <div class="hero-actions">
-        <a class="btn btn-brand" href="#order">Place COD Order</a>
-        <a class="btn btn-forest" href="#assistant"><i class="bi bi-chat-left-text"></i> Order on WhatsApp</a>
-      </div>
-      <div class="hero-note-grid">
-        <span><i class="bi bi-check-circle"></i> Hand-sorted Malda mangoes</span>
-      </div>
+<header class="store-hero">
+  <div class="announcement-strip">
+    <div class="container announcement-inner">
+      <span><i class="bi bi-calendar-check"></i> Pre Order open now</span>
+      <span><i class="bi bi-wallet2"></i> Cash On Delivery Available</span>
+      <span><i class="bi bi-truck"></i> Delivery: 2nd-4th June (Hyd/Blr) & 10th-12th June (Mum/Pun)</span>
     </div>
-
-    <div class="hero-product-card">
-      <div class="hero-mango-photo"></div>
-      <div class="hero-product-info">
-        <div>
-          <span>Today's Selection</span>
-          <strong>Malda Mango Boxes</strong>
-        </div>
-        <a href="#products">In Stock</a>
+  </div>
+  <div class="container hero-grid">
+    <div id="homeSlider" class="hero-slider" aria-label="Pulps and Leaves mango highlights">
+      <div class="hero-slides">
+        <figure class="hero-slide active">
+          <img src="{{ url_for('static', filename='img/pl-orchard-harvest.png') }}?v=20260511-slider-local" alt="Pulps and Leaves orchard harvest">
+        </figure>
+        <figure class="hero-slide">
+          <img src="{{ url_for('static', filename='img/pl-thank-farmers.png') }}?v=20260511-slider-local" alt="Pulps and Leaves thank you farmers">
+        </figure>
+        <figure class="hero-slide">
+          <img src="{{ url_for('static', filename='img/pl-happy-customers.png') }}?v=20260511-slider-local" alt="Pulps and Leaves happy customers">
+        </figure>
+      </div>
+      <div class="hero-slider-copy">
+        <span>Pre Order open now</span>
+        <strong>Farm fresh mangoes, COD available.</strong>
+        <a class="btn btn-brand" href="#order"><i class="bi bi-bag-check"></i> Quick Order</a>
+      </div>
+      <button class="hero-slider-control prev" type="button" data-slider-prev aria-label="Previous slide">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <button class="hero-slider-control next" type="button" data-slider-next aria-label="Next slide">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+      <div class="hero-slider-dots" aria-label="Choose slide">
+        <button class="active" type="button" data-slider-dot="0" aria-label="Show slide 1"></button>
+        <button type="button" data-slider-dot="1" aria-label="Show slide 2"></button>
+        <button type="button" data-slider-dot="2" aria-label="Show slide 3"></button>
       </div>
     </div>
   </div>
-  <a class="floating-concierge" href="#assistant">
-    <div class="concierge-head">
-      <span><i class="bi bi-headset"></i></span>
-      <div>
-        <strong>Mango Concierge</strong>
-        <small>Online</small>
-      </div>
-    </div>
-    <p>Need help placing your order? Chat with us.</p>
-    <div class="concierge-input">Type a message... <i class="bi bi-send-fill"></i></div>
-  </a>
+  <div class="announcement-strip secondary">
+    <span>Many mangoes one platform</span>
+    <span>5 kg = Max 20 pieces</span>
+    <span>3 Kg = Max 12 pieces</span>
+  </div>
 </header>
 
 <main>
-  <section id="products" class="section-band products-band">
+  <section id="shop" class="section-block categories-section">
     <div class="container">
-      <div class="section-kicker">Limited Selection</div>
-      <div class="section-title-row">
-        <h2>The Seasonal Gold List</h2>
-        <p>Only mangoes are orderable right now. Assam Tea and Premium Makhana are coming soon.</p>
+      <div class="section-heading centered">
+        <span>Categories</span>
+        <h2>Shop by harvest</h2>
       </div>
-
-      <div class="product-gallery">
-        {% for product in products %}
-        <article class="gold-card gold-card-{{ loop.index }}">
-          <div class="gold-image product-media-{{ loop.index }}">
-            <span>{{ product.unit }}</span>
-          </div>
-          <div class="gold-meta">
-            <div>
-              <h3>{{ product.display_title }}</h3>
-              <p>{{ product.description }}</p>
-            </div>
-            <div class="gold-price">
-              <strong>Rs {{ product.price }}</strong>
-              <s>Rs {{ product.mrp }}</s>
-            </div>
-          </div>
-          <button class="select-product harvest-add" data-product="{{ product.name }}">
-            <i class="bi bi-plus-lg"></i>
-          </button>
-        </article>
-        {% endfor %}
-        <article class="gold-card preview-card">
-          <div class="gold-image tea-preview">
-            <span>Coming Soon</span>
-          </div>
-          <div class="gold-meta">
-            <div>
-              <h3>Assam Tea & Premium Makhana</h3>
-              <p>Year-round pantry harvests will open after the mango batch.</p>
-            </div>
-            <div class="gold-price">
-              <strong>Soon</strong>
-            </div>
-          </div>
-        </article>
-      </div>
-
-      <div class="coming-row">
+      <div class="category-grid">
+        <a class="category-tile active" href="#products">
+          <i class="bi bi-brightness-high"></i>
+          <strong>Mangoes</strong>
+          <small>Open now</small>
+        </a>
         {% for item in coming_soon_products %}
-        <div class="coming-chip">
-          <span>{{ item.category }}</span>
-          <strong>{{ item.name }}</strong>
+        <div class="category-tile muted">
+          <i class="bi bi-box2-heart"></i>
+          <strong>{{ item.category }}</strong>
           <small>Coming soon</small>
         </div>
         {% endfor %}
@@ -123,65 +106,65 @@
     </div>
   </section>
 
-  <section id="quality" class="section-band quality-band">
-    <div class="container quality-layout">
-      <div>
-        <div class="section-kicker">Harvest Ritual</div>
-        <h2>The Ritual of Quality</h2>
-        <div class="quality-list">
-          <div>
-            <i class="bi bi-flower1"></i>
-            <div>
-              <strong>Sustainable Selection</strong>
-              <p>Each mango is hand-picked from trusted orchards and sorted before it enters the delivery route.</p>
-            </div>
-          </div>
-          <div>
-            <i class="bi bi-check2-circle"></i>
-            <div>
-              <strong>Rigorous Grading</strong>
-              <p>Every box is checked for weight, aroma, skin clarity, and ripeness stage.</p>
-            </div>
-          </div>
-          <div>
-            <i class="bi bi-truck"></i>
-            <div>
-              <strong>Express Delivery</strong>
-              <p>City-wise batches keep the fruit moving quickly, with COD at the doorstep.</p>
-            </div>
-          </div>
-        </div>
+  <section id="products" class="section-block products-section">
+    <div class="container">
+      <div class="section-heading">
+        <span>Fresh arrivals</span>
+        <h2>Order online at best price</h2>
+        <p>Seasonal Malda mango boxes, sorted and packed for city-wise delivery.</p>
       </div>
-      <div class="quality-images">
-        <div class="grove-image">
-          <span>Harvest route</span>
-        </div>
-        <div class="box-image">
-          <span>Premium packed</span>
-        </div>
+
+      <div class="product-grid">
+        {% for product in products %}
+        <article class="product-card product-card-{{ loop.index }}">
+          <div class="product-image">
+            <span class="sale-badge">Sale</span>
+            <button class="icon-btn select-product" data-product="{{ product.name }}" aria-label="Add {{ product.display_title }} {{ product.unit }}">
+              <i class="bi bi-plus-lg"></i>
+            </button>
+          </div>
+          <div class="product-info">
+            <span>{{ product.category }}</span>
+            <h3>{{ product.display_title }}</h3>
+            <p>{{ product.description }}</p>
+            <div class="piece-count"><i class="bi bi-basket2"></i> {{ product.pieces_label }}</div>
+            <div class="price-row">
+              <strong>Rs {{ product.price }}</strong>
+              <s>Rs {{ product.mrp }}</s>
+            </div>
+            <button class="btn btn-brand select-product" data-product="{{ product.name }}" type="button">Add To Cart</button>
+          </div>
+        </article>
+        {% endfor %}
       </div>
     </div>
   </section>
 
-  <section id="order" class="section-band checkout-band">
-    <div class="container checkout-layout">
-      <div class="checkout-copy">
-        <div class="section-kicker">Quick Checkout</div>
-        <h2>Secure Your Harvest</h2>
-        <div class="city-pills">
+  <section id="order" class="section-block order-section">
+    <div class="container order-grid">
+      <div class="order-copy">
+        <span class="mini-label">Quick checkout</span>
+        <h2>Choose item and place COD order.</h2>
+        <p>Pre Order open now. Cash On Delivery Available for the next delivery slots: 2nd-4th June (Hyd/Blr) & 10th-12th June (Mum/Pun).</p>
+        <div class="city-list">
           {% for key, city in cities.items() %}
+          {% if city.label in ["Bangalore", "Hyderabad", "Pune", "Mumbai"] %}
           <span>{{ city.label }}</span>
+          {% endif %}
           {% endfor %}
         </div>
-        <ul class="checkout-points">
-          <li><i class="bi bi-check-circle"></i> Smart WhatsApp order tracking</li>
-          <li><i class="bi bi-check-circle"></i> Eco-friendly premium cushioning</li>
-        </ul>
+        <div class="service-box">
+          <i class="bi bi-wallet2"></i>
+          <div>
+            <strong>Pay after service</strong>
+            <small>Also available in Bangalore, Hyderabad, Pune, and Mumbai.</small>
+          </div>
+        </div>
       </div>
 
       <form id="orderForm" class="checkout-card">
-        <div class="checkout-card-top">
-          <span>COD checkout</span>
+        <div class="form-title">
+          <span>Choose item</span>
           <strong>Order details</strong>
         </div>
         <div class="checkout-grid">
@@ -225,126 +208,129 @@
           </label>
         </div>
         <button class="btn btn-brand checkout-submit" type="submit">
-          <span class="button-text">Place Order / कर्ता फाइनल</span>
+          <span class="button-text">Place Order</span>
           <i class="bi bi-arrow-right"></i>
           <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
         </button>
-        <small>By clicking, you agree to our 100% quality guarantee.</small>
         <div id="orderResult" class="result-box d-none mt-3"></div>
       </form>
     </div>
   </section>
 
-  <section id="assistant" class="section-band support-band">
-    <div class="container support-layout">
-      <form id="editForm" class="soft-card">
-        <div class="section-kicker">Order Concierge</div>
-        <h2>Edit Existing Order</h2>
-        <label>
-          <span>Order ID</span>
-          <input id="editOrderId" name="order_id" class="form-control" placeholder="PL7K9Q2M4XB" required>
-        </label>
-        <label>
-          <span>New Address</span>
-          <textarea id="editAddress" name="address" class="form-control" rows="3"></textarea>
-        </label>
-        <label>
-          <span>New Mobile Number</span>
-          <input id="editPhone" name="phone" class="form-control" inputmode="numeric">
-        </label>
-        <button class="btn btn-forest w-100" type="submit"><i class="bi bi-pencil-square"></i> Update Order</button>
-        <div id="editResult" class="result-box d-none mt-3"></div>
-      </form>
+  <section id="about" class="section-block about-section">
+    <div class="container about-grid">
+      <div class="about-photo">
+        <img src="{{ url_for('static', filename='img/pl-thank-farmers.png') }}?v=20260511-posters" alt="Pulps and Leaves thank you farmers and customers poster">
+      </div>
+      <div>
+        <span class="mini-label">About us</span>
+        <h2>Premium mangoes from trusted orchards.</h2>
+        <div class="promise-list">
+          <div><i class="bi bi-check2-circle"></i><span>Handpicked and naturally ripened fruit.</span></div>
+          <div><i class="bi bi-check2-circle"></i><span>Sorted by weight, aroma, skin clarity, and ripeness.</span></div>
+          <div><i class="bi bi-check2-circle"></i><span>Packed for city-wise delivery routes.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="assistant" class="section-block support-section">
+    <div class="container support-grid">
+      <div class="soft-card edit-support-card">
+        <span class="mini-label">Order support</span>
+        <h2>Need to change your order?</h2>
+        <p class="edit-support-copy">To edit an order, contact support and share your Order ID.</p>
+        <div class="edit-support-actions">
+          <a class="btn btn-brand w-100" href="https://wa.me/919835496666?text=Hi%2C%20I%20want%20to%20edit%20my%20order.%20My%20Order%20ID%20is%20" target="_blank" rel="noopener">
+            <i class="bi bi-whatsapp"></i> Contact Support on WhatsApp
+          </a>
+          <a class="btn btn-outline-dark w-100" href="tel:+919835496666">
+            <i class="bi bi-telephone"></i> Call Support
+          </a>
+        </div>
+      </div>
 
       <div class="soft-card chat-panel">
         <div class="chat-header">
           <div>
-            <div class="section-kicker">Mango Concierge</div>
-            <h2>Ask on WhatsApp</h2>
+            <span class="mini-label">WhatsApp style help</span>
+            <h2>Mango Concierge</h2>
           </div>
           <span class="live-pill"><span></span> Online</span>
         </div>
         <div id="chatMessages" class="chat-messages"></div>
         <form id="chatForm" class="chat-input">
           <input id="chatInput" class="form-control" placeholder="Type a message..." autocomplete="off">
-          <button class="btn btn-brand" type="submit"><i class="bi bi-send"></i></button>
+          <button class="btn btn-brand" type="submit" aria-label="Send message"><i class="bi bi-send"></i></button>
         </form>
       </div>
     </div>
   </section>
 
-  <section id="delivery" class="section-band faq-band">
+  <section id="testimonials" class="section-block testimonial-section">
     <div class="container">
-      <div class="faq-heading">
-        <h2>Common Questions</h2>
-        <p>Everything you need to know about your mango journey.</p>
+      <div class="section-heading centered">
+        <span>Testimonial</span>
+        <h2>Customers love the harvest</h2>
       </div>
-      <div class="faq-list">
-        <details open>
-          <summary>When will my mangoes arrive?</summary>
-          <p>Orders are processed city-wise. Bangalore routes are fastest, while other cities follow the configured delivery slots.</p>
-        </details>
-        <details>
-          <summary>How do I track or edit my order?</summary>
-          <p>Use your Order ID in the edit section to update address or phone number.</p>
-        </details>
-        <details>
-          <summary>What if the mangoes are not ripe?</summary>
-          <p>We pack mangoes for travel and table ripening. Support can guide you based on your box stage.</p>
-        </details>
-      </div>
-      <div class="benefit-row">
-        <span><i class="bi bi-leaf"></i> Naturally Ripened</span>
-        <span><i class="bi bi-wallet2"></i> Smooth Checkout</span>
-        <span><i class="bi bi-shield-check"></i> Quality Certified</span>
-        <span><i class="bi bi-box-seam"></i> Plastic-Free Delivery</span>
+      <div class="testimonial-showcase">
+        <div class="testimonial-poster">
+          <img src="{{ url_for('static', filename='img/pl-happy-customers.png') }}?v=20260511-posters" alt="Pulps and Leaves happy customers enjoying mangoes">
+        </div>
+        <div class="testimonial-grid">
+          <article>
+            <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <strong>Fresh and sweet</strong>
+            <p>The Malda box arrived neatly packed, and every mango ripened beautifully over the week.</p>
+            <span>Aarav, Bangalore</span>
+          </article>
+          <article>
+            <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <strong>Easy COD order</strong>
+            <p>Checkout was quick, delivery updates were clear, and COD made the whole order feel simple.</p>
+            <span>Meera, Hyderabad</span>
+          </article>
+          <article>
+            <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <strong>Premium packing</strong>
+            <p>The box looked gift-ready. The fruit was cushioned well and tasted like proper summer mangoes.</p>
+            <span>Rohan, Mumbai</span>
+          </article>
+        </div>
       </div>
     </div>
   </section>
 </main>
 
-<footer class="site-footer">
+<footer id="contact" class="site-footer">
   <div class="container footer-grid">
     <div>
       <h3>Pulps & Leaves</h3>
-      <p>Crafting a premium direct-to-consumer bridge between heritage mango groves and urban doorsteps.</p>
+      <p>Many mangoes, one platform for farm-fresh seasonal ordering.</p>
     </div>
     <div>
-      <strong>Company</strong>
-      <a href="#quality">Sourcing Philosophy</a>
-      <a href="#products">Sustainability</a>
-      <a href="#assistant">Career</a>
+      <strong>Contact</strong>
+      <a href="mailto:pulpsandleaves@gmail.com"><i class="bi bi-envelope"></i> pulpsandleaves@gmail.com</a>
+      <a href="tel:+919835496666"><i class="bi bi-telephone"></i> +91 98354 96666</a>
     </div>
     <div>
-      <strong>Support</strong>
-      <a href="#delivery">Shipping & Logistics</a>
-      <a href="#delivery">FAQ</a>
-      <a href="mailto:support@pulpsandleaves.example">Contact Us</a>
-    </div>
-    <form>
-      <strong>Join The Harvest Club</strong>
-      <p>Receive seasonal variety updates and exclusive pre-booking access.</p>
-      <div class="join-row">
-        <input class="form-control" placeholder="Your Email">
-        <button class="btn btn-forest" type="button">Join</button>
+      <strong>Pay after Service using</strong>
+      <div class="payment-row">
+        <i class="bi bi-cash"></i>
+        <i class="bi bi-bank"></i>
+        <i class="bi bi-credit-card"></i>
+        <i class="bi bi-phone"></i>
       </div>
-    </form>
+    </div>
   </div>
-  <div class="container footer-bottom" style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 1rem;">
-    <div>
-      <strong style="color: rgba(0,0,0,0.7); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em;">Registrations</strong>
-      <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
-        <span style="font-size: 0.85rem; color: rgba(0,0,0,0.8);">GSTIN: 10JKIPS9038F1ZW</span>
-        <span style="font-size: 0.85rem; color: rgba(0,0,0,0.8);">FSSAI: 20426004000341</span>
-      </div>
-    </div>
-    <div style="font-size: 0.85rem; color: rgba(0,0,0,0.6);">
-      © 2026 Pulps & Leaves. All rights reserved.
-    </div>
+  <div class="container footer-bottom">
+    <span>GSTIN: 10JKIPS9038F1ZW</span>
+    <span>FSSAI: 20426004000341</span>
+    <span>Copyright 2026. Powered by Pulps & Leaves.</span>
   </div>
 </footer>
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/app.js') }}?v=20260509-free1"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}?v=20260511-local-slider"></script>
 {% endblock %}

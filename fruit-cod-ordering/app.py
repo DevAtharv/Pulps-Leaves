@@ -7,7 +7,7 @@ from flask import Flask, jsonify, redirect, render_template, request, url_for
 
 from ai_parser import normalize_phone
 from chatbot_flow import ChatbotFlow
-from delivery_config import CITIES, COMING_SOON_PRODUCTS, ORDER_STATUSES, PRODUCTS, city_by_choice, get_delivery_schedule
+from delivery_config import AVAILABLE_CITIES, CITIES, COMING_SOON_PRODUCTS, ORDER_STATUSES, PRODUCTS, city_by_choice, get_delivery_schedule
 from order_manager import OrderManager
 
 
@@ -42,10 +42,10 @@ def admin_required(view):
 def index():
     return render_template(
         "index.html",
-        cities=CITIES,
+        cities=AVAILABLE_CITIES,
         products=PRODUCTS,
         coming_soon_products=COMING_SOON_PRODUCTS,
-        schedules={key: get_delivery_schedule(key) for key in CITIES},
+        schedules={key: get_delivery_schedule(key) for key in AVAILABLE_CITIES},
         storage_backend=order_manager.sheets.backend_name,
     )
 

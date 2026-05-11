@@ -254,7 +254,7 @@ class ChatbotFlow:
 
         return (
             "A real person can help from here.\n"
-            f"Phone: {os.getenv('SUPPORT_PHONE', '+91 98765 43210')}\n"
+            f"Phone: {os.getenv('SUPPORT_PHONE', '+91 98354 96666')}\n"
             f"Email: {os.getenv('SUPPORT_EMAIL', 'support@pulpsandleaves.example')}\n\n"
             + MAIN_MENU
         )
