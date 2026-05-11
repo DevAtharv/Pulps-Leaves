@@ -264,7 +264,7 @@ h2 {
   .hero-slide img {
     width: 68%;
     margin-left: auto;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
   }
 }
