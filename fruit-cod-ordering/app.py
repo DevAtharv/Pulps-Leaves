@@ -108,6 +108,24 @@ def chatbot_message():
     return jsonify(chatbot.handle_message(user_id, message))
 
 
+@app.route("/webhook", methods=["GET", "POST"], strict_slashes=False)
+def meta_webhook():
+    if request.method == "GET":
+        mode = request.args.get("hub.mode")
+        token = request.args.get("hub.verify_token")
+        challenge = request.args.get("hub.challenge")
+        verify_token = os.getenv("META_VERIFY_TOKEN") or os.getenv("WHATSAPP_VERIFY_TOKEN")
+
+        if mode == "subscribe" and challenge:
+            if verify_token and token != verify_token:
+                return "Invalid verify token", 403
+            return app.response_class(challenge, mimetype="text/plain")
+
+        return "Webhook endpoint is ready", 200
+
+    return handle_whatsapp_payload()
+
+
 @app.post("/webhook/whatsapp")
 def whatsapp_webhook():
     """Webhook-ready endpoint for Meta, Twilio, WATI, or Interakt adapters.
@@ -115,6 +133,10 @@ def whatsapp_webhook():
     Today it returns the generated reply as JSON. In production the provider
     adapter can take this same reply and send it through the provider API.
     """
+    return handle_whatsapp_payload()
+
+
+def handle_whatsapp_payload():
     payload = request.get_json(silent=True) or {}
     user_id, message = extract_webhook_message(payload)
     if not message:
