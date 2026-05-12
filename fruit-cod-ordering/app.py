@@ -3,7 +3,7 @@ import os
 from functools import wraps
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, redirect, render_template, request, url_for
+from flask import Flask, jsonify, redirect, render_template, request, send_from_directory, url_for
 
 from ai_parser import normalize_phone
 from chatbot_flow import ChatbotFlow
@@ -48,6 +48,16 @@ def index():
         schedules={key: get_delivery_schedule(key) for key in AVAILABLE_CITIES},
         storage_backend=order_manager.sheets.backend_name,
     )
+
+
+@app.get("/favicon.ico")
+def favicon():
+    return send_from_directory(app.static_folder, "img/logo.png", mimetype="image/png")
+
+
+@app.get("/robots.txt")
+def robots_txt():
+    return app.response_class("User-agent: *\nAllow: /\n", mimetype="text/plain")
 
 
 @app.post("/api/orders")
