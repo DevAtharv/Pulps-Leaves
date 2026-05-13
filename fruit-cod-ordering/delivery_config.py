@@ -6,17 +6,21 @@ BUSINESS_NAME = "Pulps & Leaves"
 CITIES = {
     "bangalore": {"label": "Bangalore", "code": "BLR"},
     "hyderabad": {"label": "Hyderabad", "code": "HYD"},
+    "pune": {"label": "Pune", "code": "PUN"},
+    "mumbai": {"label": "Mumbai", "code": "MUM"},
     "chennai": {"label": "Chennai", "code": "CHE"},
     "bhubaneswar": {"label": "Bhubaneswar", "code": "BBI"},
 }
 
-AVAILABLE_CITY_KEYS = ("bangalore", "hyderabad")
+AVAILABLE_CITY_KEYS = ("bangalore", "hyderabad", "pune", "mumbai")
 AVAILABLE_CITIES = {key: CITIES[key] for key in AVAILABLE_CITY_KEYS}
 
 CITY_ALIASES = {
     "bengaluru": "bangalore",
     "blr": "bangalore",
     "hyd": "hyderabad",
+    "bom": "mumbai",
+    "bombay": "mumbai",
     "madras": "chennai",
     "bbsr": "bhubaneswar",
     "bhubaneshwar": "bhubaneswar",
@@ -69,6 +73,8 @@ COMING_SOON_PRODUCTS = [
 DELIVERY_SCHEDULES = {
     "bangalore": {"start": "2026-06-02", "end": "2026-06-04", "label": "2nd-4th June"},
     "hyderabad": {"start": "2026-06-02", "end": "2026-06-04", "label": "2nd-4th June"},
+    "pune": {"start": "2026-06-02", "end": "2026-06-04", "label": "2nd-4th June"},
+    "mumbai": {"start": "2026-06-02", "end": "2026-06-04", "label": "2nd-4th June"},
     "chennai": {"start": "2026-06-09", "end": "2026-06-12", "label": "9th-12th June"},
     "bhubaneswar": {"start": "2026-06-11", "end": "2026-06-14", "label": "11th-14th June"},
 }

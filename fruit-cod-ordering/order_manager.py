@@ -1,3 +1,4 @@
+import json
 import re
 import secrets
 import string
@@ -10,6 +11,15 @@ from time_utils import timestamp_local
 
 ORDER_ID_PATTERN = re.compile(r"^PL[A-Z0-9]{10}$")
 ORDER_ID_ALPHABET = string.ascii_uppercase + string.digits
+WEB_CART_PRODUCTS = {
+    "malda-mango-5kg-box": {"name": "Malda Mango 5Kg Box", "price": 999},
+    "malda-mango-3kg-box": {"name": "Malda Mango 3Kg Box", "price": 599},
+    "assam-breakfast-tea": {"name": "Husk and Dew", "price": 449},
+    "roasted-himalayan-makhana": {"name": "Naivedyam Makhana", "price": 349},
+}
+DELIVERY_FREE_ABOVE = 599
+DELIVERY_CHARGE = 30
+AAM50_MINIMUM_AFTER_GUTHLI = 599
 
 
 class OrderManager:
@@ -26,6 +36,11 @@ class OrderManager:
         total_amount = int(clean_data["total_amount"])
         now = timestamp_local()
         notes = clean_data.get("notes", "")
+        if clean_data.get("coupon_codes"):
+            notes = (
+                f"{notes} Coupons applied: {', '.join(clean_data['coupon_codes'])}; "
+                f"discount Rs {clean_data['discount']}."
+            ).strip()
         if clean_data.get("delivery_charge"):
             notes = f"{notes} Delivery charge: Rs {clean_data['delivery_charge']}.".strip()
         order = {
@@ -60,9 +75,26 @@ class OrderManager:
         phone = normalize_phone(payload.get("phone", ""))
         qty_5kg = self._parse_quantity(payload.get("qty_5kg", "0"))
         qty_3kg = self._parse_quantity(payload.get("qty_3kg", "0"))
-        uses_cart_quantities = any(key in payload for key in ("qty_5kg", "qty_3kg"))
+        cart_items = self._parse_cart_items(payload.get("cart_items"))
+        coupon_codes = self._parse_coupon_codes(payload.get("coupon_codes"))
+        uses_cart_quantities = bool(cart_items) or any(key in payload for key in ("qty_5kg", "qty_3kg"))
+        discount = 0
+        applied_coupons = []
 
-        if uses_cart_quantities:
+        if cart_items:
+            product_lines = []
+            subtotal = 0
+            total_quantity = 0
+            for item in cart_items:
+                catalog_item = WEB_CART_PRODUCTS[item["id"]]
+                quantity = item["quantity"]
+                total_quantity += quantity
+                subtotal += quantity * catalog_item["price"]
+                product_lines.append(f"{catalog_item['name']} x {quantity}")
+            discount, applied_coupons = self._cart_coupon_discount(subtotal, coupon_codes)
+            delivery_charge = 0 if subtotal == 0 or subtotal > DELIVERY_FREE_ABOVE else DELIVERY_CHARGE
+            product_summary = ", ".join(product_lines)
+        elif uses_cart_quantities:
             product_lines = []
             subtotal = 0
             total_quantity = qty_5kg + qty_3kg
@@ -76,14 +108,14 @@ class OrderManager:
                 product_lines.append(f"3Kg Box x {qty_3kg}")
                 subtotal += qty_3kg * int(product_3kg["price"])
 
-            delivery_charge = 27 if qty_3kg > 0 and qty_5kg == 0 and subtotal <= 999 else 0
+            delivery_charge = 0 if subtotal == 0 or subtotal > DELIVERY_FREE_ABOVE else DELIVERY_CHARGE
             product_summary = ", ".join(product_lines)
         else:
             product = product_by_choice(payload.get("product", "")) or str(payload.get("product", "")).strip()
             quantity = self._parse_quantity(payload.get("quantity", "0"))
             selected_product = product_record(product) if product else None
             subtotal = int(selected_product["price"]) * quantity if selected_product else 0
-            delivery_charge = 27 if product == "Malda Mango 3Kg Box" and quantity > 0 and subtotal <= 999 else 0
+            delivery_charge = 0 if subtotal == 0 or subtotal > DELIVERY_FREE_ABOVE else DELIVERY_CHARGE
             total_quantity = quantity
             product_summary = product
 
@@ -94,7 +126,7 @@ class OrderManager:
         if len(address) < 8:
             errors["address"] = "Please enter a complete delivery address."
         if not city:
-            errors["city"] = "Please select Bangalore or Hyderabad."
+            errors["city"] = "Please select Bangalore, Hyderabad, Pune, or Mumbai."
         if not product_summary:
             errors["product"] = "Please choose a product from the catalog."
         elif not uses_cart_quantities:
@@ -114,8 +146,10 @@ class OrderManager:
                 "product_summary": product_summary,
                 "quantity": total_quantity,
                 "subtotal": subtotal,
+                "discount": discount,
+                "coupon_codes": applied_coupons,
                 "delivery_charge": delivery_charge,
-                "total_amount": subtotal + delivery_charge,
+                "total_amount": subtotal - discount + delivery_charge,
                 "notes": str(payload.get("notes", "")).strip(),
             },
             errors,
@@ -127,6 +161,62 @@ class OrderManager:
             return int(str(value).strip())
         except ValueError:
             return 0
+
+    def _parse_cart_items(self, value):
+        if not value:
+            return []
+        try:
+            raw_items = json.loads(value) if isinstance(value, str) else value
+        except (TypeError, json.JSONDecodeError):
+            return []
+        if not isinstance(raw_items, list):
+            return []
+
+        cart_items = []
+        for raw_item in raw_items:
+            if not isinstance(raw_item, dict):
+                continue
+            product_id = str(raw_item.get("id", "")).strip()
+            quantity = self._parse_quantity(raw_item.get("quantity", "0"))
+            if product_id in WEB_CART_PRODUCTS and 1 <= quantity <= 50:
+                cart_items.append({"id": product_id, "quantity": quantity})
+        return cart_items
+
+    def _parse_coupon_codes(self, value):
+        if not value:
+            return []
+        try:
+            raw_codes = json.loads(value) if isinstance(value, str) else value
+        except (TypeError, json.JSONDecodeError):
+            raw_codes = str(value).split(",")
+        if isinstance(raw_codes, str):
+            raw_codes = [raw_codes]
+        if not isinstance(raw_codes, list):
+            return []
+
+        allowed_codes = {"GUTHLI10", "AAM50"}
+        coupon_codes = []
+        for raw_code in raw_codes:
+            code = str(raw_code).strip().upper()
+            if code in allowed_codes and code not in coupon_codes:
+                coupon_codes.append(code)
+        return coupon_codes
+
+    @staticmethod
+    def _cart_coupon_discount(subtotal, coupon_codes):
+        discount = 0
+        applied_coupons = []
+        if "GUTHLI10" in coupon_codes:
+            guthli_discount = round(subtotal * 0.1)
+            discount += guthli_discount
+            applied_coupons.append("GUTHLI10")
+
+        subtotal_after_guthli = subtotal - discount
+        if "AAM50" in coupon_codes and "GUTHLI10" in coupon_codes and subtotal_after_guthli >= AAM50_MINIMUM_AFTER_GUTHLI:
+            discount += 50
+            applied_coupons.append("AAM50")
+
+        return min(discount, subtotal), applied_coupons
 
     def generate_order_id(self):
         while True:
