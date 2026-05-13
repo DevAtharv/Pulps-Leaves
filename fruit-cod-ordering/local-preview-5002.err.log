@@ -1,0 +1,19 @@
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5002
+Press CTRL+C to quit
+127.0.0.1 - - [14/May/2026 01:20:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [14/May/2026 01:20:55] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [14/May/2026 01:20:58] "GET /static/img/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [14/May/2026 01:20:58] "GET /static/img/pl-orchard-harvest.png HTTP/1.1" 200 -
+127.0.0.1 - - [14/May/2026 01:20:58] "GET /static/img/mango-box.svg HTTP/1.1" 200 -
+127.0.0.1 - - [14/May/2026 01:20:58] "GET /static/css/styles.css?v=20260512-ui-fix HTTP/1.1" 200 -
+127.0.0.1 - - [14/May/2026 01:20:58] "GET /static/img/pl-happy-customers.png HTTP/1.1" 200 -
+127.0.0.1 - - [14/May/2026 01:20:58] "GET /static/img/pl-thank-farmers.png HTTP/1.1" 200 -
+127.0.0.1 - - [14/May/2026 01:20:59] "GET /favicon.ico HTTP/1.1" 200 -
+127.0.0.1 - - [14/May/2026 01:28:08] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [14/May/2026 01:28:08] "GET /static/css/styles.css?v=20260512-ui-fix HTTP/1.1" 200 -
+127.0.0.1 - - [14/May/2026 01:28:08] "GET /static/img/mango-box.svg HTTP/1.1" 200 -
+127.0.0.1 - - [14/May/2026 01:28:08] "GET /static/img/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [14/May/2026 01:28:09] "GET /static/img/pl-orchard-harvest.png HTTP/1.1" 200 -
+127.0.0.1 - - [14/May/2026 01:28:09] "GET /static/img/pl-happy-customers.png HTTP/1.1" 200 -
+127.0.0.1 - - [14/May/2026 01:28:09] "GET /static/img/pl-thank-farmers.png HTTP/1.1" 200 -
