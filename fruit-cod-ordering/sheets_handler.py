@@ -32,6 +32,9 @@ ORDER_HEADERS = [
     "Unit Price",
     "Total Amount",
     "Payment Mode",
+    "Payment Status",
+    "Razorpay Order ID",
+    "Razorpay Payment ID",
     "Notes",
     "Order Status",
     "Confirmed",
@@ -39,6 +42,21 @@ ORDER_HEADERS = [
     "Delivered",
     "Cancelled",
     "Source",
+    "Customer Email",
+    "Google Subject",
+    "Updated At",
+]
+
+
+CUSTOMER_HEADERS = [
+    "Google Subject",
+    "Email",
+    "Name",
+    "Picture",
+    "Phone",
+    "Default City",
+    "Default Address",
+    "Created At",
     "Updated At",
 ]
 
@@ -51,6 +69,7 @@ class SheetsHandler:
         self.daily_worksheets = self._read_env("GOOGLE_DAILY_WORKSHEETS", "true").lower() == "true"
         self.credentials_file = self._read_env("GOOGLE_CREDENTIALS_FILE", "credentials.json")
         self.local_file = self._resolve_local_file()
+        self.local_customers_file = self._resolve_local_customers_file()
         self._spreadsheet = None
         self._worksheet = None
         self._headers = ORDER_HEADERS.copy()
@@ -150,6 +169,119 @@ class SheetsHandler:
             self._write_local_records(records)
         return updated
 
+    def find_customer(self, google_subject=None, email=None):
+        google_subject = str(google_subject or "").strip()
+        email = str(email or "").strip().lower()
+        for customer in self.get_all_customers():
+            if google_subject and customer.get("Google Subject") == google_subject:
+                return customer
+            if email and customer.get("Email", "").lower() == email:
+                return customer
+        return None
+
+    def upsert_customer(self, profile):
+        now = timestamp_local()
+        google_subject = str(profile.get("google_subject", "")).strip()
+        email = str(profile.get("email", "")).strip().lower()
+        if not google_subject or not email:
+            return None
+
+        existing = self.find_customer(google_subject=google_subject, email=email)
+        customer = {
+            "Google Subject": google_subject,
+            "Email": email,
+            "Name": str(profile.get("name", "")).strip(),
+            "Picture": str(profile.get("picture", "")).strip(),
+            "Phone": existing.get("Phone", "") if existing else "",
+            "Default City": existing.get("Default City", "") if existing else "",
+            "Default Address": existing.get("Default Address", "") if existing else "",
+            "Created At": existing.get("Created At", now) if existing else now,
+            "Updated At": now,
+        }
+
+        if self._worksheet:
+            worksheet = self._customers_worksheet()
+            headers = self._ensure_customer_headers(worksheet)
+            records = worksheet.get_all_records(default_blank="")
+            for index, record in enumerate(records, start=2):
+                if str(record.get("Google Subject", "")).strip() == google_subject or str(record.get("Email", "")).strip().lower() == email:
+                    worksheet.update(
+                        f"A{index}:{rowcol_to_a1(index, len(headers))}",
+                        [[customer.get(header, "") for header in headers]],
+                        value_input_option="USER_ENTERED",
+                    )
+                    return customer
+            next_row = len(worksheet.get_all_values()) + 1
+            worksheet.update(
+                f"A{next_row}:{rowcol_to_a1(next_row, len(headers))}",
+                [[customer.get(header, "") for header in headers]],
+                value_input_option="USER_ENTERED",
+            )
+            return customer
+
+        records = self.get_all_customers()
+        replaced = False
+        for index, record in enumerate(records):
+            if record.get("Google Subject") == google_subject or record.get("Email", "").lower() == email:
+                records[index] = customer
+                replaced = True
+                break
+        if not replaced:
+            records.append(customer)
+        self._write_local_customers(records)
+        return customer
+
+    def update_customer_profile(self, google_subject, updates):
+        google_subject = str(google_subject or "").strip()
+        if not google_subject:
+            return None
+        allowed_updates = {
+            "Phone": updates.get("phone", ""),
+            "Default City": updates.get("city", ""),
+            "Default Address": updates.get("address", ""),
+            "Updated At": timestamp_local(),
+        }
+        allowed_updates = {key: str(value).strip() for key, value in allowed_updates.items() if value is not None}
+
+        if self._worksheet:
+            worksheet = self._customers_worksheet()
+            headers = self._ensure_customer_headers(worksheet)
+            records = worksheet.get_all_records(default_blank="")
+            for index, record in enumerate(records, start=2):
+                if str(record.get("Google Subject", "")).strip() == google_subject:
+                    for header, value in allowed_updates.items():
+                        if header in headers:
+                            worksheet.update_cell(index, headers.index(header) + 1, value)
+                    updated = {header: str(record.get(header, "")) for header in CUSTOMER_HEADERS}
+                    updated.update(allowed_updates)
+                    return updated
+            return None
+
+        records = self.get_all_customers()
+        for record in records:
+            if record.get("Google Subject") == google_subject:
+                record.update(allowed_updates)
+                self._write_local_customers(records)
+                return record
+        return None
+
+    def get_all_customers(self):
+        if self._worksheet:
+            worksheet = self._customers_worksheet()
+            self._ensure_customer_headers(worksheet)
+            return [
+                self._clean_customer_record(record)
+                for record in worksheet.get_all_records(default_blank="")
+                if record.get("Google Subject") or record.get("Email")
+            ]
+
+        self._ensure_local_customers_file()
+        frame = pd.read_excel(self.local_customers_file, dtype=str).fillna("")
+        for header in CUSTOMER_HEADERS:
+            if header not in frame.columns:
+                frame[header] = ""
+        return [self._clean_customer_record(record) for record in frame.to_dict("records") if record.get("Google Subject") or record.get("Email")]
+
     def count_orders_with_prefix(self, prefix):
         return sum(1 for order in self.get_all_orders() if str(order.get("Order ID", "")).startswith(prefix))
 
@@ -194,6 +326,14 @@ class SheetsHandler:
             worksheets = [self._today_worksheet()]
         return worksheets
 
+    def _customers_worksheet(self):
+        try:
+            worksheet = self._spreadsheet.worksheet("Customers")
+        except gspread.WorksheetNotFound:
+            worksheet = self._spreadsheet.add_worksheet(title="Customers", rows=1000, cols=len(CUSTOMER_HEADERS))
+        self._ensure_customer_headers(worksheet)
+        return worksheet
+
     @staticmethod
     def _resolve_local_file():
         configured_path = SheetsHandler._read_env("LOCAL_ORDERS_FILE")
@@ -202,6 +342,15 @@ class SheetsHandler:
         if os.getenv("VERCEL"):
             return Path("/tmp/orders.xlsx")
         return Path("data/orders.xlsx")
+
+    @staticmethod
+    def _resolve_local_customers_file():
+        configured_path = SheetsHandler._read_env("LOCAL_CUSTOMERS_FILE")
+        if configured_path:
+            return Path(configured_path)
+        if os.getenv("VERCEL"):
+            return Path("/tmp/customers.xlsx")
+        return Path("data/customers.xlsx")
 
     @staticmethod
     def _allow_local_fallback():
@@ -250,6 +399,28 @@ class SheetsHandler:
         worksheet.clear()
         rows = [canonical_headers] + normalized_rows
         worksheet.update("A1", rows, value_input_option="USER_ENTERED")
+        return canonical_headers
+
+    @staticmethod
+    def _ensure_customer_headers(worksheet):
+        first_row = worksheet.row_values(1)
+        if not first_row:
+            worksheet.append_row(CUSTOMER_HEADERS)
+            return CUSTOMER_HEADERS.copy()
+
+        extras = [header for header in first_row if header and header not in CUSTOMER_HEADERS]
+        canonical_headers = CUSTOMER_HEADERS + extras
+        if first_row == canonical_headers:
+            return canonical_headers
+
+        records = worksheet.get_all_records(default_blank="")
+        normalized_rows = [
+            [record.get(header, "") for header in canonical_headers]
+            for record in records
+            if record.get("Google Subject") or record.get("Email")
+        ]
+        worksheet.clear()
+        worksheet.update("A1", [canonical_headers] + normalized_rows, value_input_option="USER_ENTERED")
         return canonical_headers
 
     def _prepare_worksheet(self, worksheet):
@@ -532,10 +703,28 @@ class SheetsHandler:
         frame = pd.DataFrame(records, columns=ORDER_HEADERS)
         frame.to_excel(self.local_file, index=False)
 
+    def _ensure_local_customers_file(self):
+        self.local_customers_file.parent.mkdir(parents=True, exist_ok=True)
+        if not self.local_customers_file.exists():
+            pd.DataFrame(columns=CUSTOMER_HEADERS).to_excel(self.local_customers_file, index=False)
+
+    def _write_local_customers(self, records):
+        self.local_customers_file.parent.mkdir(parents=True, exist_ok=True)
+        frame = pd.DataFrame(records, columns=CUSTOMER_HEADERS)
+        frame.to_excel(self.local_customers_file, index=False)
+
     @staticmethod
     def _clean_record(record):
         cleaned = {}
         for header in ORDER_HEADERS:
+            value = record.get(header, "")
+            cleaned[header] = "" if pd.isna(value) else str(value)
+        return cleaned
+
+    @staticmethod
+    def _clean_customer_record(record):
+        cleaned = {}
+        for header in CUSTOMER_HEADERS:
             value = record.get(header, "")
             cleaned[header] = "" if pd.isna(value) else str(value)
         return cleaned

@@ -54,7 +54,10 @@ class OrderManager:
             "Quantity": str(clean_data["quantity"]),
             "Unit Price": str(unit_price),
             "Total Amount": str(total_amount),
-            "Payment Mode": "COD",
+            "Payment Mode": clean_data.get("payment_mode") or "COD",
+            "Payment Status": clean_data.get("payment_status") or ("Paid" if clean_data.get("payment_mode") == "Razorpay" else "Pending"),
+            "Razorpay Order ID": clean_data.get("razorpay_order_id", ""),
+            "Razorpay Payment ID": clean_data.get("razorpay_payment_id", ""),
             "Notes": notes,
             "Order Status": "Pending",
             "Confirmed": False,
@@ -62,6 +65,8 @@ class OrderManager:
             "Delivered": False,
             "Cancelled": False,
             "Source": source,
+            "Customer Email": clean_data.get("customer_email", ""),
+            "Google Subject": clean_data.get("google_subject", ""),
             "Updated At": now,
         }
         self.sheets.append_order(order)
@@ -151,6 +156,12 @@ class OrderManager:
                 "delivery_charge": delivery_charge,
                 "total_amount": subtotal - discount + delivery_charge,
                 "notes": str(payload.get("notes", "")).strip(),
+                "customer_email": str(payload.get("customer_email", "")).strip(),
+                "google_subject": str(payload.get("google_subject", "")).strip(),
+                "payment_mode": str(payload.get("payment_mode", "COD")).strip() or "COD",
+                "payment_status": str(payload.get("payment_status", "")).strip(),
+                "razorpay_order_id": str(payload.get("razorpay_order_id", "")).strip(),
+                "razorpay_payment_id": str(payload.get("razorpay_payment_id", "")).strip(),
             },
             errors,
         )

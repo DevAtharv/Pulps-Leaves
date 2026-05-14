@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Pulps & Leaves offers premium mangoes, tea, and makhana with website checkout and Cash on Delivery.">
+  <meta name="description" content="Pulps & Leaves offers premium mangoes, tea, and makhana with smooth online ordering and Cash on Delivery.">
   <meta property="og:title" content="Pulps & Leaves | Fresh Natural Foods">
-  <meta property="og:description" content="Shop mangoes, tea, and makhana with a smooth cart and order summary.">
+  <meta property="og:description" content="Buy mangoes, tea, and makhana with a smooth cart and order summary.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="{{ url_for('static', filename='img/logo.png') }}">
   <title>Pulps & Leaves | Fresh Natural Foods</title>
@@ -117,12 +117,22 @@
       min-height: 34px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
       overflow: hidden;
     }
 
-    .announcement span {
+    .announcement-track {
+      min-width: max-content;
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      animation: announcementRun 18s linear infinite;
+    }
+
+    .announcement:hover .announcement-track {
+      animation-play-state: paused;
+    }
+
+    .announcement-track span {
       white-space: nowrap;
     }
 
@@ -184,6 +194,7 @@
 
     .nav-link,
     .cart-button,
+    .account-button,
     .primary-button,
     .ghost-button,
     .checkout-button {
@@ -208,6 +219,7 @@
     }
 
     .cart-button,
+    .account-button,
     .primary-button,
     .checkout-button {
       color: #fff;
@@ -216,12 +228,37 @@
     }
 
     .cart-button {
-      min-width: 104px;
+      min-width: 108px;
       position: relative;
+      padding-right: 16px;
     }
 
     .cart-button.has-items {
       animation: cartGlow 720ms ease;
+    }
+
+    .cart-icon,
+    .account-icon {
+      width: 30px;
+      height: 30px;
+      display: inline-grid;
+      flex: 0 0 auto;
+      place-items: center;
+      border-radius: 999px;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.16);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    .cart-icon svg,
+    .account-icon svg {
+      width: 17px;
+      height: 17px;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 2;
     }
 
     .cart-count {
@@ -229,12 +266,33 @@
       height: 21px;
       display: inline-grid;
       place-items: center;
+      position: absolute;
+      top: -7px;
+      right: -7px;
       padding: 0 5px;
       border-radius: 999px;
-      color: var(--leaf-deep);
-      background: #fff;
+      color: var(--ink);
+      background: linear-gradient(135deg, #ffe27a, var(--mango));
       font-size: 11px;
-      box-shadow: inset 0 0 0 1px rgba(22, 69, 29, 0.08);
+      box-shadow: 0 10px 20px rgba(245, 166, 35, 0.26), inset 0 0 0 1px rgba(22, 69, 29, 0.08);
+    }
+
+    .account-button {
+      min-width: 118px;
+      border-color: var(--sky);
+      background: linear-gradient(135deg, var(--sky), var(--leaf-deep));
+    }
+
+    .account-button[data-account-action="logout"] {
+      border-color: var(--leaf);
+      background: linear-gradient(135deg, var(--leaf-deep), #0f2f16);
+    }
+
+    .account-button [data-account-label] {
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .ghost-button {
@@ -755,49 +813,6 @@
       font-weight: 900;
     }
 
-    .story-strip {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .story-panel {
-      min-height: 180px;
-      display: grid;
-      align-content: end;
-      gap: 8px;
-      padding: 18px;
-      border-radius: var(--radius);
-      overflow: hidden;
-      color: #fff;
-      background:
-        linear-gradient(180deg, rgba(16, 28, 18, 0.1), rgba(16, 28, 18, 0.82)),
-        url("{{ url_for('static', filename='img/pl-thank-farmers.png') }}") center/cover no-repeat;
-      animation: riseIn 580ms ease both;
-      transition: transform 220ms ease, box-shadow 220ms ease;
-    }
-
-    .story-panel.alt {
-      background:
-        linear-gradient(180deg, rgba(16, 28, 18, 0.1), rgba(16, 28, 18, 0.82)),
-        url("{{ url_for('static', filename='img/pl-happy-customers.png') }}") center/cover no-repeat;
-    }
-
-    .story-panel:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-strong);
-    }
-
-    .story-panel strong {
-      font-size: 20px;
-    }
-
-    .story-panel span {
-      max-width: 460px;
-      color: rgba(255, 255, 255, 0.84);
-      line-height: 1.55;
-    }
-
     .drawer-overlay {
       position: fixed;
       inset: 0;
@@ -949,6 +964,24 @@
       font-weight: 800;
     }
 
+    .cart-title-copy {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .add-more-button {
+      min-height: 34px;
+      padding: 0 12px;
+      border: 1px solid rgba(45, 123, 51, 0.28);
+      border-radius: 999px;
+      color: var(--leaf-deep);
+      background: var(--mint);
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
     .checkout-details-title {
       border-top: 1px solid var(--line);
       background: #fbfcfa;
@@ -1078,6 +1111,10 @@
       line-height: 1.45;
     }
 
+    .free-note:empty {
+      display: none;
+    }
+
     .coupon-field {
       display: grid;
       gap: 7px;
@@ -1133,6 +1170,26 @@
       font-weight: 800;
     }
 
+    .coupon-code-line {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .coupon-percent {
+      display: inline-flex;
+      align-items: center;
+      min-height: 20px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--mango), var(--terracotta));
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.02em;
+    }
+
     .checkout-form {
       display: grid;
       gap: 12px;
@@ -1177,21 +1234,129 @@
 
     .payment-box {
       display: grid;
-      gap: 5px;
-      padding: 10px;
-      border: 1px solid rgba(245, 166, 35, 0.34);
-      border-radius: 6px;
-      background: var(--mango-soft);
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid rgba(45, 123, 51, 0.16);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at top right, rgba(245, 166, 35, 0.22), transparent 34%),
+        linear-gradient(145deg, #fffdf4, #f7fbef);
+      box-shadow: 0 14px 34px rgba(22, 69, 29, 0.08);
     }
 
-    .payment-box strong {
-      font-size: 13px;
+    .payment-box-head {
+      display: grid;
+      gap: 3px;
     }
 
-    .payment-box span {
+    .payment-kicker {
+      width: fit-content;
+      padding: 4px 8px;
+      border-radius: 999px;
+      color: var(--leaf-deep);
+      background: rgba(45, 123, 51, 0.1);
+      font-size: 10px;
+      font-weight: 1000;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .payment-box-head strong {
+      color: var(--leaf-deep);
+      font-size: 16px;
+    }
+
+    .payment-box-head small {
       color: var(--muted);
       font-size: 12px;
       line-height: 1.45;
+    }
+
+    .payment-options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .payment-choice {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid rgba(45, 123, 51, 0.18);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.86);
+      cursor: pointer;
+      transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease, background 160ms ease;
+    }
+
+    .payment-choice input {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      accent-color: var(--leaf);
+    }
+
+    .payment-choice:hover {
+      transform: translateY(-1px);
+      border-color: rgba(45, 123, 51, 0.36);
+    }
+
+    .payment-choice:has(input:checked) {
+      border-color: var(--leaf);
+      background: linear-gradient(135deg, #ffffff, rgba(222, 243, 207, 0.74));
+      box-shadow: 0 12px 28px rgba(45, 123, 51, 0.12), inset 0 0 0 1px rgba(45, 123, 51, 0.08);
+    }
+
+    .payment-choice:has(input:disabled) {
+      cursor: not-allowed;
+      opacity: 0.68;
+    }
+
+    .payment-choice-copy {
+      display: grid;
+      gap: 2px;
+    }
+
+    .payment-choice-copy strong {
+      color: var(--leaf-deep);
+      font-size: 14px;
+    }
+
+    .payment-choice-copy small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .payment-choice-icon {
+      width: 35px;
+      height: 35px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 12px;
+      color: var(--leaf-deep);
+      background: rgba(45, 123, 51, 0.1);
+      font-size: 16px;
+      font-weight: 1000;
+    }
+
+    .payment-status {
+      align-self: start;
+      padding: 5px 8px;
+      border-radius: 999px;
+      color: var(--leaf-deep);
+      background: rgba(45, 123, 51, 0.1);
+      font-size: 10px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .payment-status.is-muted {
+      color: var(--muted);
+      background: rgba(12, 31, 16, 0.08);
     }
 
     .checkout-button {
@@ -1223,6 +1388,284 @@
 
     .order-result.is-visible {
       display: block;
+    }
+
+    .account-panel {
+      display: none;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper-soft);
+    }
+
+    .account-panel.is-visible {
+      display: grid;
+    }
+
+    .account-panel strong,
+    .account-panel span {
+      display: block;
+    }
+
+    .account-panel span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .account-panel button {
+      min-height: 38px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      font-weight: 900;
+    }
+
+    .account-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(15, 24, 15, 0.56);
+      animation: fadeIn 180ms ease forwards;
+    }
+
+    .account-modal-open .account-modal-overlay {
+      display: flex;
+    }
+
+    .account-modal {
+      width: min(560px, 100%);
+      max-height: calc(100vh - 36px);
+      overflow: auto;
+      padding: 18px;
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: var(--shadow-strong);
+    }
+
+    .account-modal-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .account-modal h2 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.15;
+    }
+
+    .account-modal p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .google-login-button {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      font-weight: 900;
+    }
+
+    .google-login-button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .account-actions {
+      display: grid;
+      gap: 9px;
+    }
+
+    .account-history-button,
+    .map-open-button,
+    .map-use-button,
+    .map-ghost-button {
+      min-height: 40px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      font-weight: 900;
+    }
+
+    .account-history-button {
+      color: #fff;
+      border-color: var(--leaf);
+      background: linear-gradient(135deg, var(--leaf), var(--leaf-deep));
+    }
+
+    .order-history-panel {
+      display: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .order-history-panel.is-visible {
+      display: grid;
+      gap: 10px;
+    }
+
+    .order-history-status {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .order-history-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .history-card {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfdf8;
+    }
+
+    .history-card-head,
+    .history-card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .history-card strong {
+      font-size: 14px;
+    }
+
+    .history-card span,
+    .history-card small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .history-status-pill {
+      padding: 4px 8px;
+      border-radius: 999px;
+      color: var(--leaf-deep);
+      background: var(--mint);
+      font-size: 11px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .map-open-button {
+      margin-top: 8px;
+      color: var(--leaf-deep);
+      background: var(--mint);
+    }
+
+    .field-hint {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
+    .maps-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 130;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(15, 24, 15, 0.58);
+      animation: fadeIn 180ms ease forwards;
+    }
+
+    .maps-modal-open .maps-modal-overlay {
+      display: flex;
+    }
+
+    .maps-modal {
+      width: min(760px, 100%);
+      max-height: calc(100vh - 36px);
+      overflow: auto;
+      padding: 18px;
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: var(--shadow-strong);
+    }
+
+    .maps-modal-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .maps-modal h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .maps-modal p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .map-search {
+      width: 100%;
+      min-height: 44px;
+      margin-bottom: 10px;
+      padding: 0 12px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      font: inherit;
+    }
+
+    .map-canvas {
+      min-height: 320px;
+      border-radius: var(--radius);
+      background: #edf3e8;
+      overflow: hidden;
+    }
+
+    .map-address-preview {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 6px;
+      color: var(--leaf-deep);
+      background: var(--mint);
+      font-size: 13px;
+      font-weight: 850;
+      line-height: 1.5;
+    }
+
+    .map-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .map-use-button {
+      color: #fff;
+      border-color: var(--leaf);
+      background: linear-gradient(135deg, var(--leaf), var(--leaf-deep));
     }
 
     .mobile-cart-bar {
@@ -1285,6 +1728,27 @@
     .toast.is-visible {
       opacity: 1;
       transform: translate(-50%, 0);
+    }
+
+    .city-banner {
+      margin: 12px auto 38px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(247, 178, 55, 0.16), transparent 34%),
+        linear-gradient(180deg, #fffdf6 0%, #fff 100%);
+      box-shadow: var(--shadow);
+    }
+
+    .city-banner img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid rgba(26, 93, 50, 0.1);
+      border-radius: 18px;
+      background: #fffdf6;
+      box-shadow: 0 16px 42px rgba(25, 75, 46, 0.12);
     }
 
     .footer {
@@ -1351,6 +1815,15 @@
       }
     }
 
+    @keyframes announcementRun {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
     @keyframes itemIn {
       from {
         opacity: 0;
@@ -1398,18 +1871,11 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .story-strip {
-        grid-template-columns: 1fr;
-      }
     }
 
     @media (max-width: 767px) {
       body {
         font-size: 14px;
-      }
-
-      .announcement span:nth-child(2) {
-        display: none;
       }
 
       .nav {
@@ -1485,6 +1951,15 @@
         padding: 10px;
       }
 
+      .city-banner {
+        margin: 4px auto 28px;
+        padding: 10px;
+      }
+
+      .city-banner img {
+        border-radius: 12px;
+      }
+
       .product-title {
         min-height: 38px;
         font-size: 13px;
@@ -1555,6 +2030,14 @@
         padding-bottom: 24px;
       }
 
+      .map-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .map-canvas {
+        min-height: 260px;
+      }
+
       .mobile-cart-bar.has-items {
         display: flex;
       }
@@ -1614,8 +2097,14 @@
 <body>
   <div class="announcement">
     <div class="container">
-      <span>Free delivery above Rs 599</span>
-      <span>Flat 10% off + Additional Rs 50*</span>
+      <div class="announcement-track">
+        <span>Free delivery above Rs 599</span>
+        <span>Flat 10% off + Additional Rs 50*</span>
+        <span>Fresh seasonal Malda mangoes</span>
+        <span>Free delivery above Rs 599</span>
+        <span>Flat 10% off + Additional Rs 50*</span>
+        <span>Fresh seasonal Malda mangoes</span>
+      </div>
     </div>
   </div>
 
@@ -1630,8 +2119,17 @@
       </a>
 
       <div class="nav-actions">
-        <a class="nav-link" href="#products">Shop</a>
+        <a class="nav-link" href="#products">Buy</a>
+        <button class="account-button" type="button" data-account-open data-account-action="{% if customer %}logout{% else %}login{% endif %}" {% if customer %}data-logout="true"{% endif %} aria-label="{% if customer %}Sign out{% else %}Sign in{% endif %}">
+          <span class="account-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M15 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path d="M5 20a7 7 0 0 1 14 0"/><path d="M19 12h3"/><path d="M21 10l2 2-2 2"/></svg>
+          </span>
+          <span data-account-label>{% if customer %}Sign out{% else %}Sign in{% endif %}</span>
+        </button>
         <button class="cart-button" type="button" data-cart-open>
+          <span class="cart-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M6 7h15l-2 8H8L6 7Z"/><path d="M6 7 5 3H2"/><path d="M9 20h.01"/><path d="M18 20h.01"/></svg>
+          </span>
           <span class="cart-text">Cart</span>
           <span class="cart-count" data-cart-count>0</span>
         </button>
@@ -1682,6 +2180,7 @@
       {% for product in products %}
       {% set image_url = url_for('static', filename='img/5kg.png') if product.slug == 'malda-mango-5kg-box' else url_for('static', filename='img/3kg_mangoes.png') %}
       {% set rating = '4.9' if loop.index == 1 else '4.8' %}
+      {% set discount_percent = (((product.mrp - product.price) * 100) / product.mrp) | round(0, 'common') | int %}
       <article class="product-card"
         data-product
         data-reveal
@@ -1695,7 +2194,7 @@
         data-image="{{ image_url }}">
         <div class="product-media">
           <img src="{{ image_url }}" alt="{{ product.display_title }} {{ product.unit }}">
-          <span class="discount">10% OFF</span>
+          <span class="discount">{{ discount_percent }}% OFF</span>
         </div>
         <div class="product-info">
           <span class="product-category">{{ product.category }}</span>
@@ -1745,17 +2244,17 @@
       </article>
     </section>
 
-    <section class="story-strip" aria-label="Brand highlights">
-      <article class="story-panel" data-reveal><strong>Direct from trusted sourcing</strong><span>Warm Indian produce energy, but with a cleaner online shopping flow that feels current and reliable.</span></article>
-      <article class="story-panel alt" data-reveal><strong>Made for quick mobile ordering</strong><span>Clear product cards, cart-first ordering, and a checkout drawer that does the heavy lifting.</span></article>
-    </section>
   </main>
+
+  <section class="container city-banner" aria-label="Delivery cities" data-reveal>
+    <img src="{{ url_for('static', filename='img/city.png') }}" alt="Pulps and Leaves delivers mangoes to Bengaluru, Hyderabad, Mumbai, and Pune">
+  </section>
 
   <footer class="footer">
     <div class="container footer-grid">
       <div>
         <h2>Pulps &amp; Leaves</h2>
-        <p>Premium mangoes, tea, and makhana for modern Indian homes. Website checkout, Cash on Delivery, and clear order details.</p>
+        <p>Premium mangoes, tea, and makhana for modern Indian homes with clear ordering, delivery details, and payment choices.</p>
       </div>
       <div class="footer-links">
         <strong>Quick links</strong>
@@ -1788,8 +2287,11 @@
     <div class="drawer-body">
       <section class="cart-section">
         <div class="section-title">
-          <strong>Shopping Cart</strong>
-          <span data-summary-subtitle>Cart is empty</span>
+          <div class="cart-title-copy">
+            <strong>Shopping Cart</strong>
+            <span data-summary-subtitle>Cart is empty</span>
+          </div>
+          <button class="add-more-button" type="button" data-add-more>Add More Items</button>
         </div>
         <div class="cart-items" data-cart-items>
           <div class="empty-cart"><strong>Your cart is empty</strong><span>Add products first, then click Cart to place your order here.</span></div>
@@ -1799,7 +2301,7 @@
       <section class="checkout-section">
         <div class="section-title">
           <strong>Order Summary</strong>
-          <span>Website checkout</span>
+          <span>Review and pay</span>
         </div>
         <div class="price-summary">
           <div class="summary-line"><span>Items total</span><strong data-subtotal>Rs 0</strong></div>
@@ -1808,7 +2310,7 @@
             <div class="coupon-options">
               <label class="coupon-option">
                 <input type="checkbox" value="GUTHLI10" data-coupon="GUTHLI10">
-                <span>GUTHLI10<small>kyonki aam ke aam guthliyon ke daam</small></span>
+                <span><span class="coupon-code-line">GUTHLI10 <strong class="coupon-percent">10% OFF</strong></span><small>kyonki aam ke aam guthliyon ke daam</small></span>
               </label>
               <label class="coupon-option">
                 <input type="checkbox" value="AAM50" data-coupon="AAM50">
@@ -1819,15 +2321,22 @@
           </label>
           <div class="summary-line"><span>Coupon discount</span><strong data-discount>Rs 0</strong></div>
           <div class="summary-line"><span>Delivery</span><strong data-delivery>Rs 0</strong></div>
-          <div class="summary-line"><span>Payment</span><strong>Cash on Delivery</strong></div>
+          <div class="summary-line"><span>Payment</span><strong data-payment-summary>{% if razorpay_enabled %}Razorpay Test{% else %}Cash on Delivery{% endif %}</strong></div>
           <div class="summary-line total"><span>Order total</span><strong data-total>Rs 0</strong></div>
-          <div class="free-note" data-free-note>Free delivery above Rs 599.</div>
+          <div class="free-note" data-free-note></div>
         </div>
         <div class="section-title checkout-details-title">
           <strong>Delivery details</strong>
           <span>Required</span>
         </div>
         <form class="checkout-form" data-order-form>
+          <div class="account-panel" data-account-panel>
+            <div>
+              <strong data-account-name>Create account to order</strong>
+              <span data-account-email>Use Google once, then your delivery details can be saved for next time.</span>
+            </div>
+            <button type="button" data-account-open>Continue with Google</button>
+          </div>
           <label class="field">
             <span>Full name</span>
             <input name="name" autocomplete="name" required minlength="2" placeholder="Your name">
@@ -1848,15 +2357,42 @@
           </label>
           <label class="field">
             <span>Delivery address</span>
-            <textarea name="address" required minlength="8" placeholder="House no, street, area, pincode"></textarea>
+            <textarea name="address" required minlength="8" placeholder="House no, street, area, pincode" data-address-input></textarea>
+            {% if google_maps_enabled %}
+            <button class="map-open-button" type="button" data-map-open>Choose on map</button>
+            <small class="field-hint">Search your delivery location and confirm the address from Google Maps.</small>
+            {% endif %}
           </label>
           <label class="field">
             <span>Order notes</span>
             <input name="notes" placeholder="Optional delivery note">
           </label>
           <div class="payment-box">
-            <strong>Payment method: Cash on Delivery</strong>
-            <span>You will pay after your order is delivered.</span>
+            <div class="payment-box-head">
+              <span class="payment-kicker">Payment method</span>
+              <strong>Choose your checkout option</strong>
+              <small>Order details are reviewed before confirmation. Your cart total includes coupons and delivery.</small>
+            </div>
+            <div class="payment-options">
+              <label class="payment-choice">
+                <input type="radio" name="payment_method" value="razorpay" {% if razorpay_enabled %}checked{% else %}disabled{% endif %}>
+                <span class="payment-choice-icon" aria-hidden="true">UPI</span>
+                <span class="payment-choice-copy">
+                  <strong>Secure online payment</strong>
+                  <small>{% if razorpay_enabled %}Pay through Razorpay with UPI, cards, or netbanking before the order is saved.{% else %}Online payment will appear here once Razorpay keys are added in Vercel.{% endif %}</small>
+                </span>
+                <span class="payment-status {% if not razorpay_enabled %}is-muted{% endif %}">{% if razorpay_enabled %}Live{% else %}Soon{% endif %}</span>
+              </label>
+              <label class="payment-choice">
+                <input type="radio" name="payment_method" value="cod" {% if not razorpay_enabled %}checked{% endif %}>
+                <span class="payment-choice-icon" aria-hidden="true">COD</span>
+                <span class="payment-choice-copy">
+                  <strong>Cash on Delivery</strong>
+                  <small>Pay only after your Pulps &amp; Leaves order reaches your doorstep.</small>
+                </span>
+                <span class="payment-status">Available</span>
+              </label>
+            </div>
           </div>
           <input type="hidden" name="cart_items" data-cart-items-input>
           <input type="hidden" name="coupon_codes" data-coupon-codes-input>
@@ -1866,6 +2402,47 @@
       </section>
     </div>
   </aside>
+
+  <div class="account-modal-overlay" data-account-modal aria-hidden="true">
+    <section class="account-modal" role="dialog" aria-modal="true" aria-labelledby="accountModalTitle">
+      <div class="account-modal-head">
+        <h2 id="accountModalTitle" data-account-modal-title>Create your account</h2>
+        <button class="close-button" type="button" data-account-close aria-label="Close account popup">x</button>
+      </div>
+      <p data-account-modal-copy>Continue with Google to save your profile and place this order.</p>
+      <div class="account-actions">
+        <button class="google-login-button" type="button" data-google-login {% if not google_login_enabled %}disabled{% endif %}>
+          Continue with Google
+        </button>
+        <button class="account-history-button" type="button" data-order-history hidden>View order history</button>
+      </div>
+      <div class="order-history-panel" data-order-history-panel>
+        <div class="order-history-status" data-order-history-status>Sign in to see your past orders.</div>
+        <div class="order-history-list" data-order-history-list></div>
+      </div>
+    </section>
+  </div>
+
+  {% if google_maps_enabled %}
+  <div class="maps-modal-overlay" data-maps-modal aria-hidden="true">
+    <section class="maps-modal" role="dialog" aria-modal="true" aria-labelledby="mapsModalTitle">
+      <div class="maps-modal-head">
+        <div>
+          <h2 id="mapsModalTitle">Choose delivery location</h2>
+          <p>Search your address, move the marker if needed, then use it for checkout.</p>
+        </div>
+        <button class="close-button" type="button" data-map-close aria-label="Close map">x</button>
+      </div>
+      <input class="map-search" type="text" placeholder="Search address or building name" data-map-search>
+      <div class="map-canvas" data-map-canvas></div>
+      <div class="map-address-preview" data-map-address>Loading Google Maps...</div>
+      <div class="map-actions">
+        <button class="map-use-button" type="button" data-map-use>Use this address</button>
+        <button class="map-ghost-button" type="button" data-map-close>Enter manually</button>
+      </div>
+    </section>
+  </div>
+  {% endif %}
 
   <div class="mobile-cart-bar" data-mobile-cart>
     <div>
@@ -1877,8 +2454,33 @@
 
   <div class="toast" data-toast>Added to cart</div>
 
+  {% if razorpay_enabled %}
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  {% endif %}
   <script>
     (() => {
+      const accountState = {
+        required: {{ "true" if customer_login_required else "false" }},
+        googleEnabled: {{ "true" if google_login_enabled else "false" }},
+        authenticated: {{ "true" if customer else "false" }},
+        customer: {{ (customer or {}) | tojson }},
+      };
+      const paymentState = {
+        razorpayEnabled: {{ "true" if razorpay_enabled else "false" }},
+        razorpayKeyId: {{ razorpay_key_id | tojson }},
+      };
+      const mapsState = {
+        enabled: {{ "true" if google_maps_enabled else "false" }},
+        loaded: false,
+        initialized: false,
+        open: false,
+        autoPrompted: false,
+        map: null,
+        marker: null,
+        geocoder: null,
+        autocomplete: null,
+        selectedAddress: "",
+      };
       const cart = new Map();
       const productCards = Array.from(document.querySelectorAll("[data-product]"));
       const productGrid = document.querySelector("[data-product-grid]");
@@ -1893,11 +2495,44 @@
       const revealNodes = Array.from(document.querySelectorAll("[data-reveal]"));
       const couponInputs = Array.from(document.querySelectorAll("[data-coupon]"));
       const couponNote = document.querySelector("[data-coupon-note]");
+      const paymentInputs = Array.from(document.querySelectorAll("input[name='payment_method']"));
+      const orderForm = document.querySelector("[data-order-form]");
+      const accountButton = document.querySelector("[data-account-open].account-button");
+      const accountButtonLabel = document.querySelector("[data-account-label]");
+      const accountPanel = document.querySelector("[data-account-panel]");
+      const accountName = document.querySelector("[data-account-name]");
+      const accountEmail = document.querySelector("[data-account-email]");
+      const accountModal = document.querySelector("[data-account-modal]");
+      const accountModalTitle = document.querySelector("[data-account-modal-title]");
+      const accountModalCopy = document.querySelector("[data-account-modal-copy]");
+      const googleLoginButton = document.querySelector("[data-google-login]");
+      const orderHistoryButton = document.querySelector("[data-order-history]");
+      const orderHistoryPanel = document.querySelector("[data-order-history-panel]");
+      const orderHistoryStatus = document.querySelector("[data-order-history-status]");
+      const orderHistoryList = document.querySelector("[data-order-history-list]");
+      const addressInput = document.querySelector("[data-address-input]");
+      const mapModal = document.querySelector("[data-maps-modal]");
+      const mapSearch = document.querySelector("[data-map-search]");
+      const mapCanvas = document.querySelector("[data-map-canvas]");
+      const mapAddress = document.querySelector("[data-map-address]");
+      const mapUseButton = document.querySelector("[data-map-use]");
       const heroSlides = Array.from(document.querySelectorAll("[data-hero-slide]"));
       const heroDots = Array.from(document.querySelectorAll("[data-hero-dot]"));
       const deliveryFreeAbove = 599;
       const aam50MinimumAfterGuthli = 599;
       const deliveryCharge = 30;
+      const savedCheckoutKey = "pl_checkout_draft_v1";
+      const accountErrors = {
+        access_denied: "Google sign-in was cancelled. Please continue with Google to place the order.",
+        google_auth_failed: "Google sign-in could not be completed. Please try again after checking the redirect URL setup.",
+        google_not_configured: "Google sign-in is not configured yet.",
+      };
+      const cityCenters = {
+        bangalore: { lat: 12.9716, lng: 77.5946 },
+        hyderabad: { lat: 17.385, lng: 78.4867 },
+        pune: { lat: 18.5204, lng: 73.8567 },
+        mumbai: { lat: 19.076, lng: 72.8777 },
+      };
       let activeFilter = "all";
       let activeHeroSlide = 0;
       let heroTimer = null;
@@ -1932,6 +2567,330 @@
         document.body.classList.toggle("cart-open", isOpen);
         cartDrawer.setAttribute("aria-hidden", String(!isOpen));
       }
+
+      function setAccountModalOpen(isOpen) {
+        document.body.classList.toggle("account-modal-open", isOpen);
+        accountModal.setAttribute("aria-hidden", String(!isOpen));
+        if (isOpen && accountState.authenticated) loadOrderHistory();
+      }
+
+      function setMapsModalOpen(isOpen) {
+        if (!mapsState.enabled || !mapModal) return;
+        mapsState.open = isOpen;
+        document.body.classList.toggle("maps-modal-open", isOpen);
+        mapModal.setAttribute("aria-hidden", String(!isOpen));
+        if (isOpen) {
+          initializeMapsPicker();
+          mapSearch?.focus();
+        }
+      }
+
+      function customerDisplayName(customer) {
+        return customer?.name || customer?.email || "Account";
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;",
+        }[char]));
+      }
+
+      async function parseJsonResponse(response, fallback) {
+        const text = await response.text();
+        if (!text) return {};
+        try {
+          return JSON.parse(text);
+        } catch (error) {
+          const cleanText = text.trim();
+          const title = text.match(/<title>(.*?)<\/title>/i)?.[1];
+          if (cleanText.startsWith("<")) {
+            throw new Error(`${fallback || "Request failed."} The server returned a webpage instead of order data. Please refresh after the latest update and try again.`);
+          }
+          throw new Error(title || fallback || "The server returned an unexpected response. Please refresh and try again.");
+        }
+      }
+
+      function applyCustomer(customer) {
+        accountState.authenticated = Boolean(customer?.email);
+        accountState.customer = customer || {};
+        accountButtonLabel.textContent = accountState.authenticated ? "Sign out" : "Sign in";
+        accountButton.dataset.accountAction = accountState.authenticated ? "logout" : "login";
+        accountButton.setAttribute("aria-label", accountState.authenticated ? "Sign out" : "Sign in");
+        if (accountState.authenticated) {
+          accountButton.dataset.logout = "true";
+        } else {
+          delete accountButton.dataset.logout;
+        }
+        accountPanel.classList.toggle("is-visible", accountState.required || accountState.authenticated);
+
+        if (accountState.authenticated) {
+          accountName.textContent = customerDisplayName(accountState.customer);
+          accountEmail.textContent = accountState.customer.email || "Signed in with Google";
+          accountPanel.querySelector("button").textContent = "Sign out";
+          accountPanel.querySelector("button").dataset.logout = "true";
+          accountModalTitle.textContent = "Your account";
+          accountModalCopy.textContent = `${accountState.customer.email || "Signed in"} · View your order history and saved checkout details.`;
+          googleLoginButton.hidden = true;
+          orderHistoryButton.hidden = false;
+          prefillCustomerDetails(accountState.customer);
+          return;
+        }
+
+        accountName.textContent = "Create account to order";
+        accountEmail.textContent = "Use Google once, then your delivery details can be saved for next time.";
+        accountPanel.querySelector("button").textContent = "Continue with Google";
+        delete accountPanel.querySelector("button").dataset.logout;
+        accountModalTitle.textContent = "Create your account";
+        accountModalCopy.textContent = "Continue with Google to save your profile and place this order.";
+        googleLoginButton.hidden = false;
+        orderHistoryButton.hidden = true;
+        orderHistoryPanel.classList.remove("is-visible");
+        orderHistoryList.innerHTML = "";
+        orderHistoryStatus.textContent = "Sign in to see your past orders.";
+      }
+
+      async function loadOrderHistory() {
+        if (!accountState.authenticated || !orderHistoryPanel) return;
+        orderHistoryPanel.classList.add("is-visible");
+        orderHistoryStatus.textContent = "Loading your orders...";
+        orderHistoryList.innerHTML = "";
+
+        try {
+          const response = await fetch("/api/me/orders");
+          const data = await parseJsonResponse(response, "Order history could not be loaded.");
+          if (!response.ok || !data.ok) throw new Error(data.error || "Order history could not be loaded.");
+          renderOrderHistory(data.orders || []);
+        } catch (error) {
+          orderHistoryStatus.textContent = error.message;
+        }
+      }
+
+      function renderOrderHistory(orders) {
+        if (!orders.length) {
+          orderHistoryStatus.textContent = "No orders yet. Your first order will appear here.";
+          orderHistoryList.innerHTML = "";
+          return;
+        }
+
+        orderHistoryStatus.textContent = `${orders.length} order${orders.length === 1 ? "" : "s"} found`;
+        orderHistoryList.innerHTML = orders.map((order) => {
+          const amount = Number(order.total_amount || 0);
+          const total = Number.isFinite(amount) && amount > 0 ? formatMoney(amount) : `Rs ${escapeHtml(order.total_amount || "0")}`;
+          const payment = [order.payment_mode, order.payment_status].filter(Boolean).join(" · ") || "Payment pending";
+          return `
+            <article class="history-card">
+              <div class="history-card-head">
+                <strong>Order ${escapeHtml(order.order_id)}</strong>
+                <span class="history-status-pill">${escapeHtml(order.order_status || "Pending")}</span>
+              </div>
+              <span>${escapeHtml(order.product || "Order items")}</span>
+              <div class="history-card-meta">
+                <small>${escapeHtml(order.timestamp || "")}</small>
+                <strong>${total}</strong>
+              </div>
+              <small>${escapeHtml(payment)}</small>
+              <small>${escapeHtml(order.city || "")}${order.address ? ` · ${escapeHtml(order.address)}` : ""}</small>
+            </article>
+          `;
+        }).join("");
+      }
+
+      function prefillCustomerDetails(customer) {
+        if (!orderForm || !customer) return;
+        const fields = {
+          name: customer.name,
+          phone: customer.phone,
+          city: customer.city,
+          address: customer.address,
+        };
+        Object.entries(fields).forEach(([name, value]) => {
+          const field = orderForm.elements[name];
+          if (field && value && !field.value) field.value = value;
+        });
+      }
+
+      function checkoutDraft() {
+        const formValues = {};
+        if (orderForm) {
+          Array.from(new FormData(orderForm).entries()).forEach(([key, value]) => {
+            formValues[key] = value;
+          });
+        }
+        return {
+          cart: Array.from(cart.values()).map((item) => ({ id: item.id, qty: item.qty })),
+          form: formValues,
+          coupons: couponPayload(),
+        };
+      }
+
+      function saveCheckoutDraft() {
+        localStorage.setItem(savedCheckoutKey, JSON.stringify(checkoutDraft()));
+      }
+
+      function restoreCheckoutDraft() {
+        const rawDraft = localStorage.getItem(savedCheckoutKey);
+        if (!rawDraft) return;
+        let draft = null;
+        try {
+          draft = JSON.parse(rawDraft);
+        } catch (error) {
+          localStorage.removeItem(savedCheckoutKey);
+          return;
+        }
+
+        (draft.cart || []).forEach((item) => {
+          const product = products.get(item.id);
+          const qty = Number(item.qty || 0);
+          if (product && qty > 0 && !product.unavailable) {
+            cart.set(item.id, { ...product, qty });
+          }
+        });
+        Object.entries(draft.form || {}).forEach(([name, value]) => {
+          const field = orderForm?.elements[name];
+          if (field && value && name !== "cart_items" && name !== "coupon_codes") field.value = value;
+        });
+        (draft.coupons || []).forEach((code) => {
+          const input = couponInputs.find((candidate) => candidate.value === code);
+          if (input) input.checked = true;
+        });
+        localStorage.removeItem(savedCheckoutKey);
+        renderSummary();
+      }
+
+      async function refreshAccount() {
+        try {
+          const response = await fetch("/api/me");
+          const data = await parseJsonResponse(response, "Account details could not be loaded.");
+          applyCustomer(data.customer);
+        } catch (error) {
+          applyCustomer(accountState.customer);
+        }
+      }
+
+      function showAccountErrorFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const error = params.get("account_error");
+        if (!error) return;
+        accountModalCopy.textContent = accountErrors[error] || "Google sign-in could not be completed. Please try again.";
+        setAccountModalOpen(true);
+        params.delete("account_error");
+        const nextQuery = params.toString();
+        const nextUrl = `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ""}${window.location.hash}`;
+        window.history.replaceState({}, "", nextUrl);
+      }
+
+      function startGoogleLogin() {
+        if (!accountState.googleEnabled) {
+          accountModalCopy.textContent = "Google sign-in is ready in the site, but the OAuth Client ID and Secret still need to be added in Vercel.";
+          setAccountModalOpen(true);
+          return;
+        }
+        saveCheckoutDraft();
+        const nextUrl = `${window.location.origin}${window.location.pathname}?account=connected#shop`;
+        window.location.href = `/auth/google?next=${encodeURIComponent(nextUrl)}`;
+      }
+
+      function currentMapCenter() {
+        const cityValue = orderForm?.elements.city?.value || "bangalore";
+        return cityCenters[cityValue] || cityCenters.bangalore;
+      }
+
+      function initializeMapsPicker() {
+        if (!mapsState.enabled || !mapCanvas) return;
+        if (!window.google?.maps) {
+          mapAddress.textContent = "Google Maps is loading. Please wait a moment.";
+          return;
+        }
+
+        if (!mapsState.initialized) {
+          const center = currentMapCenter();
+          mapsState.geocoder = new google.maps.Geocoder();
+          mapsState.map = new google.maps.Map(mapCanvas, {
+            center,
+            zoom: 14,
+            mapTypeControl: false,
+            fullscreenControl: false,
+            streetViewControl: false,
+          });
+          mapsState.marker = new google.maps.Marker({
+            map: mapsState.map,
+            position: center,
+            draggable: true,
+          });
+          mapsState.map.addListener("click", (event) => updateMapMarker(event.latLng, true));
+          mapsState.marker.addListener("dragend", () => updateMapMarker(mapsState.marker.getPosition(), true));
+
+          if (google.maps.places && mapSearch) {
+            mapsState.autocomplete = new google.maps.places.Autocomplete(mapSearch, {
+              componentRestrictions: { country: "in" },
+              fields: ["formatted_address", "geometry", "name"],
+            });
+            mapsState.autocomplete.addListener("place_changed", () => {
+              const place = mapsState.autocomplete.getPlace();
+              if (!place.geometry?.location) return;
+              const address = place.formatted_address || place.name || "";
+              updateMapMarker(place.geometry.location, false, address);
+            });
+          }
+
+          mapsState.initialized = true;
+        }
+
+        const address = addressInput?.value?.trim();
+        if (address) {
+          geocodeAddress(address);
+        } else {
+          updateMapMarker(currentMapCenter(), true);
+        }
+
+        window.setTimeout(() => google.maps.event.trigger(mapsState.map, "resize"), 80);
+      }
+
+      function updateMapMarker(position, shouldReverseGeocode = false, address = "") {
+        if (!mapsState.map || !mapsState.marker) return;
+        mapsState.marker.setPosition(position);
+        mapsState.map.panTo(position);
+        if (address) {
+          mapsState.selectedAddress = address;
+          mapAddress.textContent = address;
+          if (mapSearch) mapSearch.value = address;
+          return;
+        }
+        if (shouldReverseGeocode) reverseGeocode(position);
+      }
+
+      function geocodeAddress(address) {
+        if (!mapsState.geocoder || !address) return;
+        mapsState.geocoder.geocode({ address, componentRestrictions: { country: "IN" } }, (results, status) => {
+          if (status === "OK" && results?.[0]) {
+            updateMapMarker(results[0].geometry.location, false, results[0].formatted_address);
+          } else {
+            mapAddress.textContent = "Search for your location or move the marker to confirm the address.";
+          }
+        });
+      }
+
+      function reverseGeocode(position) {
+        if (!mapsState.geocoder) return;
+        mapsState.geocoder.geocode({ location: position }, (results, status) => {
+          if (status === "OK" && results?.[0]) {
+            mapsState.selectedAddress = results[0].formatted_address;
+            mapAddress.textContent = mapsState.selectedAddress;
+            if (mapSearch) mapSearch.value = mapsState.selectedAddress;
+          } else {
+            mapAddress.textContent = "Could not read this location. Please search the address manually.";
+          }
+        });
+      }
+
+      window.initPLMaps = () => {
+        mapsState.loaded = true;
+        if (mapsState.open) initializeMapsPicker();
+      };
 
       function totals() {
         const items = Array.from(cart.values());
@@ -1969,7 +2928,7 @@
         if (!isGuthliApplied && aam50Input?.checked) {
           couponMessage = "Apply GUTHLI10 first to unlock AAM50.";
         } else if (isGuthliApplied && !isAam50Eligible && subtotal > 0) {
-          couponMessage = `GUTHLI10 applied. AAM50 unlocks at ${formatMoney(aam50MinimumAfterGuthli)} after GUTHLI10.`;
+          couponMessage = "GUTHLI10 applied successfully. Buy above ₹599 to unlock AAM50.";
         } else if (discount > 0) {
           couponMessage = `${appliedCoupons.join(" + ")} applied.`;
         } else if (isGuthliApplied && subtotal === 0) {
@@ -1988,6 +2947,14 @@
         return couponInputs
           .filter((input) => input.checked && !input.disabled)
           .map((input) => input.value);
+      }
+
+      function formPayload(form) {
+        return Object.fromEntries(new FormData(form).entries());
+      }
+
+      function selectedPaymentMethod(form) {
+        return new FormData(form).get("payment_method") || "cod";
       }
 
       function updateAddRows() {
@@ -2027,8 +2994,9 @@
         document.querySelector("[data-discount]").textContent = summary.discount ? `- ${formatMoney(summary.discount)}` : "Rs 0";
         document.querySelector("[data-delivery]").textContent = summary.delivery ? formatMoney(summary.delivery) : "Free";
         document.querySelector("[data-total]").textContent = formatMoney(summary.total);
+        document.querySelector("[data-payment-summary]").textContent = selectedPaymentMethod(orderForm) === "razorpay" ? "Razorpay Test" : "Cash on Delivery";
         if (couponNote) couponNote.textContent = summary.couponMessage;
-        document.querySelector("[data-free-note]").textContent = summary.subtotal > deliveryFreeAbove ? "You unlocked free delivery." : `Delivery is ${formatMoney(deliveryCharge)} for orders of ${formatMoney(deliveryFreeAbove)} or below.`;
+        document.querySelector("[data-free-note]").textContent = summary.subtotal > deliveryFreeAbove ? "You unlocked free delivery." : "";
         document.querySelector("[data-cart-items-input]").value = JSON.stringify(cartPayload());
         document.querySelector("[data-coupon-codes-input]").value = JSON.stringify(couponPayload());
         document.querySelector("[data-submit-order]").disabled = summary.count === 0;
@@ -2157,31 +3125,47 @@
         heroTimer = window.setInterval(() => setHeroSlide(activeHeroSlide + 1), 4200);
       }
 
+      function moveCustomerHomeAfterOrder(orderId) {
+        setCartOpen(false);
+        setMapsModalOpen(false);
+        const homeSection = document.getElementById("shop");
+        if (homeSection) {
+          homeSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        window.history.replaceState({}, "", `${window.location.pathname}${window.location.search}#shop`);
+        showToast(`Order placed. Order ID: ${orderId}`);
+      }
+
       async function submitOrder(form) {
         const result = form.querySelector("[data-order-result]");
         const submit = form.querySelector("[data-submit-order]");
         result.className = "order-result";
         result.textContent = "";
+
+        if (accountState.required && !accountState.authenticated) {
+          saveCheckoutDraft();
+          accountModalCopy.textContent = "Create your account with Google to place this order. Your cart and delivery details will stay here.";
+          setAccountModalOpen(true);
+          return;
+        }
+
         submit.disabled = true;
-        submit.textContent = "Placing order...";
+        submit.textContent = selectedPaymentMethod(form) === "razorpay" ? "Opening Razorpay..." : "Placing order...";
 
         try {
-          const response = await fetch("/api/orders", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(Object.fromEntries(new FormData(form).entries())),
-          });
-          const data = await response.json();
-          if (!response.ok || !data.ok) {
-            const message = data.errors ? Object.values(data.errors).join(" ") : data.error || "Order could not be placed.";
-            throw new Error(message);
-          }
-          result.textContent = `Order placed successfully. Order ID: ${data.order["Order ID"]}. Total: Rs ${data.order["Total Amount"]}.`;
+          const data = selectedPaymentMethod(form) === "razorpay"
+            ? await submitRazorpayOrder(form)
+            : await submitCodOrder(form);
+          const orderId = data.order["Order ID"];
+          result.textContent = `Order placed successfully. Order ID: ${orderId}. Total: Rs ${data.order["Total Amount"]}.`;
           result.className = "order-result is-visible";
           cart.clear();
-          renderSummary();
           form.reset();
-          showToast("Order placed successfully");
+          renderSummary();
+          if (accountState.authenticated) {
+            await refreshAccount();
+          }
+          moveCustomerHomeAfterOrder(orderId);
         } catch (error) {
           result.textContent = error.message;
           result.className = "order-result error is-visible";
@@ -2191,6 +3175,78 @@
         }
       }
 
+      async function submitCodOrder(form) {
+        const response = await fetch("/api/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formPayload(form)),
+        });
+        const data = await parseJsonResponse(response, "Order could not be placed.");
+        handleAuthRequired(response, data);
+        if (!response.ok || !data.ok) throwOrderError(data, "Order could not be placed.");
+        return data;
+      }
+
+      async function submitRazorpayOrder(form) {
+        if (!paymentState.razorpayEnabled || !window.Razorpay) {
+          throw new Error("Razorpay test checkout is not available. Please refresh and try again.");
+        }
+        const orderPayload = formPayload(form);
+        const orderResponse = await fetch("/api/payments/razorpay/order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderPayload),
+        });
+        const orderData = await parseJsonResponse(orderResponse, "Razorpay order could not be created.");
+        handleAuthRequired(orderResponse, orderData);
+        if (!orderResponse.ok || !orderData.ok) throwOrderError(orderData, "Razorpay order could not be created.");
+
+        return new Promise((resolve, reject) => {
+          const checkout = new Razorpay({
+            key: orderData.key_id,
+            amount: orderData.amount,
+            currency: orderData.currency,
+            name: "Pulps & Leaves",
+            description: "Test payment for your order",
+            order_id: orderData.order_id,
+            prefill: orderData.customer,
+            theme: { color: "#2d7b33" },
+            handler: async (paymentResponse) => {
+              try {
+                const verifyResponse = await fetch("/api/payments/razorpay/verify", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(paymentResponse),
+                });
+                const verifyData = await parseJsonResponse(verifyResponse, "Payment could not be verified.");
+                if (!verifyResponse.ok || !verifyData.ok) throwOrderError(verifyData, "Payment could not be verified.");
+                resolve(verifyData);
+              } catch (error) {
+                reject(error);
+              }
+            },
+            modal: {
+              ondismiss: () => reject(new Error("Payment popup was closed before completion.")),
+            },
+          });
+          checkout.open();
+        });
+      }
+
+      function handleAuthRequired(response, data) {
+        if (response.status === 401 && data.auth_required) {
+          saveCheckoutDraft();
+          accountModalCopy.textContent = data.error || "Create your account with Google to place this order.";
+          setAccountModalOpen(true);
+          throw new Error(data.error || "Please create your account with Google before placing the order.");
+        }
+      }
+
+      function throwOrderError(data, fallback) {
+        const message = data.errors ? Object.values(data.errors).join(" ") : data.error || fallback;
+        throw new Error(message);
+      }
+
       document.addEventListener("click", (event) => {
         const addButton = event.target.closest("[data-add]");
         const increaseButton = event.target.closest("[data-increase]");
@@ -2198,6 +3254,15 @@
         const filterButton = event.target.closest("[data-filter]");
         const openButton = event.target.closest("[data-cart-open]");
         const closeButton = event.target.closest("[data-cart-close]");
+        const addMoreButton = event.target.closest("[data-add-more]");
+        const accountOpenButton = event.target.closest("[data-account-open]");
+        const accountCloseButton = event.target.closest("[data-account-close]");
+        const googleLogin = event.target.closest("[data-google-login]");
+        const logoutButton = event.target.closest("[data-logout]");
+        const orderHistoryOpen = event.target.closest("[data-order-history]");
+        const mapOpenButton = event.target.closest("[data-map-open]");
+        const mapCloseButton = event.target.closest("[data-map-close]");
+        const mapUseButton = event.target.closest("[data-map-use]");
 
         if (addButton) addToCart(addButton.dataset.add);
         if (increaseButton) changeQty(increaseButton.dataset.increase, 1);
@@ -2205,6 +3270,33 @@
         if (filterButton) setActiveFilter(filterButton.dataset.filter);
         if (openButton) setCartOpen(true);
         if (closeButton) setCartOpen(false);
+        if (addMoreButton) {
+          setCartOpen(false);
+          document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        if (logoutButton) {
+          fetch("/auth/logout", { method: "POST" }).finally(() => window.location.reload());
+        } else if (accountOpenButton) {
+          if (accountState.authenticated) {
+            setAccountModalOpen(true);
+          } else {
+            accountModalCopy.textContent = "Continue with Google to save your profile and place this order.";
+            setAccountModalOpen(true);
+          }
+        }
+        if (orderHistoryOpen) loadOrderHistory();
+        if (accountCloseButton) setAccountModalOpen(false);
+        if (googleLogin) startGoogleLogin();
+        if (mapOpenButton) setMapsModalOpen(true);
+        if (mapCloseButton) setMapsModalOpen(false);
+        if (mapUseButton) {
+          if (mapsState.selectedAddress && addressInput) {
+            addressInput.value = mapsState.selectedAddress;
+            addressInput.dispatchEvent(new Event("input", { bubbles: true }));
+            addressInput.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+          setMapsModalOpen(false);
+        }
       });
 
       document.addEventListener("submit", (event) => {
@@ -2216,6 +3308,8 @@
 
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") setCartOpen(false);
+        if (event.key === "Escape") setAccountModalOpen(false);
+        if (event.key === "Escape") setMapsModalOpen(false);
       });
 
       heroDots.forEach((dot) => {
@@ -2227,10 +3321,26 @@
 
       sortSelect.addEventListener("change", sortProducts);
       couponInputs.forEach((input) => input.addEventListener("change", renderSummary));
+      paymentInputs.forEach((input) => input.addEventListener("change", renderSummary));
+      addressInput?.addEventListener("focus", () => {
+        if (!mapsState.enabled || mapsState.autoPrompted) return;
+        mapsState.autoPrompted = true;
+        setMapsModalOpen(true);
+      });
+      mapSearch?.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") event.preventDefault();
+      });
       startHeroSlider();
       initRevealMotion();
+      applyCustomer(accountState.customer);
+      restoreCheckoutDraft();
+      refreshAccount();
+      showAccountErrorFromUrl();
       renderSummary();
     })();
   </script>
+  {% if google_maps_enabled %}
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initPLMaps"></script>
+  {% endif %}
 </body>
 </html>
