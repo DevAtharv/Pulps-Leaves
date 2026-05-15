@@ -10,6 +10,7 @@ from time_utils import timestamp_local
 
 
 ORDER_ID_PATTERN = re.compile(r"^PL[A-Z0-9]{10}$")
+CHECKOUT_TOKEN_PATTERN = re.compile(r"^[A-Za-z0-9_-]{8,120}$")
 ORDER_ID_ALPHABET = string.ascii_uppercase + string.digits
 WEB_CART_PRODUCTS = {
     "malda-mango-5kg-box": {"name": "Malda Mango 5Kg Box", "price": 999},
@@ -25,12 +26,14 @@ AAM50_MINIMUM_AFTER_GUTHLI = 599
 class OrderManager:
     def __init__(self, sheets_handler=None):
         self.sheets = sheets_handler or SheetsHandler()
+        self._recent_order_ids = set()
 
     def create_order(self, payload, source="Website"):
         clean_data, errors = self.validate_new_order(payload)
         if errors:
             return {"ok": False, "errors": errors}
 
+        checkout_token = clean_data.get("checkout_token", "")
         order_id = self.generate_order_id()
         unit_price = int(clean_data["subtotal"])
         total_amount = int(clean_data["total_amount"])
@@ -45,6 +48,7 @@ class OrderManager:
             notes = f"{notes} Delivery charge: Rs {clean_data['delivery_charge']}.".strip()
         order = {
             "Order ID": order_id,
+            "Checkout Token": checkout_token,
             "Timestamp": now,
             "Customer Name": clean_data["name"],
             "Phone": clean_data["phone"],
@@ -131,7 +135,7 @@ class OrderManager:
         if len(address) < 8:
             errors["address"] = "Please enter a complete delivery address."
         if not city:
-            errors["city"] = "Please select Bangalore, Hyderabad, Pune, or Mumbai."
+            errors["city"] = "Please select Bengaluru, Hyderabad, Pune, or Mumbai."
         if not product_summary:
             errors["product"] = "Please choose a product from the catalog."
         elif not uses_cart_quantities:
@@ -158,6 +162,7 @@ class OrderManager:
                 "notes": str(payload.get("notes", "")).strip(),
                 "customer_email": str(payload.get("customer_email", "")).strip(),
                 "google_subject": str(payload.get("google_subject", "")).strip(),
+                "checkout_token": self._parse_checkout_token(payload.get("checkout_token", "")),
                 "payment_mode": str(payload.get("payment_mode", "COD")).strip() or "COD",
                 "payment_status": str(payload.get("payment_status", "")).strip(),
                 "razorpay_order_id": str(payload.get("razorpay_order_id", "")).strip(),
@@ -214,6 +219,13 @@ class OrderManager:
         return coupon_codes
 
     @staticmethod
+    def _parse_checkout_token(value):
+        token = str(value or "").strip()
+        if not token:
+            return ""
+        return token if CHECKOUT_TOKEN_PATTERN.match(token) else ""
+
+    @staticmethod
     def _cart_coupon_discount(subtotal, coupon_codes):
         discount = 0
         applied_coupons = []
@@ -232,7 +244,10 @@ class OrderManager:
     def generate_order_id(self):
         while True:
             candidate = "PL" + "".join(secrets.choice(ORDER_ID_ALPHABET) for _ in range(10))
-            if not self.sheets.find_order(candidate):
+            if candidate not in self._recent_order_ids:
+                if len(self._recent_order_ids) >= 512:
+                    self._recent_order_ids = set()
+                self._recent_order_ids.add(candidate)
                 return candidate
 
     def validate_order_id(self, order_id):
@@ -243,6 +258,12 @@ class OrderManager:
         if not order:
             return None, "I could not find that Order ID. Please check the ID and try again."
         return order, None
+
+    def find_order_by_checkout_token(self, checkout_token):
+        return self.sheets.find_order_by_checkout_token(checkout_token)
+
+    def find_order_by_payment_id(self, payment_id):
+        return self.sheets.find_order_by_razorpay_payment_id(payment_id)
 
     def update_address(self, order_id, new_address):
         new_address = str(new_address or "").strip()

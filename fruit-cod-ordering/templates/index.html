@@ -192,6 +192,10 @@
       gap: 8px;
     }
 
+    .account-menu {
+      position: relative;
+    }
+
     .nav-link,
     .cart-button,
     .account-button,
@@ -225,6 +229,18 @@
       color: #fff;
       border-color: var(--leaf);
       background: linear-gradient(135deg, var(--leaf), var(--leaf-deep));
+    }
+
+    .account-button {
+      min-width: 140px;
+      position: relative;
+      padding-right: 12px;
+    }
+
+    .nav-link {
+      color: var(--leaf-deep);
+      border-color: rgba(34, 91, 40, 0.2);
+      background: linear-gradient(135deg, #eef7dd, #f6e9c8);
     }
 
     .cart-button {
@@ -261,6 +277,96 @@
       stroke-width: 2;
     }
 
+    .account-caret {
+      width: 10px;
+      height: 10px;
+      flex: 0 0 auto;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg) translateY(-1px);
+      opacity: 0.82;
+    }
+
+    .account-dropdown {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: min(260px, calc(100vw - 20px));
+      display: none;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid rgba(33, 79, 50, 0.12);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 24px 48px rgba(17, 47, 32, 0.18);
+      backdrop-filter: blur(16px);
+      z-index: 70;
+    }
+
+    .account-dropdown.is-open {
+      display: grid;
+    }
+
+    .account-dropdown-head {
+      display: none;
+      gap: 2px;
+      padding: 2px 2px 8px;
+      border-bottom: 1px solid rgba(33, 79, 50, 0.08);
+    }
+
+    .account-dropdown-head.is-visible {
+      display: grid;
+    }
+
+    .account-dropdown-head strong {
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .account-dropdown-head small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .account-dropdown-item {
+      width: 100%;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 14px;
+      border: 1px solid rgba(33, 79, 50, 0.14);
+      border-radius: 12px;
+      background: linear-gradient(180deg, #fff, #f8fbf4);
+      color: var(--ink);
+      font-weight: 900;
+      text-align: left;
+    }
+
+    .account-dropdown-item:hover {
+      border-color: rgba(33, 79, 50, 0.28);
+      transform: translateY(-1px);
+    }
+
+    .account-dropdown-item.is-primary {
+      color: #fff;
+      border-color: var(--leaf);
+      background: linear-gradient(135deg, var(--leaf), var(--leaf-deep));
+    }
+
+    .account-dropdown-item.is-danger {
+      color: #8d241f;
+      border-color: rgba(141, 36, 31, 0.16);
+      background: linear-gradient(180deg, #fff7f5, #fff1ed);
+    }
+
+    .account-dropdown-item[hidden] {
+      display: none !important;
+    }
+
     .cart-count {
       min-width: 21px;
       height: 21px;
@@ -278,14 +384,9 @@
     }
 
     .account-button {
-      min-width: 118px;
+      min-width: 132px;
       border-color: var(--sky);
       background: linear-gradient(135deg, var(--sky), var(--leaf-deep));
-    }
-
-    .account-button[data-account-action="logout"] {
-      border-color: var(--leaf);
-      background: linear-gradient(135deg, var(--leaf-deep), #0f2f16);
     }
 
     .account-button [data-account-label] {
@@ -940,6 +1041,12 @@
       animation: riseIn 340ms ease both;
     }
 
+    .cart-section.is-error,
+    .checkout-section.is-error {
+      border-color: rgba(214, 69, 69, 0.52);
+      box-shadow: 0 10px 26px rgba(214, 69, 69, 0.12);
+    }
+
     .checkout-section {
       display: grid;
       gap: 0;
@@ -1170,6 +1277,14 @@
       font-weight: 800;
     }
 
+    .coupon-copy-primary {
+      color: var(--sun-deep);
+    }
+
+    .coupon-copy-secondary {
+      color: var(--leaf-deep);
+    }
+
     .coupon-code-line {
       display: flex;
       align-items: center;
@@ -1230,6 +1345,28 @@
     .field textarea:focus {
       border-color: var(--leaf);
       box-shadow: 0 0 0 4px rgba(45, 123, 51, 0.1);
+    }
+
+    .field.is-error input,
+    .field.is-error select,
+    .field.is-error textarea {
+      border-color: #d64545;
+      background: #fff8f7;
+      box-shadow: 0 0 0 3px rgba(214, 69, 69, 0.08);
+    }
+
+    .field.is-error input:focus,
+    .field.is-error select:focus,
+    .field.is-error textarea:focus {
+      border-color: #d64545;
+      box-shadow: 0 0 0 4px rgba(214, 69, 69, 0.12);
+    }
+
+    .field-error {
+      color: #b42318;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.4;
     }
 
     .payment-box {
@@ -1368,6 +1505,21 @@
     .checkout-button:disabled {
       cursor: not-allowed;
       opacity: 0.56;
+    }
+
+    .checkout-button.is-loading {
+      position: relative;
+      pointer-events: none;
+    }
+
+    .checkout-button.is-loading::before {
+      content: "";
+      width: 15px;
+      height: 15px;
+      border: 2px solid rgba(255, 255, 255, 0.34);
+      border-top-color: #fff;
+      border-radius: 999px;
+      animation: spin 700ms linear infinite;
     }
 
     .order-result {
@@ -1730,21 +1882,156 @@
       transform: translate(-50%, 0);
     }
 
+    .celebration-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 140;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(14, 22, 14, 0.18);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 220ms ease;
+    }
+
+    .celebration-overlay.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .celebration-card {
+      position: relative;
+      width: min(460px, 100%);
+      display: grid;
+      gap: 10px;
+      padding: 26px 22px 22px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 28px;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.96), rgba(255, 249, 235, 0.98) 58%, rgba(240, 250, 232, 0.98)),
+        #fff;
+      box-shadow: 0 32px 88px rgba(19, 54, 28, 0.24);
+      text-align: center;
+      transform: translateY(16px) scale(0.96);
+      transition: transform 280ms ease;
+      overflow: hidden;
+    }
+
+    .celebration-overlay.is-visible .celebration-card {
+      transform: translateY(0) scale(1);
+    }
+
+    .celebration-card::before,
+    .celebration-card::after {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      filter: blur(1px);
+      opacity: 0.7;
+      animation: confettiFloat 3.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .celebration-card::before {
+      top: -42px;
+      left: -20px;
+      background:
+        radial-gradient(circle at 18px 18px, rgba(245, 166, 35, 0.4) 0 5px, transparent 6px),
+        radial-gradient(circle at 90px 34px, rgba(45, 123, 51, 0.28) 0 5px, transparent 6px),
+        radial-gradient(circle at 46px 118px, rgba(207, 63, 52, 0.28) 0 4px, transparent 5px),
+        radial-gradient(circle at 132px 90px, rgba(47, 111, 159, 0.24) 0 4px, transparent 5px);
+    }
+
+    .celebration-card::after {
+      right: -26px;
+      bottom: -54px;
+      background:
+        radial-gradient(circle at 24px 26px, rgba(45, 123, 51, 0.34) 0 5px, transparent 6px),
+        radial-gradient(circle at 108px 40px, rgba(245, 166, 35, 0.32) 0 5px, transparent 6px),
+        radial-gradient(circle at 64px 126px, rgba(207, 63, 52, 0.24) 0 4px, transparent 5px),
+        radial-gradient(circle at 146px 108px, rgba(47, 111, 159, 0.2) 0 4px, transparent 5px);
+      animation-delay: 220ms;
+    }
+
+    .celebration-badge {
+      justify-self: center;
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 16px;
+      border-radius: 999px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--mango), var(--rose));
+      font-size: 12px;
+      font-weight: 1000;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      box-shadow: 0 14px 28px rgba(245, 166, 35, 0.24);
+    }
+
+    .celebration-badge.is-order {
+      background: linear-gradient(135deg, var(--leaf), var(--sky));
+      box-shadow: 0 14px 28px rgba(45, 123, 51, 0.24);
+    }
+
+    .celebration-emoji {
+      font-size: 44px;
+      line-height: 1;
+    }
+
+    .celebration-card h3 {
+      font-size: clamp(28px, 4vw, 38px);
+      line-height: 1.04;
+    }
+
+    .celebration-card p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .celebration-order-id {
+      justify-self: center;
+      min-width: min(280px, 100%);
+      padding: 14px 18px;
+      border: 1px dashed rgba(32, 91, 49, 0.22);
+      border-radius: 18px;
+      color: var(--leaf-deep);
+      background: rgba(232, 245, 223, 0.86);
+      font-size: clamp(20px, 4vw, 28px);
+      font-weight: 1000;
+      letter-spacing: 0.08em;
+    }
+
+    .celebration-subcopy {
+      color: var(--leaf-deep);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
     .city-banner {
       margin: 12px auto 38px;
-      padding: 18px;
+      padding: 10px;
       border: 1px solid var(--line);
       border-radius: var(--radius-lg);
       background:
         radial-gradient(circle at 12% 0%, rgba(247, 178, 55, 0.16), transparent 34%),
         linear-gradient(180deg, #fffdf6 0%, #fff 100%);
       box-shadow: var(--shadow);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
     }
 
     .city-banner img {
       display: block;
       width: 100%;
       height: auto;
+      max-width: 1120px;
       border: 1px solid rgba(26, 93, 50, 0.1);
       border-radius: 18px;
       background: #fffdf6;
@@ -1862,6 +2149,17 @@
       }
     }
 
+    @keyframes confettiFloat {
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(-8px) rotate(6deg);
+      }
+    }
+
     @media (max-width: 1023px) {
       .product-grid {
         grid-template-columns: repeat(4, minmax(210px, 1fr));
@@ -1887,6 +2185,10 @@
       .brand img {
         width: 42px;
         height: 42px;
+      }
+
+      .brand strong {
+        font-size: 16px;
       }
 
       .brand small,
@@ -1939,12 +2241,21 @@
       }
 
       .product-grid {
-        grid-template-columns: repeat(4, minmax(170px, 1fr));
-        gap: 10px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        overflow-x: visible;
+        padding-bottom: 0;
+        scroll-snap-type: none;
+      }
+
+      .product-card {
+        min-width: 0;
+        scroll-snap-align: unset;
       }
 
       .product-media {
         padding: 8px;
+        aspect-ratio: 1 / 0.88;
       }
 
       .product-info {
@@ -1952,16 +2263,24 @@
       }
 
       .city-banner {
-        margin: 4px auto 28px;
-        padding: 10px;
+        width: 100%;
+        margin: 8px auto 28px;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
       }
 
       .city-banner img {
+        width: 100%;
+        border: 0;
         border-radius: 12px;
+        box-shadow: 0 14px 34px rgba(25, 75, 46, 0.14);
       }
 
       .product-title {
-        min-height: 38px;
+        min-height: 34px;
         font-size: 13px;
       }
 
@@ -1981,6 +2300,15 @@
 
       .cart-button {
         min-width: 48px;
+      }
+
+      .account-button {
+        min-width: 110px;
+        padding: 0 12px;
+      }
+
+      .account-button [data-account-label] {
+        font-size: 13px;
       }
 
       .cart-text {
@@ -2046,6 +2374,19 @@
         bottom: 82px;
       }
 
+      .celebration-card {
+        padding: 24px 18px 20px;
+        border-radius: 24px;
+      }
+
+      .celebration-emoji {
+        font-size: 38px;
+      }
+
+      .celebration-card p {
+        font-size: 14px;
+      }
+
       .footer-grid {
         grid-template-columns: 1fr;
         gap: 18px;
@@ -2070,11 +2411,25 @@
       }
 
       .hero {
-        aspect-ratio: 1024 / 683;
+        width: 100%;
+        aspect-ratio: 4 / 3;
       }
 
       .hero h1 {
         font-size: 26px;
+      }
+
+      .product-grid {
+        gap: 10px;
+      }
+
+      .price-row {
+        gap: 6px;
+      }
+
+      .add-button {
+        min-height: 42px;
+        font-size: 13px;
       }
 
       .primary-button {
@@ -2120,12 +2475,24 @@
 
       <div class="nav-actions">
         <a class="nav-link" href="#products">Buy</a>
-        <button class="account-button" type="button" data-account-open data-account-action="{% if customer %}logout{% else %}login{% endif %}" {% if customer %}data-logout="true"{% endif %} aria-label="{% if customer %}Sign out{% else %}Sign in{% endif %}">
-          <span class="account-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M15 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path d="M5 20a7 7 0 0 1 14 0"/><path d="M19 12h3"/><path d="M21 10l2 2-2 2"/></svg>
-          </span>
-          <span data-account-label>{% if customer %}Sign out{% else %}Sign in{% endif %}</span>
-        </button>
+        <div class="account-menu">
+          <button class="account-button" type="button" data-account-toggle aria-haspopup="menu" aria-expanded="false" aria-label="Open profile menu">
+            <span class="account-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M15 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path d="M5 20a7 7 0 0 1 14 0"/><path d="M19 12h3"/><path d="M21 10l2 2-2 2"/></svg>
+            </span>
+            <span data-account-label>Profile</span>
+            <span class="account-caret" aria-hidden="true"></span>
+          </button>
+          <div class="account-dropdown" data-account-dropdown role="menu" aria-label="Profile options">
+            <div class="account-dropdown-head" data-account-dropdown-head>
+              <strong data-account-dropdown-name>Profile</strong>
+              <small data-account-dropdown-email></small>
+            </div>
+            <button class="account-dropdown-item is-primary" type="button" data-profile-login role="menuitem">Log In</button>
+            <button class="account-dropdown-item" type="button" data-profile-history role="menuitem" hidden>See order history</button>
+            <button class="account-dropdown-item is-danger" type="button" data-profile-logout role="menuitem" hidden>Log Out</button>
+          </div>
+        </div>
         <button class="cart-button" type="button" data-cart-open>
           <span class="cart-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="M6 7h15l-2 8H8L6 7Z"/><path d="M6 7 5 3H2"/><path d="M9 20h.01"/><path d="M18 20h.01"/></svg>
@@ -2142,10 +2509,8 @@
       <figure class="hero-slide is-active" data-hero-slide>
         <img src="{{ url_for('static', filename='img/home_image.png') }}" alt="Pulps and Leaves fresh produce collection">
       </figure>
-      <figure class="hero-slide hero-promo-slide" data-hero-slide>
-        <div class="hero-promo-copy">Experience<br>Nature's<br><span>Premium</span></div>
-        <img src="{{ url_for('static', filename='img/home_image.png') }}" alt="Malda mangoes premium basket">
-        <span class="hero-badge">Malda<br>Mangoes</span>
+      <figure class="hero-slide" data-hero-slide>
+        <img src="{{ url_for('static', filename='img/home_slider_2.png') }}" alt="Nature's gold handpicked for you mango orchard artwork">
       </figure>
     </div>
     <div class="hero-dots" aria-label="Hero slides">
@@ -2209,7 +2574,7 @@
       </article>
       {% endfor %}
 
-      <article class="product-card" data-product data-reveal data-unavailable="true" data-id="assam-breakfast-tea" data-name="Husk and Dew" data-category="Tea" data-variant="100 g Tin" data-price="449" data-mrp="549" data-rating="4.8" data-image="{{ url_for('static', filename='img/tea.png') }}">
+      <article class="product-card" data-product data-reveal data-unavailable="true" data-id="assam-breakfast-tea" data-name="Husk and Dew" data-category="Tea" data-variant="250 g Tin" data-price="449" data-mrp="549" data-rating="4.8" data-image="{{ url_for('static', filename='img/tea.png') }}">
         <div class="product-media">
           <img src="{{ url_for('static', filename='img/tea.png') }}" alt="Husk and Dew">
           <span class="coming-soon-badge">Coming soon</span>
@@ -2217,7 +2582,7 @@
         <div class="product-info">
           <span class="product-category">Tea</span>
           <h3 class="product-title">Husk and Dew</h3>
-          <span class="variant">100 g Tin</span>
+          <span class="variant">250 g Tin</span>
           <div class="rating-line"><span class="badge">Coming soon</span><span>Premium tea collection</span></div>
           <div class="price-row"><strong>Coming soon</strong></div>
           <div class="add-row" data-add-row="assam-breakfast-tea">
@@ -2226,7 +2591,7 @@
         </div>
       </article>
 
-      <article class="product-card" data-product data-reveal data-unavailable="true" data-id="roasted-himalayan-makhana" data-name="Naivedyam Makhana" data-category="Makhana" data-variant="150 g Pouch" data-price="349" data-mrp="449" data-rating="4.9" data-image="{{ url_for('static', filename='img/makhana.png') }}">
+      <article class="product-card" data-product data-reveal data-unavailable="true" data-id="roasted-himalayan-makhana" data-name="Naivedyam Makhana" data-category="Makhana" data-variant="100 g Pouch" data-price="349" data-mrp="449" data-rating="4.9" data-image="{{ url_for('static', filename='img/makhana.png') }}">
         <div class="product-media">
           <img src="{{ url_for('static', filename='img/makhana.png') }}" alt="Naivedyam Makhana">
           <span class="coming-soon-badge">Coming soon</span>
@@ -2234,8 +2599,8 @@
         <div class="product-info">
           <span class="product-category">Makhana</span>
           <h3 class="product-title">Naivedyam Makhana</h3>
-          <span class="variant">150 g Pouch</span>
-          <div class="rating-line"><span class="badge">Coming soon</span><span>Clean snacking range</span></div>
+          <span class="variant">100 g Pouch</span>
+          <div class="rating-line"><span class="badge">Coming soon</span><span>Healthy Range</span></div>
           <div class="price-row"><strong>Coming soon</strong></div>
           <div class="add-row" data-add-row="roasted-himalayan-makhana">
             <button class="add-button" type="button" disabled>Coming soon</button>
@@ -2259,7 +2624,8 @@
       <div class="footer-links">
         <strong>Quick links</strong>
         <a href="#products">Products</a>
-        <a href="#shop">Fresh drop</a>
+        <a href="https://www.facebook.com/share/1XsbRh4rcg/" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://www.youtube.com/@Pulps_and_Leaves" target="_blank" rel="noopener">YouTube</a>
         <a href="https://www.instagram.com/pulpsandleaves?igsh=bW1vMndtM2k3cjZo" target="_blank" rel="noopener">Instagram</a>
       </div>
       <div class="footer-contact">
@@ -2310,18 +2676,17 @@
             <div class="coupon-options">
               <label class="coupon-option">
                 <input type="checkbox" value="GUTHLI10" data-coupon="GUTHLI10">
-                <span><span class="coupon-code-line">GUTHLI10 <strong class="coupon-percent">10% OFF</strong></span><small>kyonki aam ke aam guthliyon ke daam</small></span>
+                <span><span class="coupon-code-line">GUTHLI10 <strong class="coupon-percent">10% OFF</strong></span><small class="coupon-copy-primary">Kyonki aam ke aam ghuthliyon k daam</small></span>
               </label>
               <label class="coupon-option">
                 <input type="checkbox" value="AAM50" data-coupon="AAM50">
-                <span>AAM50<small>On order above Rs 599*</small></span>
+                <span>AAM50<small class="coupon-copy-secondary">On Order Above Rs 599*</small></span>
               </label>
             </div>
             <small class="coupon-note" data-coupon-note>Select a coupon to apply savings.</small>
           </label>
           <div class="summary-line"><span>Coupon discount</span><strong data-discount>Rs 0</strong></div>
-          <div class="summary-line"><span>Delivery</span><strong data-delivery>Rs 0</strong></div>
-          <div class="summary-line"><span>Payment</span><strong data-payment-summary>{% if razorpay_enabled %}Razorpay Test{% else %}Cash on Delivery{% endif %}</strong></div>
+          <div class="summary-line"><span data-delivery-label>Delivery</span><strong data-delivery>Rs 0</strong></div>
           <div class="summary-line total"><span>Order total</span><strong data-total>Rs 0</strong></div>
           <div class="free-note" data-free-note></div>
         </div>
@@ -2338,7 +2703,7 @@
             <button type="button" data-account-open>Continue with Google</button>
           </div>
           <label class="field">
-            <span>Full name</span>
+            <span>Full Name</span>
             <input name="name" autocomplete="name" required minlength="2" placeholder="Your name">
           </label>
           <label class="field">
@@ -2349,7 +2714,7 @@
             <span>City</span>
             <select name="city" required>
               <option value="">Select city</option>
-              <option value="bangalore">Bangalore</option>
+              <option value="bangalore">Bengaluru</option>
               <option value="hyderabad">Hyderabad</option>
               <option value="pune">Pune</option>
               <option value="mumbai">Mumbai</option>
@@ -2358,10 +2723,6 @@
           <label class="field">
             <span>Delivery address</span>
             <textarea name="address" required minlength="8" placeholder="House no, street, area, pincode" data-address-input></textarea>
-            {% if google_maps_enabled %}
-            <button class="map-open-button" type="button" data-map-open>Choose on map</button>
-            <small class="field-hint">Search your delivery location and confirm the address from Google Maps.</small>
-            {% endif %}
           </label>
           <label class="field">
             <span>Order notes</span>
@@ -2378,10 +2739,10 @@
                 <input type="radio" name="payment_method" value="razorpay" {% if razorpay_enabled %}checked{% else %}disabled{% endif %}>
                 <span class="payment-choice-icon" aria-hidden="true">UPI</span>
                 <span class="payment-choice-copy">
-                  <strong>Secure online payment</strong>
-                  <small>{% if razorpay_enabled %}Pay through Razorpay with UPI, cards, or netbanking before the order is saved.{% else %}Online payment will appear here once Razorpay keys are added in Vercel.{% endif %}</small>
+                  <strong data-online-payment-title>Secure online payment</strong>
+                  <small data-online-payment-copy>{% if razorpay_enabled %}Pay through Razorpay with UPI, cards, or netbanking before the order is saved.{% else %}Online payment will appear here once Razorpay keys are added in Vercel.{% endif %}</small>
                 </span>
-                <span class="payment-status {% if not razorpay_enabled %}is-muted{% endif %}">{% if razorpay_enabled %}Live{% else %}Soon{% endif %}</span>
+                <span class="payment-status {% if not razorpay_enabled %}is-muted{% endif %}" data-online-payment-status>{% if razorpay_enabled %}Live{% else %}Soon{% endif %}</span>
               </label>
               <label class="payment-choice">
                 <input type="radio" name="payment_method" value="cod" {% if not razorpay_enabled %}checked{% endif %}>
@@ -2396,6 +2757,7 @@
           </div>
           <input type="hidden" name="cart_items" data-cart-items-input>
           <input type="hidden" name="coupon_codes" data-coupon-codes-input>
+          <input type="hidden" name="checkout_token" data-checkout-token-input>
           <button class="checkout-button" type="submit" data-submit-order disabled>Place Order</button>
           <div class="order-result" data-order-result></div>
         </form>
@@ -2414,7 +2776,7 @@
         <button class="google-login-button" type="button" data-google-login {% if not google_login_enabled %}disabled{% endif %}>
           Continue with Google
         </button>
-        <button class="account-history-button" type="button" data-order-history hidden>View order history</button>
+        <button class="account-history-button" type="button" data-order-history>View order history</button>
       </div>
       <div class="order-history-panel" data-order-history-panel>
         <div class="order-history-status" data-order-history-status>Sign in to see your past orders.</div>
@@ -2422,27 +2784,6 @@
       </div>
     </section>
   </div>
-
-  {% if google_maps_enabled %}
-  <div class="maps-modal-overlay" data-maps-modal aria-hidden="true">
-    <section class="maps-modal" role="dialog" aria-modal="true" aria-labelledby="mapsModalTitle">
-      <div class="maps-modal-head">
-        <div>
-          <h2 id="mapsModalTitle">Choose delivery location</h2>
-          <p>Search your address, move the marker if needed, then use it for checkout.</p>
-        </div>
-        <button class="close-button" type="button" data-map-close aria-label="Close map">x</button>
-      </div>
-      <input class="map-search" type="text" placeholder="Search address or building name" data-map-search>
-      <div class="map-canvas" data-map-canvas></div>
-      <div class="map-address-preview" data-map-address>Loading Google Maps...</div>
-      <div class="map-actions">
-        <button class="map-use-button" type="button" data-map-use>Use this address</button>
-        <button class="map-ghost-button" type="button" data-map-close>Enter manually</button>
-      </div>
-    </section>
-  </div>
-  {% endif %}
 
   <div class="mobile-cart-bar" data-mobile-cart>
     <div>
@@ -2453,6 +2794,16 @@
   </div>
 
   <div class="toast" data-toast>Added to cart</div>
+  <div class="celebration-overlay" data-celebration aria-hidden="true">
+    <section class="celebration-card" aria-live="polite" aria-atomic="true">
+      <div class="celebration-badge" data-celebration-badge>Saved</div>
+      <div class="celebration-emoji" data-celebration-emoji>🎉</div>
+      <h3 data-celebration-title>Success</h3>
+      <div class="celebration-order-id" data-celebration-order-id hidden></div>
+      <p data-celebration-message>Your update has been applied.</p>
+      <div class="celebration-subcopy" data-celebration-subcopy hidden></div>
+    </section>
+  </div>
 
   {% if razorpay_enabled %}
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -2470,7 +2821,7 @@
         razorpayKeyId: {{ razorpay_key_id | tojson }},
       };
       const mapsState = {
-        enabled: {{ "true" if google_maps_enabled else "false" }},
+        enabled: false,
         loaded: false,
         initialized: false,
         open: false,
@@ -2492,13 +2843,29 @@
       const mobileCount = document.querySelector("[data-mobile-count]");
       const sortSelect = document.getElementById("sortSelect");
       const toast = document.querySelector("[data-toast]");
+      const celebration = document.querySelector("[data-celebration]");
+      const celebrationBadge = document.querySelector("[data-celebration-badge]");
+      const celebrationEmoji = document.querySelector("[data-celebration-emoji]");
+      const celebrationTitle = document.querySelector("[data-celebration-title]");
+      const celebrationMessage = document.querySelector("[data-celebration-message]");
+      const celebrationOrderId = document.querySelector("[data-celebration-order-id]");
+      const celebrationSubcopy = document.querySelector("[data-celebration-subcopy]");
       const revealNodes = Array.from(document.querySelectorAll("[data-reveal]"));
       const couponInputs = Array.from(document.querySelectorAll("[data-coupon]"));
       const couponNote = document.querySelector("[data-coupon-note]");
       const paymentInputs = Array.from(document.querySelectorAll("input[name='payment_method']"));
       const orderForm = document.querySelector("[data-order-form]");
-      const accountButton = document.querySelector("[data-account-open].account-button");
+      const cartSection = document.querySelector(".cart-section");
+      const checkoutSection = document.querySelector(".checkout-section");
+      const accountButton = document.querySelector("[data-account-toggle]");
       const accountButtonLabel = document.querySelector("[data-account-label]");
+      const accountDropdown = document.querySelector("[data-account-dropdown]");
+      const accountDropdownHead = document.querySelector("[data-account-dropdown-head]");
+      const accountDropdownName = document.querySelector("[data-account-dropdown-name]");
+      const accountDropdownEmail = document.querySelector("[data-account-dropdown-email]");
+      const profileLoginButton = document.querySelector("[data-profile-login]");
+      const profileHistoryButton = document.querySelector("[data-profile-history]");
+      const profileLogoutButton = document.querySelector("[data-profile-logout]");
       const accountPanel = document.querySelector("[data-account-panel]");
       const accountName = document.querySelector("[data-account-name]");
       const accountEmail = document.querySelector("[data-account-email]");
@@ -2518,10 +2885,20 @@
       const mapUseButton = document.querySelector("[data-map-use]");
       const heroSlides = Array.from(document.querySelectorAll("[data-hero-slide]"));
       const heroDots = Array.from(document.querySelectorAll("[data-hero-dot]"));
+      const onlinePaymentTitle = document.querySelector("[data-online-payment-title]");
+      const onlinePaymentCopy = document.querySelector("[data-online-payment-copy]");
+      const onlinePaymentStatus = document.querySelector("[data-online-payment-status]");
       const deliveryFreeAbove = 599;
       const aam50MinimumAfterGuthli = 599;
       const deliveryCharge = 30;
       const savedCheckoutKey = "pl_checkout_draft_v1";
+      const checkoutState = {
+        pending: false,
+        currentToken: "",
+        currentRequestId: "",
+        lastSubmitAt: 0,
+        lastMutationAt: 0,
+      };
       const accountErrors = {
         access_denied: "Google sign-in was cancelled. Please continue with Google to place the order.",
         google_auth_failed: "Google sign-in could not be completed. Please try again after checking the redirect URL setup.",
@@ -2537,8 +2914,163 @@
       let activeHeroSlide = 0;
       let heroTimer = null;
       let toastTimer = null;
+      let celebrationTimer = null;
+      let orderResultTimer = null;
+      let accountMenuOpen = false;
+      let lastCouponKey = "";
 
       const formatMoney = (value) => `Rs ${value.toLocaleString("en-IN")}`;
+      paymentState.isTestKey = String(paymentState.razorpayKeyId || "").startsWith("rzp_test_");
+
+      function logCheckout(event, details = {}) {
+        try {
+          console.info("[checkout]", event, {
+            ts: new Date().toISOString(),
+            checkoutToken: checkoutState.currentToken || "",
+            requestId: checkoutState.currentRequestId || "",
+            ...details,
+          });
+        } catch (error) {
+          console.info("[checkout]", event);
+        }
+      }
+
+      function makeCheckoutToken() {
+        if (window.crypto?.randomUUID) return `chk_${window.crypto.randomUUID()}`;
+        return `chk_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+      }
+
+      function makeRequestId() {
+        if (window.crypto?.randomUUID) return `req_${window.crypto.randomUUID()}`;
+        return `req_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      }
+
+      function currentCheckoutToken() {
+        if (!checkoutState.currentToken) {
+          checkoutState.currentToken = makeCheckoutToken();
+        }
+        const tokenInput = document.querySelector("[data-checkout-token-input]");
+        if (tokenInput) tokenInput.value = checkoutState.currentToken;
+        return checkoutState.currentToken;
+      }
+
+      function resetCheckoutToken(reason = "reset") {
+        if (checkoutState.pending || !checkoutState.currentToken) return;
+        logCheckout("checkout_token_reset", { reason });
+        checkoutState.currentToken = "";
+        checkoutState.currentRequestId = "";
+        const tokenInput = document.querySelector("[data-checkout-token-input]");
+        if (tokenInput) tokenInput.value = "";
+      }
+
+      function markCheckoutDirty(reason = "mutation") {
+        checkoutState.lastMutationAt = Date.now();
+        resetCheckoutToken(reason);
+      }
+
+      function setSubmitState(submit, isLoading, label) {
+        if (!submit) return;
+        submit.disabled = Boolean(isLoading) || totals().count === 0;
+        submit.classList.toggle("is-loading", Boolean(isLoading));
+        submit.textContent = label;
+      }
+
+      async function fetchJson(url, { method = "GET", body, timeoutMs = 35000, headers = {} } = {}, fallback = "Request failed.") {
+        const controller = new AbortController();
+        const timer = window.setTimeout(() => controller.abort(), timeoutMs);
+        const options = {
+          method,
+          headers: { ...headers },
+          signal: controller.signal,
+        };
+        if (body !== undefined) {
+          options.headers["Content-Type"] = "application/json";
+          options.body = JSON.stringify(body);
+        }
+        logCheckout("api_request_started", { url, method });
+        try {
+          const response = await fetch(url, options);
+          const data = await parseJsonResponse(response, fallback);
+          logCheckout("api_request_finished", { url, method, ok: response.ok, status: response.status });
+          return { response, data };
+        } catch (error) {
+          const message = error?.name === "AbortError"
+            ? "The server is taking longer than expected. Please try again in a moment."
+            : (error.message || fallback);
+          logCheckout("api_request_failed", { url, method, error: message });
+          throw new Error(message);
+        } finally {
+          window.clearTimeout(timer);
+        }
+      }
+
+      if (paymentState.razorpayEnabled && paymentState.isTestKey) {
+        if (onlinePaymentTitle) onlinePaymentTitle.textContent = "Test online payment";
+        if (onlinePaymentCopy) onlinePaymentCopy.textContent = "Use card or netbanking in test mode. UPI app QR or intent can fail until live Razorpay keys are used.";
+        if (onlinePaymentStatus) onlinePaymentStatus.textContent = "Test";
+      }
+
+      function clearCheckoutErrors() {
+        if (cartSection) cartSection.classList.remove("is-error");
+        if (checkoutSection) checkoutSection.classList.remove("is-error");
+        if (!orderForm) return;
+        orderForm.querySelectorAll(".field").forEach((field) => field.classList.remove("is-error"));
+        orderForm.querySelectorAll(".field-error").forEach((node) => node.remove());
+        Array.from(orderForm.elements).forEach((field) => {
+          if (field instanceof HTMLElement) field.removeAttribute("aria-invalid");
+        });
+      }
+
+      function setFieldError(name, message) {
+        if (!orderForm) return false;
+        const input = orderForm.elements[name];
+        if (!(input instanceof HTMLElement)) return false;
+        const field = input.closest(".field");
+        if (!field) return false;
+        field.classList.add("is-error");
+        input.setAttribute("aria-invalid", "true");
+        let note = field.querySelector(".field-error");
+        if (!note) {
+          note = document.createElement("small");
+          note.className = "field-error";
+          field.appendChild(note);
+        }
+        note.textContent = message;
+        return true;
+      }
+
+      function clearFieldError(input) {
+        if (!(input instanceof HTMLElement)) return;
+        const field = input.closest(".field");
+        if (!field) return;
+        field.classList.remove("is-error");
+        input.removeAttribute("aria-invalid");
+        field.querySelector(".field-error")?.remove();
+        if (orderForm && !orderForm.querySelector(".field.is-error") && !cartSection?.classList.contains("is-error")) {
+          checkoutSection?.classList.remove("is-error");
+        }
+      }
+
+      function applyCheckoutErrors(errors = {}) {
+        clearCheckoutErrors();
+        let firstInvalid = null;
+        const fieldNames = ["name", "phone", "city", "address", "notes"];
+        fieldNames.forEach((name) => {
+          if (!errors[name]) return;
+          const applied = setFieldError(name, errors[name]);
+          if (applied && !firstInvalid) {
+            const field = orderForm?.elements[name];
+            if (field instanceof HTMLElement) firstInvalid = field;
+          }
+        });
+        if (errors.product || errors.quantity) {
+          cartSection?.classList.add("is-error");
+        }
+        if (Object.keys(errors).length) {
+          checkoutSection?.classList.add("is-error");
+        }
+        firstInvalid?.focus();
+      }
 
       function productFromCard(card) {
         return {
@@ -2556,11 +3088,44 @@
 
       const products = new Map(productCards.map((card) => [card.dataset.id, productFromCard(card)]));
 
-      function showToast(message) {
+      function showToast(message, duration = 1300) {
         toast.textContent = message;
         toast.classList.add("is-visible");
         window.clearTimeout(toastTimer);
-        toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 1300);
+        toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), duration);
+      }
+
+      function showCelebration({ badge = "Saved", badgeType = "", emoji = "🎉", title = "Success", message = "", orderId = "", subcopy = "", duration = 3200 } = {}) {
+        if (!celebration) return;
+        celebrationBadge.textContent = badge;
+        celebrationBadge.classList.toggle("is-order", badgeType === "order");
+        celebrationEmoji.textContent = emoji;
+        celebrationTitle.textContent = title;
+        celebrationMessage.textContent = message;
+
+        if (orderId) {
+          celebrationOrderId.hidden = false;
+          celebrationOrderId.textContent = orderId;
+        } else {
+          celebrationOrderId.hidden = true;
+          celebrationOrderId.textContent = "";
+        }
+
+        if (subcopy) {
+          celebrationSubcopy.hidden = false;
+          celebrationSubcopy.textContent = subcopy;
+        } else {
+          celebrationSubcopy.hidden = true;
+          celebrationSubcopy.textContent = "";
+        }
+
+        celebration.setAttribute("aria-hidden", "false");
+        celebration.classList.add("is-visible");
+        window.clearTimeout(celebrationTimer);
+        celebrationTimer = window.setTimeout(() => {
+          celebration.classList.remove("is-visible");
+          celebration.setAttribute("aria-hidden", "true");
+        }, duration);
       }
 
       function setCartOpen(isOpen) {
@@ -2571,7 +3136,13 @@
       function setAccountModalOpen(isOpen) {
         document.body.classList.toggle("account-modal-open", isOpen);
         accountModal.setAttribute("aria-hidden", String(!isOpen));
-        if (isOpen && accountState.authenticated) loadOrderHistory();
+      }
+
+      function setAccountMenuOpen(isOpen) {
+        accountMenuOpen = Boolean(isOpen);
+        if (!accountDropdown || !accountButton) return;
+        accountDropdown.classList.toggle("is-open", accountMenuOpen);
+        accountButton.setAttribute("aria-expanded", String(accountMenuOpen));
       }
 
       function setMapsModalOpen(isOpen) {
@@ -2586,7 +3157,7 @@
       }
 
       function customerDisplayName(customer) {
-        return customer?.name || customer?.email || "Account";
+        return customer?.name || customer?.email || "Log In";
       }
 
       function escapeHtml(value) {
@@ -2617,17 +3188,19 @@
       function applyCustomer(customer) {
         accountState.authenticated = Boolean(customer?.email);
         accountState.customer = customer || {};
-        accountButtonLabel.textContent = accountState.authenticated ? "Sign out" : "Sign in";
-        accountButton.dataset.accountAction = accountState.authenticated ? "logout" : "login";
-        accountButton.setAttribute("aria-label", accountState.authenticated ? "Sign out" : "Sign in");
-        if (accountState.authenticated) {
-          accountButton.dataset.logout = "true";
-        } else {
-          delete accountButton.dataset.logout;
-        }
+        accountButtonLabel.textContent = accountState.authenticated
+          ? (accountState.customer.name || "Profile").split(" ")[0]
+          : "Profile";
+        accountButton.setAttribute("aria-label", accountState.authenticated ? "Open your profile menu" : "Open profile menu");
         accountPanel.classList.toggle("is-visible", accountState.required || accountState.authenticated);
 
         if (accountState.authenticated) {
+          accountDropdownHead.classList.add("is-visible");
+          accountDropdownName.textContent = accountState.customer.name || "Pulps & Leaves customer";
+          accountDropdownEmail.textContent = accountState.customer.email || "";
+          profileLoginButton.hidden = true;
+          profileHistoryButton.hidden = false;
+          profileLogoutButton.hidden = false;
           accountName.textContent = customerDisplayName(accountState.customer);
           accountEmail.textContent = accountState.customer.email || "Signed in with Google";
           accountPanel.querySelector("button").textContent = "Sign out";
@@ -2636,16 +3209,23 @@
           accountModalCopy.textContent = `${accountState.customer.email || "Signed in"} · View your order history and saved checkout details.`;
           googleLoginButton.hidden = true;
           orderHistoryButton.hidden = false;
+          orderHistoryButton.textContent = "View order history";
           prefillCustomerDetails(accountState.customer);
           return;
         }
 
+        accountDropdownHead.classList.remove("is-visible");
+        accountDropdownName.textContent = "Profile";
+        accountDropdownEmail.textContent = "";
+        profileLoginButton.hidden = false;
+        profileHistoryButton.hidden = true;
+        profileLogoutButton.hidden = true;
         accountName.textContent = "Create account to order";
         accountEmail.textContent = "Use Google once, then your delivery details can be saved for next time.";
         accountPanel.querySelector("button").textContent = "Continue with Google";
         delete accountPanel.querySelector("button").dataset.logout;
         accountModalTitle.textContent = "Create your account";
-        accountModalCopy.textContent = "Continue with Google to save your profile and place this order.";
+        accountModalCopy.textContent = "Continue with Google to save your profile, place orders, and view order history.";
         googleLoginButton.hidden = false;
         orderHistoryButton.hidden = true;
         orderHistoryPanel.classList.remove("is-visible");
@@ -2655,6 +3235,13 @@
 
       async function loadOrderHistory() {
         if (!accountState.authenticated || !orderHistoryPanel) return;
+        if (loadOrderHistory.pending) return;
+        const now = Date.now();
+        if (loadOrderHistory.cache && now - loadOrderHistory.cache.fetchedAt < 60000) {
+          renderOrderHistory(loadOrderHistory.cache.orders);
+          return;
+        }
+        loadOrderHistory.pending = true;
         orderHistoryPanel.classList.add("is-visible");
         orderHistoryStatus.textContent = "Loading your orders...";
         orderHistoryList.innerHTML = "";
@@ -2663,9 +3250,13 @@
           const response = await fetch("/api/me/orders");
           const data = await parseJsonResponse(response, "Order history could not be loaded.");
           if (!response.ok || !data.ok) throw new Error(data.error || "Order history could not be loaded.");
-          renderOrderHistory(data.orders || []);
+          const orders = data.orders || [];
+          loadOrderHistory.cache = { fetchedAt: now, orders };
+          renderOrderHistory(orders);
         } catch (error) {
           orderHistoryStatus.textContent = error.message;
+        } finally {
+          loadOrderHistory.pending = false;
         }
       }
 
@@ -2699,6 +3290,28 @@
         }).join("");
       }
 
+      function rememberOrderForHistory(order) {
+        if (!order || !order["Order ID"]) return;
+        const historyOrder = {
+          order_id: order["Order ID"],
+          timestamp: order.Timestamp || "",
+          product: order.Product || "",
+          quantity: order.Quantity || "",
+          total_amount: order["Total Amount"] || "",
+          payment_mode: order["Payment Mode"] || "",
+          payment_status: order["Payment Status"] || "",
+          order_status: order["Order Status"] || "Pending",
+          city: order.City || "",
+          address: order.Address || "",
+          razorpay_payment_id: order["Razorpay Payment ID"] || "",
+        };
+        const cachedOrders = loadOrderHistory.cache?.orders || [];
+        loadOrderHistory.cache = {
+          fetchedAt: Date.now(),
+          orders: [historyOrder, ...cachedOrders.filter((item) => item.order_id !== historyOrder.order_id)],
+        };
+      }
+
       function prefillCustomerDetails(customer) {
         if (!orderForm || !customer) return;
         const fields = {
@@ -2711,6 +3324,25 @@
           const field = orderForm.elements[name];
           if (field && value && !field.value) field.value = value;
         });
+      }
+
+      async function syncCustomerProfileFromForm(form) {
+        if (!accountState.authenticated || !form) return;
+        try {
+          const response = await fetch("/api/me", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              phone: form.elements.phone?.value || "",
+              city: form.elements.city?.value || "",
+              address: form.elements.address?.value || "",
+            }),
+          });
+          const data = await parseJsonResponse(response, "Profile could not be synced.");
+          if (data.customer) applyCustomer(data.customer);
+        } catch (error) {
+          logCheckout("customer_profile_sync_failed", { error: error.message || "Profile sync failed" });
+        }
       }
 
       function checkoutDraft() {
@@ -2783,14 +3415,43 @@
         window.history.replaceState({}, "", nextUrl);
       }
 
-      function startGoogleLogin() {
+      function showAccountIntentFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const intent = params.get("account");
+        if (!intent) return;
+        if (intent === "orders") {
+          accountModalTitle.textContent = "Your account";
+          accountModalCopy.textContent = accountState.authenticated
+            ? `${accountState.customer.email || "Signed in"} · View your order history and saved checkout details.`
+            : "Continue with Google to view your past orders.";
+          setAccountModalOpen(true);
+          if (accountState.authenticated) loadOrderHistory();
+        } else if (intent === "checkout") {
+          setAccountModalOpen(false);
+          setCartOpen(true);
+          showToast("Signed in. Continue checkout here.");
+        } else if (intent === "connected") {
+          setAccountModalOpen(false);
+          showToast("Signed in successfully.");
+        }
+        params.delete("account");
+        const nextQuery = params.toString();
+        const nextUrl = `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ""}${window.location.hash}`;
+        window.history.replaceState({}, "", nextUrl);
+      }
+
+      function startGoogleLogin(intent = "connected") {
         if (!accountState.googleEnabled) {
           accountModalCopy.textContent = "Google sign-in is ready in the site, but the OAuth Client ID and Secret still need to be added in Vercel.";
           setAccountModalOpen(true);
           return;
         }
+        const loginIntent = intent === "connected" && document.body.classList.contains("cart-open") && totals().count > 0
+          ? "checkout"
+          : intent;
         saveCheckoutDraft();
-        const nextUrl = `${window.location.origin}${window.location.pathname}?account=connected#shop`;
+        const returnHash = loginIntent === "checkout" ? "checkout" : "shop";
+        const nextUrl = `${window.location.origin}${window.location.pathname}?account=${encodeURIComponent(loginIntent)}#${returnHash}`;
         window.location.href = `/auth/google?next=${encodeURIComponent(nextUrl)}`;
       }
 
@@ -2844,7 +3505,10 @@
         if (address) {
           geocodeAddress(address);
         } else {
-          updateMapMarker(currentMapCenter(), true);
+          updateMapMarker(currentMapCenter(), false);
+          mapsState.selectedAddress = "";
+          mapAddress.textContent = "Search your address or move the marker to confirm the address.";
+          if (mapSearch) mapSearch.value = "";
         }
 
         window.setTimeout(() => google.maps.event.trigger(mapsState.map, "resize"), 80);
@@ -2869,7 +3533,8 @@
           if (status === "OK" && results?.[0]) {
             updateMapMarker(results[0].geometry.location, false, results[0].formatted_address);
           } else {
-            mapAddress.textContent = "Search for your location or move the marker to confirm the address.";
+            mapsState.selectedAddress = address;
+            mapAddress.textContent = `Using typed address: ${address}`;
           }
         });
       }
@@ -2882,7 +3547,14 @@
             mapAddress.textContent = mapsState.selectedAddress;
             if (mapSearch) mapSearch.value = mapsState.selectedAddress;
           } else {
-            mapAddress.textContent = "Could not read this location. Please search the address manually.";
+            const typedAddress = String(mapSearch?.value || "").trim();
+            if (typedAddress) {
+              mapsState.selectedAddress = typedAddress;
+              mapAddress.textContent = `Using typed address: ${typedAddress}`;
+              return;
+            }
+            mapsState.selectedAddress = "";
+            mapAddress.textContent = "Search your address above, or use Enter manually if Google cannot read this pin.";
           }
         });
       }
@@ -2891,6 +3563,7 @@
         mapsState.loaded = true;
         if (mapsState.open) initializeMapsPicker();
       };
+      window.initMap = window.initPLMaps;
 
       function totals() {
         const items = Array.from(cart.values());
@@ -2936,7 +3609,15 @@
         }
 
         const delivery = subtotal === 0 || subtotal > deliveryFreeAbove ? 0 : deliveryCharge;
-        return { count, subtotal, discount, delivery, total: subtotal - discount + delivery, couponMessage };
+        return {
+          count,
+          subtotal,
+          discount,
+          delivery,
+          total: subtotal - discount + delivery,
+          couponMessage,
+          appliedCoupons,
+        };
       }
 
       function cartPayload() {
@@ -2950,7 +3631,9 @@
       }
 
       function formPayload(form) {
-        return Object.fromEntries(new FormData(form).entries());
+        const payload = Object.fromEntries(new FormData(form).entries());
+        payload.checkout_token = currentCheckoutToken();
+        return payload;
       }
 
       function selectedPaymentMethod(form) {
@@ -2981,8 +3664,10 @@
       }
 
       function renderSummary() {
+        cartSection?.classList.remove("is-error");
         const summary = totals();
         const items = Array.from(cart.values());
+        const appliedCouponKey = summary.appliedCoupons.join("+");
         cartCount.textContent = summary.count;
         cartButton.classList.toggle("has-items", summary.count > 0);
         mobileTotal.textContent = formatMoney(summary.total);
@@ -2992,14 +3677,28 @@
         document.querySelector("[data-drawer-subtitle]").textContent = summary.count ? "Review items, enter details, place order." : "Add items first, then place your order.";
         document.querySelector("[data-subtotal]").textContent = formatMoney(summary.subtotal);
         document.querySelector("[data-discount]").textContent = summary.discount ? `- ${formatMoney(summary.discount)}` : "Rs 0";
+        document.querySelector("[data-delivery-label]").textContent = summary.delivery ? "Delivery (Free above Rs 599)" : "Delivery";
         document.querySelector("[data-delivery]").textContent = summary.delivery ? formatMoney(summary.delivery) : "Free";
         document.querySelector("[data-total]").textContent = formatMoney(summary.total);
-        document.querySelector("[data-payment-summary]").textContent = selectedPaymentMethod(orderForm) === "razorpay" ? "Razorpay Test" : "Cash on Delivery";
         if (couponNote) couponNote.textContent = summary.couponMessage;
         document.querySelector("[data-free-note]").textContent = summary.subtotal > deliveryFreeAbove ? "You unlocked free delivery." : "";
         document.querySelector("[data-cart-items-input]").value = JSON.stringify(cartPayload());
         document.querySelector("[data-coupon-codes-input]").value = JSON.stringify(couponPayload());
-        document.querySelector("[data-submit-order]").disabled = summary.count === 0;
+        const tokenInput = document.querySelector("[data-checkout-token-input]");
+        if (tokenInput) tokenInput.value = checkoutState.currentToken || "";
+        document.querySelector("[data-submit-order]").disabled = checkoutState.pending || summary.count === 0;
+
+        if (appliedCouponKey && appliedCouponKey !== lastCouponKey) {
+          showCelebration({
+            badge: "Coupon Applied",
+            emoji: "🎊",
+            title: summary.appliedCoupons.length > 1 ? "Savings stacked" : "Coupon unlocked",
+            message: summary.couponMessage,
+            subcopy: summary.discount ? `You saved ${formatMoney(summary.discount)} on this cart.` : "",
+            duration: 2600,
+          });
+        }
+        lastCouponKey = appliedCouponKey;
 
         const itemMount = document.querySelector("[data-cart-items]");
         if (!items.length) {
@@ -3037,6 +3736,7 @@
         }
         const existing = cart.get(id);
         cart.set(id, { ...product, qty: existing ? existing.qty + 1 : 1 });
+        markCheckoutDirty("cart_add");
         product.card.classList.remove("is-added");
         void product.card.offsetWidth;
         product.card.classList.add("is-added");
@@ -3058,6 +3758,7 @@
         } else {
           cart.set(id, { ...existing, qty: nextQty });
         }
+        markCheckoutDirty("cart_quantity_change");
         renderSummary();
       }
 
@@ -3133,14 +3834,32 @@
           homeSection.scrollIntoView({ behavior: "smooth", block: "start" });
         }
         window.history.replaceState({}, "", `${window.location.pathname}${window.location.search}#shop`);
-        showToast(`Order placed. Order ID: ${orderId}`);
+        showToast(`Order placed. Order ID: ${orderId}`, 10000);
+        showCelebration({
+          badge: "Order Confirmed",
+          badgeType: "order",
+          emoji: "🥭",
+          title: "Order placed successfully",
+          message: "Your Pulps & Leaves order is now in our system.",
+          orderId,
+          subcopy: "Please save this Order ID for tracking and support.",
+          duration: 6200,
+        });
       }
 
       async function submitOrder(form) {
         const result = form.querySelector("[data-order-result]");
         const submit = form.querySelector("[data-submit-order]");
+        window.clearTimeout(orderResultTimer);
+        clearCheckoutErrors();
         result.className = "order-result";
         result.textContent = "";
+
+        if (checkoutState.pending || Date.now() - checkoutState.lastSubmitAt < 700) {
+          logCheckout("submit_ignored_duplicate_click", { pending: checkoutState.pending });
+          showToast("Order is already being placed");
+          return;
+        }
 
         if (accountState.required && !accountState.authenticated) {
           saveCheckoutDraft();
@@ -3149,39 +3868,62 @@
           return;
         }
 
-        submit.disabled = true;
-        submit.textContent = selectedPaymentMethod(form) === "razorpay" ? "Opening Razorpay..." : "Placing order...";
+        checkoutState.pending = true;
+        checkoutState.lastSubmitAt = Date.now();
+        checkoutState.currentRequestId = makeRequestId();
+        const paymentMethod = selectedPaymentMethod(form);
+        currentCheckoutToken();
+        setSubmitState(submit, true, paymentMethod === "razorpay" ? "Opening Razorpay..." : "Placing Order...");
+        logCheckout("order_started", { paymentMethod });
 
         try {
-          const data = selectedPaymentMethod(form) === "razorpay"
+          showToast(paymentMethod === "razorpay" ? "Initializing secure payment..." : "Placing your order...");
+          const data = paymentMethod === "razorpay"
             ? await submitRazorpayOrder(form)
             : await submitCodOrder(form);
           const orderId = data.order["Order ID"];
+          logCheckout("order_completed", { orderId, duplicate: Boolean(data.duplicate) });
+          rememberOrderForHistory(data.order);
           result.textContent = `Order placed successfully. Order ID: ${orderId}. Total: Rs ${data.order["Total Amount"]}.`;
           result.className = "order-result is-visible";
+          orderResultTimer = window.setTimeout(() => {
+            result.className = "order-result";
+            result.textContent = "";
+          }, 10000);
+          await syncCustomerProfileFromForm(form);
           cart.clear();
           form.reset();
+          checkoutState.currentToken = "";
+          checkoutState.currentRequestId = "";
           renderSummary();
           if (accountState.authenticated) {
             await refreshAccount();
           }
           moveCustomerHomeAfterOrder(orderId);
         } catch (error) {
-          result.textContent = error.message;
+          logCheckout("order_failed", { error: error.message || "Unknown order failure" });
+          if (error.fieldErrors) {
+            applyCheckoutErrors(error.fieldErrors);
+            result.textContent = "Please check the highlighted details and try again.";
+            showToast("Please check the highlighted details");
+          } else {
+            result.textContent = error.message || "Something went wrong while placing your order. Please try again.";
+            showToast(result.textContent, 2200);
+          }
           result.className = "order-result error is-visible";
         } finally {
-          submit.textContent = "Place Order";
-          submit.disabled = totals().count === 0;
+          checkoutState.pending = false;
+          setSubmitState(submit, false, "Place Order");
         }
       }
 
       async function submitCodOrder(form) {
-        const response = await fetch("/api/orders", {
+        const payload = formPayload(form);
+        logCheckout("order_save_started", { paymentMethod: "cod" });
+        const { response, data } = await fetchJson("/api/orders", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formPayload(form)),
-        });
-        const data = await parseJsonResponse(response, "Order could not be placed.");
+          body: payload,
+        }, "Order could not be placed.");
         handleAuthRequired(response, data);
         if (!response.ok || !data.ok) throwOrderError(data, "Order could not be placed.");
         return data;
@@ -3192,42 +3934,75 @@
           throw new Error("Razorpay test checkout is not available. Please refresh and try again.");
         }
         const orderPayload = formPayload(form);
-        const orderResponse = await fetch("/api/payments/razorpay/order", {
+        logCheckout("payment_initialized_requested", { paymentMethod: "razorpay" });
+        const { response: orderResponse, data: orderData } = await fetchJson("/api/create-order", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(orderPayload),
-        });
-        const orderData = await parseJsonResponse(orderResponse, "Razorpay order could not be created.");
+          body: orderPayload,
+        }, "Razorpay order could not be created.");
         handleAuthRequired(orderResponse, orderData);
         if (!orderResponse.ok || !orderData.ok) throwOrderError(orderData, "Razorpay order could not be created.");
+        if (orderData.order) {
+          logCheckout("payment_reused_existing_order", { orderId: orderData.order["Order ID"] || "" });
+          return orderData;
+        }
 
         return new Promise((resolve, reject) => {
+          logCheckout("payment_modal_open", { razorpayOrderId: orderData.order_id });
           const checkout = new Razorpay({
             key: orderData.key_id,
             amount: orderData.amount,
             currency: orderData.currency,
             name: "Pulps & Leaves",
-            description: "Test payment for your order",
+            description: paymentState.isTestKey ? "Test payment for your order" : "Secure payment for your order",
             order_id: orderData.order_id,
             prefill: orderData.customer,
             theme: { color: "#2d7b33" },
+            config: paymentState.isTestKey ? {
+              display: {
+                blocks: {
+                  online: {
+                    name: "Test payment methods",
+                    instruments: [
+                      { method: "card" },
+                      { method: "netbanking" }
+                    ],
+                  },
+                },
+                sequence: ["block.online"],
+                preferences: {
+                  show_default_blocks: false,
+                },
+              },
+            } : undefined,
             handler: async (paymentResponse) => {
               try {
-                const verifyResponse = await fetch("/api/payments/razorpay/verify", {
+                logCheckout("payment_success", { razorpayOrderId: paymentResponse.razorpay_order_id, razorpayPaymentId: paymentResponse.razorpay_payment_id });
+                logCheckout("order_save_started", { paymentMethod: "razorpay" });
+                const { response: verifyResponse, data: verifyData } = await fetchJson("/api/verify-payment", {
                   method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(paymentResponse),
-                });
-                const verifyData = await parseJsonResponse(verifyResponse, "Payment could not be verified.");
+                  body: {
+                    ...paymentResponse,
+                    verification_token: orderData.verification_token || "",
+                  },
+                }, "Payment could not be verified.");
                 if (!verifyResponse.ok || !verifyData.ok) throwOrderError(verifyData, "Payment could not be verified.");
                 resolve(verifyData);
               } catch (error) {
+                logCheckout("payment_verify_failed", { error: error.message || "Verification failed" });
                 reject(error);
               }
             },
             modal: {
-              ondismiss: () => reject(new Error("Payment popup was closed before completion.")),
+              ondismiss: () => {
+                logCheckout("payment_dismissed");
+                reject(new Error("Payment popup was closed before completion."));
+              },
             },
+          });
+          checkout.on("payment.failed", (response) => {
+            const details = response?.error?.description || response?.error?.reason || "Payment failed before completion.";
+            logCheckout("payment_failed", { error: details });
+            reject(new Error(details));
           });
           checkout.open();
         });
@@ -3243,11 +4018,20 @@
       }
 
       function throwOrderError(data, fallback) {
-        const message = data.errors ? Object.values(data.errors).join(" ") : data.error || fallback;
-        throw new Error(message);
+        const hasFieldErrors = Boolean(data.errors && Object.keys(data.errors).length);
+        const message = hasFieldErrors
+          ? "Please check the highlighted details and try again."
+          : data.error || fallback || "Something went wrong while placing your order. Please try again.";
+        const error = new Error(message);
+        if (hasFieldErrors) error.fieldErrors = data.errors;
+        throw error;
       }
 
       document.addEventListener("click", (event) => {
+        if (event.target === celebration) {
+          celebration.classList.remove("is-visible");
+          celebration.setAttribute("aria-hidden", "true");
+        }
         const addButton = event.target.closest("[data-add]");
         const increaseButton = event.target.closest("[data-increase]");
         const decreaseButton = event.target.closest("[data-decrease]");
@@ -3255,14 +4039,21 @@
         const openButton = event.target.closest("[data-cart-open]");
         const closeButton = event.target.closest("[data-cart-close]");
         const addMoreButton = event.target.closest("[data-add-more]");
+        const accountToggleButton = event.target.closest("[data-account-toggle]");
         const accountOpenButton = event.target.closest("[data-account-open]");
         const accountCloseButton = event.target.closest("[data-account-close]");
         const googleLogin = event.target.closest("[data-google-login]");
         const logoutButton = event.target.closest("[data-logout]");
         const orderHistoryOpen = event.target.closest("[data-order-history]");
+        const profileLogin = event.target.closest("[data-profile-login]");
+        const profileHistory = event.target.closest("[data-profile-history]");
+        const profileLogout = event.target.closest("[data-profile-logout]");
         const mapOpenButton = event.target.closest("[data-map-open]");
         const mapCloseButton = event.target.closest("[data-map-close]");
         const mapUseButton = event.target.closest("[data-map-use]");
+        const insideAccountMenu = event.target.closest(".account-menu");
+
+        if (!insideAccountMenu) setAccountMenuOpen(false);
 
         if (addButton) addToCart(addButton.dataset.add);
         if (increaseButton) changeQty(increaseButton.dataset.increase, 1);
@@ -3274,6 +4065,22 @@
           setCartOpen(false);
           document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" });
         }
+        if (accountToggleButton) setAccountMenuOpen(!accountMenuOpen);
+        if (profileLogin) {
+          setAccountMenuOpen(false);
+          accountModalTitle.textContent = "Create your account";
+          accountModalCopy.textContent = "Continue with Google to save your profile and place orders.";
+          setAccountModalOpen(true);
+        }
+        if (profileHistory) {
+          setAccountMenuOpen(false);
+          setAccountModalOpen(true);
+          loadOrderHistory();
+        }
+        if (profileLogout) {
+          setAccountMenuOpen(false);
+          fetch("/auth/logout", { method: "POST" }).finally(() => window.location.reload());
+        }
         if (logoutButton) {
           fetch("/auth/logout", { method: "POST" }).finally(() => window.location.reload());
         } else if (accountOpenButton) {
@@ -3284,7 +4091,17 @@
             setAccountModalOpen(true);
           }
         }
-        if (orderHistoryOpen) loadOrderHistory();
+        if (orderHistoryOpen) {
+          if (accountState.authenticated) {
+            setAccountModalOpen(true);
+            loadOrderHistory();
+          } else {
+            accountModalTitle.textContent = "Order history";
+            accountModalCopy.textContent = "Continue with Google to view your past orders.";
+            setAccountModalOpen(true);
+            startGoogleLogin("orders");
+          }
+        }
         if (accountCloseButton) setAccountModalOpen(false);
         if (googleLogin) startGoogleLogin();
         if (mapOpenButton) setMapsModalOpen(true);
@@ -3306,10 +4123,29 @@
         submitOrder(form);
       });
 
+      orderForm?.addEventListener("input", (event) => {
+        clearFieldError(event.target);
+        if (event.target?.name && event.target.name !== "checkout_token") {
+          markCheckoutDirty(`form_input_${event.target.name}`);
+        }
+      });
+
+      orderForm?.addEventListener("change", (event) => {
+        clearFieldError(event.target);
+        if (event.target?.name && event.target.name !== "checkout_token") {
+          markCheckoutDirty(`form_change_${event.target.name}`);
+        }
+      });
+
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") setCartOpen(false);
         if (event.key === "Escape") setAccountModalOpen(false);
+        if (event.key === "Escape") setAccountMenuOpen(false);
         if (event.key === "Escape") setMapsModalOpen(false);
+        if (event.key === "Escape" && celebration) {
+          celebration.classList.remove("is-visible");
+          celebration.setAttribute("aria-hidden", "true");
+        }
       });
 
       heroDots.forEach((dot) => {
@@ -3320,8 +4156,14 @@
       });
 
       sortSelect.addEventListener("change", sortProducts);
-      couponInputs.forEach((input) => input.addEventListener("change", renderSummary));
-      paymentInputs.forEach((input) => input.addEventListener("change", renderSummary));
+      couponInputs.forEach((input) => input.addEventListener("change", () => {
+        markCheckoutDirty(`coupon_${input.value}`);
+        renderSummary();
+      }));
+      paymentInputs.forEach((input) => input.addEventListener("change", () => {
+        markCheckoutDirty(`payment_${input.value}`);
+        renderSummary();
+      }));
       addressInput?.addEventListener("focus", () => {
         if (!mapsState.enabled || mapsState.autoPrompted) return;
         mapsState.autoPrompted = true;
@@ -3336,11 +4178,9 @@
       restoreCheckoutDraft();
       refreshAccount();
       showAccountErrorFromUrl();
+      showAccountIntentFromUrl();
       renderSummary();
     })();
   </script>
-  {% if google_maps_enabled %}
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initPLMaps"></script>
-  {% endif %}
 </body>
 </html>

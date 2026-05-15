@@ -1,10 +1,12 @@
 import json
 import os
+import time
 from datetime import datetime
 from pathlib import Path
 
 import gspread
 import pandas as pd
+from gspread.exceptions import APIError
 from gspread.utils import rowcol_to_a1
 
 from time_utils import timestamp_local, today_local
@@ -22,6 +24,7 @@ STATUS_OPTIONS = [
 
 ORDER_HEADERS = [
     "Order ID",
+    "Checkout Token",
     "Timestamp",
     "Customer Name",
     "Phone",
@@ -46,6 +49,8 @@ ORDER_HEADERS = [
     "Google Subject",
     "Updated At",
 ]
+
+LEGACY_ORDER_HEADERS = [header for header in ORDER_HEADERS if header != "Checkout Token"]
 
 
 CUSTOMER_HEADERS = [
@@ -73,6 +78,7 @@ class SheetsHandler:
         self._spreadsheet = None
         self._worksheet = None
         self._headers = ORDER_HEADERS.copy()
+        self._prepared_worksheet_titles = set()
 
         if self.storage_mode in {"auto", "sheets"} and self._can_use_sheets():
             try:
@@ -94,16 +100,18 @@ class SheetsHandler:
 
     def append_order(self, order):
         if self._worksheet:
-            self._worksheet = self._today_worksheet()
-            self._headers = self._prepare_worksheet(self._worksheet)
-            row = [order.get(header, "") for header in self._headers]
-            next_row = self._next_available_row(self._worksheet)
-            self._worksheet.update(
-                f"A{next_row}:{rowcol_to_a1(next_row, len(self._headers))}",
-                [row],
-                value_input_option="USER_ENTERED",
+            worksheet = self._worksheet
+            self._worksheet = worksheet
+            self._ensure_order_header_best_effort(worksheet)
+            headers = self._headers or ORDER_HEADERS.copy()
+            row = [order.get(header, "") for header in headers]
+            self._retry_sheet_write(
+                lambda: self._worksheet.append_row(
+                    row,
+                    value_input_option="USER_ENTERED",
+                    table_range="A1",
+                )
             )
-            self._style_worksheet(self._worksheet, self._headers)
             return
 
         records = self.get_all_orders()
@@ -114,8 +122,7 @@ class SheetsHandler:
         if self._worksheet:
             orders = []
             for worksheet in self._order_worksheets():
-                self._prepare_worksheet(worksheet)
-                records = worksheet.get_all_records()
+                records = self._records_from_worksheet_values(worksheet)
                 for record in records:
                     if record.get("Order ID"):
                         cleaned = self._clean_record(record)
@@ -134,6 +141,24 @@ class SheetsHandler:
         order_id = str(order_id).strip().upper()
         for order in self.get_all_orders():
             if str(order.get("Order ID", "")).strip().upper() == order_id:
+                return order
+        return None
+
+    def find_order_by_checkout_token(self, checkout_token):
+        checkout_token = str(checkout_token or "").strip()
+        if not checkout_token:
+            return None
+        for order in reversed(self.get_all_orders()):
+            if str(order.get("Checkout Token", "")).strip() == checkout_token:
+                return order
+        return None
+
+    def find_order_by_razorpay_payment_id(self, payment_id):
+        payment_id = str(payment_id or "").strip()
+        if not payment_id:
+            return None
+        for order in reversed(self.get_all_orders()):
+            if str(order.get("Razorpay Payment ID", "")).strip() == payment_id:
                 return order
         return None
 
@@ -186,36 +211,50 @@ class SheetsHandler:
         if not google_subject or not email:
             return None
 
-        existing = self.find_customer(google_subject=google_subject, email=email)
+        try:
+            existing = self.find_customer(google_subject=google_subject, email=email)
+        except Exception:
+            existing = None
         customer = {
             "Google Subject": google_subject,
             "Email": email,
             "Name": str(profile.get("name", "")).strip(),
             "Picture": str(profile.get("picture", "")).strip(),
-            "Phone": existing.get("Phone", "") if existing else "",
-            "Default City": existing.get("Default City", "") if existing else "",
-            "Default Address": existing.get("Default Address", "") if existing else "",
+            "Phone": existing.get("Phone", "") if existing else str(profile.get("phone", "")).strip(),
+            "Default City": existing.get("Default City", "") if existing else str(profile.get("city", "")).strip(),
+            "Default Address": existing.get("Default Address", "") if existing else str(profile.get("address", "")).strip(),
             "Created At": existing.get("Created At", now) if existing else now,
             "Updated At": now,
         }
 
         if self._worksheet:
-            worksheet = self._customers_worksheet()
-            headers = self._ensure_customer_headers(worksheet)
-            records = worksheet.get_all_records(default_blank="")
-            for index, record in enumerate(records, start=2):
+            worksheet = self._customers_worksheet(prepare=False)
+            rows = worksheet.get_all_values()
+            if not rows:
+                self._retry_sheet_write(lambda: worksheet.update("A1", [CUSTOMER_HEADERS], value_input_option="USER_ENTERED"))
+                rows = [CUSTOMER_HEADERS]
+            headers = self._customer_headers_from_row(rows[0])
+            for index, row in enumerate(rows[1:], start=2):
+                record = self._record_from_row(row, headers, CUSTOMER_HEADERS)
                 if str(record.get("Google Subject", "")).strip() == google_subject or str(record.get("Email", "")).strip().lower() == email:
-                    worksheet.update(
-                        f"A{index}:{rowcol_to_a1(index, len(headers))}",
-                        [[customer.get(header, "") for header in headers]],
-                        value_input_option="USER_ENTERED",
+                    customer["Phone"] = record.get("Phone", "")
+                    customer["Default City"] = record.get("Default City", "")
+                    customer["Default Address"] = record.get("Default Address", "")
+                    customer["Created At"] = record.get("Created At", now) or now
+                    self._retry_sheet_write(
+                        lambda: worksheet.update(
+                            f"A{index}:{rowcol_to_a1(index, len(CUSTOMER_HEADERS))}",
+                            [[customer.get(header, "") for header in CUSTOMER_HEADERS]],
+                            value_input_option="USER_ENTERED",
+                        )
                     )
                     return customer
-            next_row = len(worksheet.get_all_values()) + 1
-            worksheet.update(
-                f"A{next_row}:{rowcol_to_a1(next_row, len(headers))}",
-                [[customer.get(header, "") for header in headers]],
-                value_input_option="USER_ENTERED",
+            self._retry_sheet_write(
+                lambda: worksheet.append_row(
+                    [customer.get(header, "") for header in CUSTOMER_HEADERS],
+                    value_input_option="USER_ENTERED",
+                    table_range="A1",
+                )
             )
             return customer
 
@@ -244,14 +283,24 @@ class SheetsHandler:
         allowed_updates = {key: str(value).strip() for key, value in allowed_updates.items() if value is not None}
 
         if self._worksheet:
-            worksheet = self._customers_worksheet()
-            headers = self._ensure_customer_headers(worksheet)
-            records = worksheet.get_all_records(default_blank="")
-            for index, record in enumerate(records, start=2):
+            worksheet = self._customers_worksheet(prepare=False)
+            rows = worksheet.get_all_values()
+            if not rows:
+                self._retry_sheet_write(lambda: worksheet.update("A1", [CUSTOMER_HEADERS], value_input_option="USER_ENTERED"))
+                rows = [CUSTOMER_HEADERS]
+            headers = self._customer_headers_from_row(rows[0])
+            for index, row in enumerate(rows[1:], start=2):
+                record = self._record_from_row(row, headers, CUSTOMER_HEADERS)
                 if str(record.get("Google Subject", "")).strip() == google_subject:
-                    for header, value in allowed_updates.items():
-                        if header in headers:
-                            worksheet.update_cell(index, headers.index(header) + 1, value)
+                    merged = {header: str(record.get(header, "")) for header in CUSTOMER_HEADERS}
+                    merged.update(allowed_updates)
+                    self._retry_sheet_write(
+                        lambda: worksheet.update(
+                            f"A{index}:{rowcol_to_a1(index, len(CUSTOMER_HEADERS))}",
+                            [[merged.get(header, "") for header in CUSTOMER_HEADERS]],
+                            value_input_option="USER_ENTERED",
+                        )
+                    )
                     updated = {header: str(record.get(header, "")) for header in CUSTOMER_HEADERS}
                     updated.update(allowed_updates)
                     return updated
@@ -267,11 +316,14 @@ class SheetsHandler:
 
     def get_all_customers(self):
         if self._worksheet:
-            worksheet = self._customers_worksheet()
-            self._ensure_customer_headers(worksheet)
+            worksheet = self._customers_worksheet(prepare=False)
+            rows = worksheet.get_all_values()
+            if not rows:
+                return []
+            headers = self._customer_headers_from_row(rows[0])
             return [
                 self._clean_customer_record(record)
-                for record in worksheet.get_all_records(default_blank="")
+                for record in (self._record_from_row(row, headers, CUSTOMER_HEADERS) for row in rows[1:])
                 if record.get("Google Subject") or record.get("Email")
             ]
 
@@ -297,7 +349,7 @@ class SheetsHandler:
             client = gspread.service_account(filename=self.credentials_file)
         self._spreadsheet = client.open_by_key(self.sheet_id)
         worksheet = self._today_worksheet()
-        self._headers = self._prepare_worksheet(worksheet)
+        self._headers = ORDER_HEADERS.copy()
         return worksheet
 
     def format_all_order_tabs(self):
@@ -311,7 +363,9 @@ class SheetsHandler:
         try:
             return self._spreadsheet.worksheet(worksheet_title)
         except gspread.WorksheetNotFound:
-            return self._spreadsheet.add_worksheet(title=worksheet_title, rows=1000, cols=len(ORDER_HEADERS))
+            worksheet = self._spreadsheet.add_worksheet(title=worksheet_title, rows=1000, cols=len(ORDER_HEADERS))
+            worksheet.append_row(ORDER_HEADERS, value_input_option="USER_ENTERED")
+            return worksheet
 
     def _order_worksheets(self):
         if not self.daily_worksheets:
@@ -326,12 +380,15 @@ class SheetsHandler:
             worksheets = [self._today_worksheet()]
         return worksheets
 
-    def _customers_worksheet(self):
+    def _customers_worksheet(self, prepare=True):
         try:
             worksheet = self._spreadsheet.worksheet("Customers")
         except gspread.WorksheetNotFound:
             worksheet = self._spreadsheet.add_worksheet(title="Customers", rows=1000, cols=len(CUSTOMER_HEADERS))
-        self._ensure_customer_headers(worksheet)
+            worksheet.append_row(CUSTOMER_HEADERS, value_input_option="USER_ENTERED")
+            return worksheet
+        if prepare:
+            self._ensure_customer_headers(worksheet)
         return worksheet
 
     @staticmethod
@@ -427,7 +484,80 @@ class SheetsHandler:
         headers = self._ensure_worksheet_headers(worksheet)
         self._repair_shifted_status_values(worksheet, headers)
         self._style_worksheet(worksheet, headers)
+        self._prepared_worksheet_titles.add(worksheet.title)
         return headers
+
+    def _ensure_order_header_best_effort(self, worksheet):
+        if worksheet.title in self._prepared_worksheet_titles:
+            return
+        try:
+            self._retry_sheet_write(
+                lambda: worksheet.update(
+                    f"A1:{rowcol_to_a1(1, len(ORDER_HEADERS))}",
+                    [ORDER_HEADERS],
+                    value_input_option="USER_ENTERED",
+                )
+            )
+            self._prepared_worksheet_titles.add(worksheet.title)
+        except Exception:
+            return
+
+    @staticmethod
+    def _records_from_worksheet_values(worksheet):
+        rows = worksheet.get_all_values()
+        if len(rows) < 2:
+            return []
+        headers = SheetsHandler._order_headers_from_row(rows[0])
+        records = []
+        for row in rows[1:]:
+            if not any(str(value).strip() for value in row):
+                continue
+            second_cell = SheetsHandler._row_value(row, 1)
+            if "Checkout Token" in headers and second_cell and not second_cell.startswith("chk_") and SheetsHandler._looks_like_timestamp(second_cell):
+                row_headers = LEGACY_ORDER_HEADERS
+            elif "Checkout Token" not in headers and second_cell.startswith("chk_"):
+                row_headers = ORDER_HEADERS
+            else:
+                row_headers = headers
+            record = SheetsHandler._record_from_row(row, row_headers, ORDER_HEADERS)
+            records.append(record)
+        return records
+
+    @staticmethod
+    def _order_headers_from_row(row):
+        cleaned = [str(header).strip() for header in row]
+        if "Order ID" not in cleaned:
+            return ORDER_HEADERS.copy()
+        return cleaned
+
+    @staticmethod
+    def _customer_headers_from_row(row):
+        cleaned = [str(header).strip() for header in row]
+        if "Google Subject" not in cleaned and "Email" not in cleaned:
+            return CUSTOMER_HEADERS.copy()
+        return cleaned
+
+    @staticmethod
+    def _record_from_row(row, headers, canonical_headers):
+        record = {header: "" for header in canonical_headers}
+        seen_headers = set()
+        for index, header in enumerate(headers):
+            if not header or header in seen_headers or header not in record:
+                continue
+            record[header] = row[index] if index < len(row) else ""
+            seen_headers.add(header)
+        return record
+
+    def _style_worksheet_if_needed(self, worksheet, headers):
+        if worksheet.title in self._prepared_worksheet_titles:
+            return
+        try:
+            self._repair_shifted_status_values(worksheet, headers)
+            self._style_worksheet(worksheet, headers)
+            self._prepared_worksheet_titles.add(worksheet.title)
+        except Exception:
+            # Formatting should never block saving a paid order.
+            return
 
     def _next_available_row(self, worksheet):
         rows = worksheet.get_all_values()
@@ -437,6 +567,32 @@ class SheetsHandler:
             if self._row_value(row, order_id_index):
                 last_real_row = row_number
         return last_real_row + 1
+
+    @staticmethod
+    def is_rate_limit_error(error):
+        status_code = getattr(getattr(error, "response", None), "status_code", None)
+        if status_code == 429:
+            return True
+        if isinstance(error, APIError):
+            message = str(error).lower()
+            if "quota" in message or "rate limit" in message or "resource_exhausted" in message:
+                return True
+        return "rate limit" in str(error).lower() or "quota exceeded" in str(error).lower()
+
+    def _retry_sheet_write(self, callback, attempts=3):
+        last_error = None
+        for attempt in range(attempts):
+            try:
+                return callback()
+            except Exception as error:
+                last_error = error
+                status_code = getattr(getattr(error, "response", None), "status_code", None)
+                is_retryable = self.is_rate_limit_error(error) or status_code in {500, 502, 503, 504}
+                if not is_retryable or attempt == attempts - 1:
+                    raise
+                time.sleep(0.5 * (attempt + 1))
+        if last_error:
+            raise last_error
 
     def _repair_shifted_status_values(self, worksheet, headers):
         status_headers = ["Confirmed", "Packed", "Delivered", "Cancelled"]

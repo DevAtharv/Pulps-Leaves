@@ -4,7 +4,7 @@ from time_utils import today_local
 BUSINESS_NAME = "Pulps & Leaves"
 
 CITIES = {
-    "bangalore": {"label": "Bangalore", "code": "BLR"},
+    "bangalore": {"label": "Bengaluru", "code": "BLR"},
     "hyderabad": {"label": "Hyderabad", "code": "HYD"},
     "pune": {"label": "Pune", "code": "PUN"},
     "mumbai": {"label": "Mumbai", "code": "MUM"},
