@@ -3136,6 +3136,11 @@
       function setAccountModalOpen(isOpen) {
         document.body.classList.toggle("account-modal-open", isOpen);
         accountModal.setAttribute("aria-hidden", String(!isOpen));
+        if (!isOpen) {
+          orderHistoryPanel.classList.remove("is-visible");
+          orderHistoryList.innerHTML = "";
+          orderHistoryStatus.textContent = "Sign in to see your past orders.";
+        }
       }
 
       function setAccountMenuOpen(isOpen) {
@@ -3208,8 +3213,7 @@
           accountModalTitle.textContent = "Your account";
           accountModalCopy.textContent = `${accountState.customer.email || "Signed in"} · View your order history and saved checkout details.`;
           googleLoginButton.hidden = true;
-          orderHistoryButton.hidden = false;
-          orderHistoryButton.textContent = "View order history";
+          orderHistoryButton.hidden = true;
           prefillCustomerDetails(accountState.customer);
           return;
         }
@@ -3424,13 +3428,17 @@
           accountModalCopy.textContent = accountState.authenticated
             ? `${accountState.customer.email || "Signed in"} · View your order history and saved checkout details.`
             : "Continue with Google to view your past orders.";
+          orderHistoryButton.hidden = false;
+          orderHistoryButton.textContent = "View order history";
           setAccountModalOpen(true);
           if (accountState.authenticated) loadOrderHistory();
         } else if (intent === "checkout") {
+          orderHistoryButton.hidden = true;
           setAccountModalOpen(false);
           setCartOpen(true);
           showToast("Signed in. Continue checkout here.");
         } else if (intent === "connected") {
+          orderHistoryButton.hidden = true;
           setAccountModalOpen(false);
           showToast("Signed in successfully.");
         }
