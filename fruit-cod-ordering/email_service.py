@@ -20,6 +20,8 @@ def build_order_confirmation(order, support_phone, support_email):
     total_amount = _money_label(order.get("Total Amount", "0"))
     payment_mode = str(order.get("Payment Mode", "")).strip() or "COD"
     payment_status = str(order.get("Payment Status", "")).strip() or "Pending"
+    if payment_mode.upper() == "COD" and payment_status.lower() == "pending":
+        payment_status = "To be collected on delivery"
     city = str(order.get("City", "")).strip()
     address = str(order.get("Address", "")).strip()
 

@@ -13,7 +13,7 @@ from time_utils import timestamp_local, today_local
 
 
 STATUS_OPTIONS = [
-    "Pending",
+    "Received",
     "Confirmed",
     "Packed",
     "Out for Delivery",

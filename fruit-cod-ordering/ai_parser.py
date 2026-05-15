@@ -9,7 +9,7 @@ from delivery_config import product_by_choice
 
 
 PHONE_PATTERN = re.compile(r"(?:\+?91[\s-]?)?([6-9]\d[\d\s-]{8,12}\d)")
-ORDER_ID_PATTERN = re.compile(r"\bPL\d{2}[A-Z]{2}\d{2}[A-Z]{3}\d{4}\b", re.IGNORECASE)
+ORDER_ID_PATTERN = re.compile(r"\bPL[A-Z0-9]{6}\b", re.IGNORECASE)
 
 
 def normalize_phone(value):

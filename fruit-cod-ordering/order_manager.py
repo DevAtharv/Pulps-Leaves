@@ -9,7 +9,7 @@ from sheets_handler import SheetsHandler
 from time_utils import timestamp_local
 
 
-ORDER_ID_PATTERN = re.compile(r"^PL[A-Z0-9]{10}$")
+ORDER_ID_PATTERN = re.compile(r"^PL[A-Z0-9]{6}$")
 CHECKOUT_TOKEN_PATTERN = re.compile(r"^[A-Za-z0-9_-]{8,120}$")
 ORDER_ID_ALPHABET = string.ascii_uppercase + string.digits
 WEB_CART_PRODUCTS = {
@@ -63,7 +63,7 @@ class OrderManager:
             "Razorpay Order ID": clean_data.get("razorpay_order_id", ""),
             "Razorpay Payment ID": clean_data.get("razorpay_payment_id", ""),
             "Notes": notes,
-            "Order Status": "Pending",
+            "Order Status": "Received",
             "Confirmed": False,
             "Packed": False,
             "Delivered": False,
@@ -243,17 +243,20 @@ class OrderManager:
 
     def generate_order_id(self):
         while True:
-            candidate = "PL" + "".join(secrets.choice(ORDER_ID_ALPHABET) for _ in range(10))
-            if candidate not in self._recent_order_ids:
-                if len(self._recent_order_ids) >= 512:
-                    self._recent_order_ids = set()
-                self._recent_order_ids.add(candidate)
-                return candidate
+            candidate = "PL" + "".join(secrets.choice(ORDER_ID_ALPHABET) for _ in range(6))
+            if candidate in self._recent_order_ids:
+                continue
+            if self.sheets.find_order(candidate):
+                continue
+            if len(self._recent_order_ids) >= 512:
+                self._recent_order_ids = set()
+            self._recent_order_ids.add(candidate)
+            return candidate
 
     def validate_order_id(self, order_id):
         normalized = str(order_id or "").strip().upper()
         if not ORDER_ID_PATTERN.match(normalized):
-            return None, "That Order ID format does not look right. Example: PL7K9Q2M4XB."
+            return None, "That Order ID format does not look right. Example: PL7K9Q2M."
         order = self.sheets.find_order(normalized)
         if not order:
             return None, "I could not find that Order ID. Please check the ID and try again."

@@ -65,7 +65,7 @@ class ChatbotFlow:
             return "Lovely. Which city should we deliver to?\n\n" + city_menu_text()
         if value in {"2", "edit", "edit order", "change order"}:
             session["state"] = "EDIT_ID"
-            return "Please share your Order ID. Example: PL7K9Q2M4XB"
+            return "Please share your Order ID. Example: PL7K9Q2M"
         if value in {"3", "delivery", "delivery date", "date"}:
             session["state"] = "DELIVERY_CITY"
             return "Which city do you want the delivery date for?\n\n" + city_menu_text()

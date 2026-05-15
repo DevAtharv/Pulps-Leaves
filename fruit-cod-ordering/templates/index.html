@@ -2918,6 +2918,7 @@
       let orderResultTimer = null;
       let accountMenuOpen = false;
       let lastCouponKey = "";
+      let suppressCouponCelebration = false;
 
       const formatMoney = (value) => `Rs ${value.toLocaleString("en-IN")}`;
       paymentState.isTestKey = String(paymentState.razorpayKeyId || "").startsWith("rzp_test_");
@@ -3280,7 +3281,7 @@
             <article class="history-card">
               <div class="history-card-head">
                 <strong>Order ${escapeHtml(order.order_id)}</strong>
-                <span class="history-status-pill">${escapeHtml(order.order_status || "Pending")}</span>
+                <span class="history-status-pill">${escapeHtml(order.order_status || "Received")}</span>
               </div>
               <span>${escapeHtml(order.product || "Order items")}</span>
               <div class="history-card-meta">
@@ -3304,7 +3305,7 @@
           total_amount: order["Total Amount"] || "",
           payment_mode: order["Payment Mode"] || "",
           payment_status: order["Payment Status"] || "",
-          order_status: order["Order Status"] || "Pending",
+          order_status: order["Order Status"] || "Received",
           city: order.City || "",
           address: order.Address || "",
           razorpay_payment_id: order["Razorpay Payment ID"] || "",
@@ -3696,7 +3697,7 @@
         if (tokenInput) tokenInput.value = checkoutState.currentToken || "";
         document.querySelector("[data-submit-order]").disabled = checkoutState.pending || summary.count === 0;
 
-        if (appliedCouponKey && appliedCouponKey !== lastCouponKey) {
+        if (appliedCouponKey && appliedCouponKey !== lastCouponKey && !suppressCouponCelebration) {
           showCelebration({
             badge: "Coupon Applied",
             emoji: "🎊",
@@ -3877,6 +3878,7 @@
         }
 
         checkoutState.pending = true;
+        suppressCouponCelebration = true;
         checkoutState.lastSubmitAt = Date.now();
         checkoutState.currentRequestId = makeRequestId();
         const paymentMethod = selectedPaymentMethod(form);
@@ -3921,6 +3923,9 @@
           result.className = "order-result error is-visible";
         } finally {
           checkoutState.pending = false;
+          window.setTimeout(() => {
+            suppressCouponCelebration = false;
+          }, 300);
           setSubmitState(submit, false, "Place Order");
         }
       }

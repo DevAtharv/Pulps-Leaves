@@ -80,7 +80,7 @@ DELIVERY_SCHEDULES = {
 }
 
 ORDER_STATUSES = [
-    "Pending",
+    "Received",
     "Confirmed",
     "Packed",
     "Out for Delivery",
