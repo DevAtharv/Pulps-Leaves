@@ -4843,7 +4843,7 @@
         <h2 id="accountModalTitle" data-account-modal-title>Create your account</h2>
         <button class="close-button" type="button" data-account-close aria-label="Close account popup">x</button>
       </div>
-      <p data-account-modal-copy>Continue with Google to save your profile and place this order.</p>
+      <p data-account-modal-copy>Join Pulps &amp; Leaves Family</p>
       <div class="account-actions">
         <button class="google-login-button" type="button" data-google-login {% if not google_login_enabled %}disabled{% endif %}>
           <span class="google-action-copy">Continue with
@@ -4975,6 +4975,7 @@
         google_auth_failed: "Google sign-in could not be completed. Please try again after checking the redirect URL setup.",
         google_not_configured: "Google sign-in is not configured yet.",
       };
+      const accountJoinCopy = "Join Pulps & Leaves Family";
       let activeFilter = "Mangoes";
       let activeHeroSlide = 0;
       let heroTimer = null;
@@ -5336,6 +5337,35 @@
         return customer?.name || customer?.email || "Log In";
       }
 
+      function showLoginAccountModal() {
+        accountModalTitle.textContent = "Create your account";
+        accountModalCopy.textContent = accountJoinCopy;
+        googleLoginButton.hidden = false;
+        orderHistoryButton.hidden = true;
+        orderHistoryPanel.classList.remove("is-visible", "is-loading");
+        orderHistoryList.innerHTML = "";
+        orderHistoryStatus.textContent = "Sign in to see your past orders.";
+        setAccountModalOpen(true);
+      }
+
+      function showSignedInAccountModal() {
+        accountModalTitle.textContent = "Your account";
+        accountModalCopy.textContent = accountState.customer.email || "Signed in";
+        googleLoginButton.hidden = true;
+        orderHistoryButton.hidden = false;
+        orderHistoryButton.textContent = "Order History";
+        setAccountModalOpen(true);
+      }
+
+      function showOrderHistoryModal() {
+        accountModalTitle.textContent = "Order history";
+        accountModalCopy.textContent = accountState.customer.email || "";
+        googleLoginButton.hidden = true;
+        orderHistoryButton.hidden = true;
+        setAccountModalOpen(true);
+        loadOrderHistory();
+      }
+
       function escapeHtml(value) {
         return String(value ?? "").replace(/[&<>"']/g, (char) => ({
           "&": "&amp;",
@@ -5382,9 +5412,10 @@
           accountPanel.querySelector("button").textContent = "Sign out";
           accountPanel.querySelector("button").dataset.logout = "true";
           accountModalTitle.textContent = "Your account";
-          accountModalCopy.textContent = `${accountState.customer.email || "Signed in"} · View your order history and saved checkout details.`;
+          accountModalCopy.textContent = accountState.customer.email || "Signed in";
           googleLoginButton.hidden = true;
-          orderHistoryButton.hidden = true;
+          orderHistoryButton.hidden = false;
+          orderHistoryButton.textContent = "Order History";
           prefillCustomerDetails(accountState.customer);
           return;
         }
@@ -5400,7 +5431,7 @@
         accountPanel.querySelector("button").innerHTML = googleActionMarkup();
         delete accountPanel.querySelector("button").dataset.logout;
         accountModalTitle.textContent = "Create your account";
-        accountModalCopy.textContent = "Continue with Google to save your profile, place orders, and view order history.";
+        accountModalCopy.textContent = accountJoinCopy;
         googleLoginButton.hidden = false;
         orderHistoryButton.hidden = true;
         orderHistoryPanel.classList.remove("is-visible");
@@ -5624,14 +5655,11 @@
         const intent = params.get("account");
         if (!intent) return;
         if (intent === "orders") {
-          accountModalTitle.textContent = "Your account";
-          accountModalCopy.textContent = accountState.authenticated
-            ? `${accountState.customer.email || "Signed in"} · View your order history and saved checkout details.`
-            : "Continue with Google to view your past orders.";
-          orderHistoryButton.hidden = false;
-          orderHistoryButton.textContent = "Order History";
-          setAccountModalOpen(true);
-          if (accountState.authenticated) loadOrderHistory();
+          if (accountState.authenticated) {
+            showOrderHistoryModal();
+          } else {
+            showLoginAccountModal();
+          }
         } else if (intent === "checkout") {
           orderHistoryButton.hidden = true;
           setAccountModalOpen(false);
@@ -6005,8 +6033,7 @@
 
         if (accountState.required && !accountState.authenticated) {
           saveCheckoutDraft();
-          accountModalCopy.textContent = "Create your account with Google to place this order. Your cart and delivery details will stay here.";
-          setAccountModalOpen(true);
+          showLoginAccountModal();
           return;
         }
 
@@ -6157,8 +6184,7 @@
       function handleAuthRequired(response, data) {
         if (response.status === 401 && data.auth_required) {
           saveCheckoutDraft();
-          accountModalCopy.textContent = data.error || "Create your account with Google to place this order.";
-          setAccountModalOpen(true);
+          showLoginAccountModal();
           throw new Error(data.error || "Please create your account with Google before placing the order.");
         }
       }
@@ -6245,14 +6271,11 @@
         if (accountToggleButton) setAccountMenuOpen(!accountMenuOpen);
         if (profileLogin) {
           setAccountMenuOpen(false);
-          accountModalTitle.textContent = "Create your account";
-          accountModalCopy.textContent = "Continue with Google to save your profile and place orders.";
-          setAccountModalOpen(true);
+          showLoginAccountModal();
         }
         if (profileHistory) {
           setAccountMenuOpen(false);
-          setAccountModalOpen(true);
-          loadOrderHistory();
+          showOrderHistoryModal();
         }
         if (profileLogout) {
           setAccountMenuOpen(false);
@@ -6262,20 +6285,16 @@
           fetch("/auth/logout", { method: "POST" }).finally(() => window.location.reload());
         } else if (accountOpenButton) {
           if (accountState.authenticated) {
-            setAccountModalOpen(true);
+            showSignedInAccountModal();
           } else {
-            accountModalCopy.textContent = "Continue with Google to save your profile and place this order.";
-            setAccountModalOpen(true);
+            showLoginAccountModal();
           }
         }
         if (orderHistoryOpen) {
           if (accountState.authenticated) {
-            setAccountModalOpen(true);
-            loadOrderHistory();
+            showOrderHistoryModal();
           } else {
-            accountModalTitle.textContent = "Order history";
-            accountModalCopy.textContent = "Continue with Google to view your past orders.";
-            setAccountModalOpen(true);
+            showLoginAccountModal();
             startGoogleLogin("orders");
           }
         }
