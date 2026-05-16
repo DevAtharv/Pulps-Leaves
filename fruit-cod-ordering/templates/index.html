@@ -1174,15 +1174,44 @@
       display: grid;
       gap: 12px;
       justify-items: center;
-      padding: 28px 16px;
+      padding: 34px 18px;
       color: var(--muted);
       text-align: center;
       line-height: 1.6;
+      border: 1px dashed #d8cebf;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(245, 166, 35, 0.12), transparent 42%),
+        #fffdf9;
     }
 
     .empty-cart strong {
       color: var(--ink);
       font-size: 17px;
+    }
+
+    .empty-cart .add-more-button {
+      margin-top: 4px;
+      min-height: 44px;
+      padding: 0 18px;
+      color: #fff;
+      border-color: var(--leaf-deep);
+      background: var(--leaf-deep);
+      box-shadow: 0 14px 28px rgba(7, 38, 25, 0.14);
+    }
+
+    .cart-drawer.is-empty .drawer-body {
+      grid-template-columns: minmax(0, 760px);
+      justify-content: center;
+    }
+
+    .cart-drawer.is-empty .checkout-left {
+      width: 100%;
+    }
+
+    .cart-drawer.is-empty .delivery-section,
+    .cart-drawer.is-empty .checkout-section {
+      display: none;
     }
 
     .cart-item {
@@ -3094,7 +3123,7 @@
             <button class="add-more-button" type="button" data-add-more>Add More Items</button>
           </div>
           <div class="cart-items" data-cart-items>
-            <div class="empty-cart"><strong>Your cart is empty</strong><span>Add products first, then click Cart to place your order here.</span></div>
+            <div class="empty-cart"><strong>Your cart is empty</strong><span>Add mangoes first, then your delivery details and payment options will appear here.</span><button class="add-more-button" type="button" data-add-more>Shop products</button></div>
           </div>
         </section>
 
@@ -3583,6 +3612,11 @@
       function setCartOpen(isOpen) {
         document.body.classList.toggle("cart-open", isOpen);
         cartDrawer.setAttribute("aria-hidden", String(!isOpen));
+        if (isOpen) {
+          window.requestAnimationFrame(() => {
+            orderForm?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+          });
+        }
       }
 
       function setAccountModalOpen(isOpen) {
@@ -3887,8 +3921,13 @@
         } else if (intent === "checkout") {
           orderHistoryButton.hidden = true;
           setAccountModalOpen(false);
-          setCartOpen(true);
-          showToast("Signed in. Continue checkout here.");
+          if (totals().count > 0) {
+            setCartOpen(true);
+            showToast("Signed in. Continue checkout here.");
+          } else {
+            document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            showToast("Signed in. Add products to continue checkout.");
+          }
         } else if (intent === "connected") {
           orderHistoryButton.hidden = true;
           setAccountModalOpen(false);
@@ -4128,6 +4167,7 @@
         const summary = totals();
         const items = Array.from(cart.values());
         const appliedCouponKey = summary.appliedCoupons.join("+");
+        cartDrawer?.classList.toggle("is-empty", summary.count === 0);
         cartCount.textContent = summary.count;
         cartButton.classList.toggle("has-items", summary.count > 0);
         mobileTotal.textContent = formatMoney(summary.total);
@@ -4168,7 +4208,7 @@
 
         const itemMount = document.querySelector("[data-cart-items]");
         if (!items.length) {
-          itemMount.innerHTML = '<div class="empty-cart"><strong>Your cart is empty</strong><span>Add products first, then click Cart to place your order here.</span></div>';
+          itemMount.innerHTML = '<div class="empty-cart"><strong>Your cart is empty</strong><span>Add mangoes first, then your delivery details and payment options will appear here.</span><button class="add-more-button" type="button" data-add-more>Shop products</button></div>';
           updateAddRows();
           return;
         }
