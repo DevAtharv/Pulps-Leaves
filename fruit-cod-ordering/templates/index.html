@@ -5892,16 +5892,31 @@
 
       function applyApproximateLocation({ city, position }) {
         if (!addressInput || !city) return;
-        const location = plainLocation(position);
-        const address = `Current location near ${city.label} (${location.lat.toFixed(5)}, ${location.lng.toFixed(5)})`;
+        const address = `Current location near ${city.label}`;
         syncLocationFields({ address, city });
         mapsState.selectedAddress = address;
         mapsState.selectedCity = city.key;
         if (mapAddress) mapAddress.textContent = address;
         if (mapSearch) mapSearch.value = address;
-        setLocationStatus("We filled an approximate location. Please add your house, building, or street details before placing the order.");
+        setLocationStatus("We could not read the exact street address. Please add your house, building, or street details before placing the order.", "error");
         markCheckoutDirty("current_location_approximate");
-        showToast(`Approx location added for ${city.label}`);
+        showToast(`Please add address details for ${city.label}`);
+      }
+
+      async function reverseGeocodeCurrentLocation(location) {
+        const params = new URLSearchParams({
+          lat: String(location.lat),
+          lng: String(location.lng),
+        });
+        const { response, data } = await fetchJson(
+          `/api/reverse-geocode?${params.toString()}`,
+          { timeoutMs: 14000 },
+          "Could not read the address for this location."
+        );
+        if (!response.ok || !data.ok || !data.address) {
+          throw new Error(data.error || "Could not read the address for this location.");
+        }
+        return data.address;
       }
 
       function useCurrentLocation() {
@@ -5928,25 +5943,18 @@
           }
 
           setLocationStatus("Location found. Reading your address...");
-          const hasGeocoder = mapsState.enabled ? await waitForMapsGeocoder() : false;
-          if (!hasGeocoder) {
+          try {
+            const address = await reverseGeocodeCurrentLocation(userLocation);
             mapsState.locating = false;
-            applyApproximateLocation({ city, position: userLocation });
-            return;
-          }
-
-          mapsState.geocoder.geocode({ location: userLocation }, (results, status) => {
-            mapsState.locating = false;
-            if (status !== "OK" || !results?.[0]) {
-              applyApproximateLocation({ city, position: userLocation });
-              return;
-            }
             applyResolvedLocation({
-              address: results[0].formatted_address,
+              address,
               city,
               position: userLocation,
             });
-          });
+          } catch (error) {
+            mapsState.locating = false;
+            applyApproximateLocation({ city, position: userLocation });
+          }
         }, (error) => {
           mapsState.locating = false;
           const denied = error.code === error.PERMISSION_DENIED;

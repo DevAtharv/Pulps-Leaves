@@ -134,6 +134,28 @@ def support_email():
     return clean_env("SUPPORT_EMAIL", "pulpsandleaves@gmail.com")
 
 
+def reverse_geocode_user_agent():
+    return f"PulpsAndLeaves/1.0 ({support_email()})"
+
+
+def readable_osm_address(result):
+    display_name = str(result.get("display_name", "")).strip()
+    if display_name:
+        return display_name
+
+    address = result.get("address") or {}
+    parts = [
+        address.get("house_number"),
+        address.get("road"),
+        address.get("neighbourhood") or address.get("suburb"),
+        address.get("city") or address.get("town") or address.get("village"),
+        address.get("state"),
+        address.get("postcode"),
+        address.get("country"),
+    ]
+    return ", ".join(str(part).strip() for part in parts if str(part or "").strip())
+
+
 def send_order_confirmation_email(order):
     if str(order.get("Source", "")).strip() != "Website":
         return False
@@ -377,6 +399,50 @@ def favicon():
 @app.get("/robots.txt")
 def robots_txt():
     return app.response_class("User-agent: *\nAllow: /\n", mimetype="text/plain")
+
+
+@app.get("/api/reverse-geocode")
+def reverse_geocode():
+    try:
+        lat = float(request.args.get("lat", ""))
+        lng = float(request.args.get("lng", ""))
+    except (TypeError, ValueError):
+        return jsonify({"ok": False, "error": "Location coordinates are invalid."}), 400
+
+    if not (-90 <= lat <= 90 and -180 <= lng <= 180):
+        return jsonify({"ok": False, "error": "Location coordinates are out of range."}), 400
+
+    try:
+        response = requests.get(
+            "https://nominatim.openstreetmap.org/reverse",
+            params={
+                "format": "jsonv2",
+                "lat": f"{lat:.7f}",
+                "lon": f"{lng:.7f}",
+                "zoom": 18,
+                "addressdetails": 1,
+                "accept-language": "en-IN,en;q=0.9",
+            },
+            headers={
+                "Accept": "application/json",
+                "User-Agent": reverse_geocode_user_agent(),
+            },
+            timeout=8,
+        )
+        response.raise_for_status()
+        result = response.json()
+    except requests.RequestException:
+        app.logger.exception("Reverse geocoding request failed")
+        return jsonify({"ok": False, "error": "Could not read the address for this location."}), 502
+    except ValueError:
+        app.logger.exception("Reverse geocoding returned invalid JSON")
+        return jsonify({"ok": False, "error": "Could not read the address for this location."}), 502
+
+    address = readable_osm_address(result)
+    if not address:
+        return jsonify({"ok": False, "error": "Could not find a readable address for this location."}), 404
+
+    return jsonify({"ok": True, "address": address})
 
 
 @app.post("/api/orders")
