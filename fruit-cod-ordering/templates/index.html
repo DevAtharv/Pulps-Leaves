@@ -4685,7 +4685,6 @@
         <section class="delivery-section">
           <div class="section-title checkout-details-title">
             <strong>Delivery details</strong>
-            <button class="add-more-button" type="button" data-account-open>Use saved profile</button>
           </div>
           <div class="checkout-form">
             <div class="account-panel" data-account-panel>
@@ -4924,7 +4923,7 @@
       const onlinePaymentCopy = document.querySelector("[data-online-payment-copy]");
       const onlinePaymentStatus = document.querySelector("[data-online-payment-status]");
       const deliveryFreeAbove = 599;
-      const aam50MinimumAfterGuthli = 599;
+      const couponMinimum = 599;
       const deliveryCharge = 30;
       const savedCheckoutKey = "pl_checkout_draft_v1";
       const checkoutState = {
@@ -5640,8 +5639,7 @@
         const aam50Input = couponInputs.find((input) => input.value === "AAM50");
         const isGuthliApplied = Boolean(guthliInput?.checked);
         const guthliDiscount = isGuthliApplied ? Math.round(subtotal * 0.1) : 0;
-        const subtotalAfterGuthli = subtotal - guthliDiscount;
-        const isAam50Eligible = isGuthliApplied && subtotalAfterGuthli >= aam50MinimumAfterGuthli;
+        const isAam50Eligible = subtotal >= couponMinimum;
 
         if (aam50Input) {
           aam50Input.disabled = !isAam50Eligible;
@@ -5665,14 +5663,12 @@
 
         discount = Math.min(discount, subtotal);
 
-        if (!isGuthliApplied && aam50Input?.checked) {
-          couponMessage = "Apply GUTHLI10 first to unlock AAM50.";
-        } else if (isGuthliApplied && !isAam50Eligible && subtotal > 0) {
-          couponMessage = "GUTHLI10 applied successfully. Shop above ₹599 to unlock AAM50.";
+        if (aam50Input?.checked && !isAam50Eligible && subtotal > 0) {
+          couponMessage = "Shop above Rs 599 to unlock AAM50.";
         } else if (discount > 0) {
           couponMessage = `${appliedCoupons.join(" + ")} applied.`;
-        } else if (isGuthliApplied && subtotal === 0) {
-          couponMessage = "Add products to use GUTHLI10.";
+        } else if ((isGuthliApplied || aam50Input?.checked) && subtotal === 0) {
+          couponMessage = "Add products to use coupons.";
         }
 
         const delivery = subtotal === 0 || subtotal > deliveryFreeAbove ? 0 : deliveryCharge;
@@ -5927,6 +5923,13 @@
         setAccountModalOpen(false);
         document.getElementById("shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
         window.history.replaceState({}, "", `${window.location.pathname}${window.location.search}#shop`);
+      }
+
+      function goToProducts() {
+        setProductDetailVisible(false);
+        setCartOpen(false);
+        document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        window.history.replaceState({}, "", `${window.location.pathname}${window.location.search}#products`);
       }
 
       function moveCustomerHomeAfterOrder(orderId) {
@@ -6200,8 +6203,7 @@
         if (openButton) setCartOpen(true);
         if (closeButton) setCartOpen(false);
         if (addMoreButton) {
-          setCartOpen(false);
-          document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" });
+          goToProducts();
         }
         if (accountToggleButton) setAccountMenuOpen(!accountMenuOpen);
         if (profileLogin) {
