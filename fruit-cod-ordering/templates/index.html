@@ -919,7 +919,7 @@
       inset: 0;
       z-index: 80;
       display: none;
-      background: rgba(15, 24, 15, 0.48);
+      background: rgba(15, 24, 15, 0.22);
       opacity: 0;
       animation: fadeIn 180ms ease forwards;
     }
@@ -930,48 +930,71 @@
 
     .cart-drawer {
       position: fixed;
-      top: 16px;
-      right: 16px;
-      bottom: 16px;
+      inset: 0;
       z-index: 90;
-      width: min(1120px, calc(100vw - 32px));
+      width: 100vw;
+      height: 100vh;
+      max-height: 100dvh;
       display: grid;
-      grid-template-rows: auto auto minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
       color: var(--ink);
-      background: #fff;
-      border-radius: var(--radius);
-      box-shadow: -22px 0 60px rgba(15, 24, 15, 0.22);
-      transform: translateX(calc(100% + 24px));
+      background: #faf8f3;
+      border-radius: 0;
+      box-shadow: 0 -24px 70px rgba(15, 24, 15, 0.18);
+      transform: translateY(calc(100% + 24px));
       transition: transform 280ms ease;
       overflow: hidden;
       min-height: 0;
     }
 
     .cart-open .cart-drawer {
-      transform: translateX(0);
+      transform: translateY(0);
     }
 
     .drawer-head {
-      min-height: 66px;
-      display: flex;
+      position: relative;
+      min-height: 72px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      justify-content: space-between;
       gap: 12px;
-      padding: 0 16px;
-      border-bottom: 1px solid var(--line);
-      background: linear-gradient(180deg, #fff, #fbfdf8);
+      padding: 0 clamp(18px, 4vw, 56px);
+      border-bottom: 1px solid #e6dfd2;
+      background: #fff;
     }
 
-    .drawer-head strong {
-      display: block;
-      font-size: 19px;
+    .drawer-brand {
+      grid-column: 2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #071d15;
     }
 
-    .drawer-head span {
+    .drawer-brand strong {
       display: block;
-      margin-top: 2px;
-      color: var(--muted);
-      font-size: 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(24px, 2.4vw, 33px);
+      letter-spacing: -0.04em;
+    }
+
+    .drawer-brand-mark {
+      width: 30px;
+      height: 30px;
+      display: inline-grid;
+      place-items: center;
+      color: #082117;
+    }
+
+    .secure-checkout {
+      justify-self: end;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #222a23;
+      font-size: 14px;
+      font-weight: 700;
     }
 
     .close-button {
@@ -983,8 +1006,12 @@
       font-size: 20px;
     }
 
+    .checkout-close-button {
+      justify-self: start;
+    }
+
     .checkout-steps {
-      display: grid;
+      display: none;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
       padding: 12px 16px;
@@ -1018,26 +1045,40 @@
     .drawer-body {
       overflow: auto;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(330px, 380px);
-      gap: 14px;
+      grid-template-columns: minmax(0, 1.42fr) minmax(360px, 470px);
+      gap: clamp(22px, 3vw, 42px);
       align-items: start;
-      padding: 14px 16px 18px;
-      background: #f8faf5;
+      width: min(1420px, calc(100vw - 96px));
+      margin: 0 auto;
+      padding: clamp(28px, 4vw, 42px) 0 56px;
+      background: #faf8f3;
       min-height: 0;
       height: 100%;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
     }
 
+    .checkout-layout {
+      border: 0;
+    }
+
+    .checkout-left {
+      display: grid;
+      gap: clamp(26px, 4vw, 38px);
+      min-width: 0;
+    }
+
     .cart-section,
+    .delivery-section,
     .checkout-section {
       min-width: 0;
       min-height: 0;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: #fff;
-      overflow: hidden;
-      box-shadow: 0 8px 22px rgba(24, 34, 21, 0.06);
+      background: transparent;
+      animation: riseIn 340ms ease both;
+    }
+
+    .cart-section,
+    .delivery-section {
       animation: riseIn 340ms ease both;
     }
 
@@ -1050,6 +1091,13 @@
     .checkout-section {
       display: grid;
       gap: 0;
+      position: sticky;
+      top: 28px;
+      padding: clamp(26px, 3vw, 36px);
+      border: 1px solid #ded8cf;
+      border-radius: 6px;
+      background: #fff;
+      box-shadow: 0 18px 38px rgba(24, 34, 21, 0.06);
     }
 
     .section-title {
@@ -1057,12 +1105,16 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 13px 14px;
-      border-bottom: 1px solid var(--line);
+      padding: 0;
+      margin-bottom: 18px;
+      border-bottom: 0;
     }
 
     .section-title strong {
-      font-size: 16px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(28px, 3vw, 34px);
+      font-weight: 500;
+      letter-spacing: -0.04em;
     }
 
     .section-title span {
@@ -1078,26 +1130,26 @@
     }
 
     .add-more-button {
-      min-height: 34px;
-      padding: 0 12px;
-      border: 1px solid rgba(45, 123, 51, 0.28);
-      border-radius: 999px;
-      color: var(--leaf-deep);
-      background: var(--mint);
-      font-size: 12px;
+      min-height: 38px;
+      padding: 0 14px;
+      border: 1px solid #e2dacd;
+      border-radius: 7px;
+      color: #071d15;
+      background: #fff;
+      font-size: 13px;
       font-weight: 950;
       white-space: nowrap;
     }
 
     .checkout-details-title {
-      border-top: 1px solid var(--line);
-      background: #fbfcfa;
+      border-top: 0;
+      background: transparent;
     }
 
     .cart-items {
-      min-height: 360px;
-      padding: 12px;
-      background: #fbfcfa;
+      min-height: 164px;
+      padding: 0;
+      background: transparent;
     }
 
     .empty-cart {
@@ -1117,11 +1169,11 @@
 
     .cart-item {
       display: grid;
-      grid-template-columns: 60px 1fr;
-      gap: 10px;
-      padding: 10px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
+      grid-template-columns: 118px minmax(0, 1fr);
+      gap: 18px;
+      padding: 20px;
+      border: 1px solid #e3dacf;
+      border-radius: 6px;
       background: #fff;
       animation: itemIn 220ms ease both;
     }
@@ -1131,21 +1183,21 @@
     }
 
     .cart-item img {
-      width: 60px;
-      height: 60px;
+      width: 118px;
+      height: 118px;
       object-fit: cover;
-      border-radius: 6px;
+      border-radius: 8px;
       background: var(--mint);
     }
 
     .cart-item-main {
       display: grid;
-      gap: 7px;
+      gap: 12px;
       min-width: 0;
     }
 
     .cart-item-main strong {
-      font-size: 14px;
+      font-size: 17px;
       line-height: 1.35;
     }
 
@@ -1161,18 +1213,76 @@
       gap: 8px;
     }
 
+    .cart-item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .cart-item-price {
+      display: grid;
+      justify-items: end;
+      gap: 1px;
+      white-space: nowrap;
+    }
+
+    .cart-item-price strong {
+      font-size: 17px;
+      letter-spacing: 0.03em;
+    }
+
+    .cart-item-price s {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .cart-item-badges {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .cart-item-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 3px 11px;
+      border-radius: 999px;
+      color: #5a3d0e;
+      background: #fff4d8;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .cart-item-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #e5ded2, transparent);
+    }
+
+    .cart-dispatch {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: #2f352e;
+      font-size: 13px;
+    }
+
     .mini-stepper {
       display: grid;
-      grid-template-columns: 30px 34px 30px;
-      border: 1px solid var(--leaf);
-      border-radius: 6px;
+      grid-template-columns: 34px 42px 34px;
+      border: 1px solid #e1d8cc;
+      border-radius: 7px;
       overflow: hidden;
       background: #fff;
     }
 
     .mini-stepper button {
-      min-height: 30px;
-      font-size: 16px;
+      min-height: 34px;
+      color: #071d15;
+      background: #fff;
+      font-size: 17px;
     }
 
     .mini-stepper span {
@@ -1181,9 +1291,9 @@
 
     .price-summary {
       display: grid;
-      gap: 10px;
-      padding: 13px 14px 14px;
-      border-bottom: 1px solid var(--line);
+      gap: 14px;
+      padding: 0;
+      border-bottom: 0;
       background: #fff;
     }
 
@@ -1191,29 +1301,68 @@
       display: flex;
       justify-content: space-between;
       gap: 12px;
-      color: var(--muted);
-      font-size: 14px;
+      color: #343d35;
+      font-size: 18px;
     }
 
     .summary-line strong {
       color: var(--ink);
+      font-weight: 900;
+      letter-spacing: 0.07em;
+    }
+
+    .summary-line.discount strong {
+      color: #9b1010;
     }
 
     .summary-line.total {
-      margin-top: 4px;
-      padding-top: 12px;
-      border-top: 1px dashed var(--line-strong);
+      align-items: end;
+      margin-top: 20px;
+      padding-top: 22px;
+      border-top: 1px solid #ccd2ce;
       color: var(--ink);
-      font-size: 18px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 34px;
       font-weight: 900;
     }
 
-    .free-note {
-      padding: 9px 10px;
-      border-radius: 6px;
-      color: var(--leaf-deep);
-      background: var(--mint);
+    .summary-line.total span {
+      display: grid;
+      gap: 6px;
+    }
+
+    .summary-line.total small {
+      color: var(--muted);
+      font-family: var(--font);
       font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    .summary-line.total strong {
+      font-size: clamp(36px, 4vw, 48px);
+      letter-spacing: 0.02em;
+    }
+
+    .summary-code-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 1px 9px;
+      border-radius: 4px;
+      background: #e9e5da;
+      color: #182118;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+    }
+
+    .free-note {
+      padding: 0;
+      border-radius: 0;
+      color: #1a6d24;
+      background: transparent;
+      font-size: 13px;
       font-weight: 900;
       line-height: 1.45;
     }
@@ -1224,17 +1373,19 @@
 
     .coupon-field {
       display: grid;
-      gap: 7px;
-      padding: 10px;
-      border: 1px dashed rgba(45, 123, 51, 0.32);
-      border-radius: 6px;
-      background: #fbfdf8;
+      gap: 10px;
+      padding: 20px 0 16px;
+      border: 0;
+      border-top: 1px solid #ded8cf;
+      border-bottom: 1px dashed #ded8cf;
+      border-radius: 0;
+      background: #fff;
     }
 
     .coupon-field span {
-      color: var(--leaf-deep);
-      font-size: 12px;
-      font-weight: 900;
+      color: #1d241e;
+      font-size: 14px;
+      font-weight: 600;
     }
 
     .coupon-note {
@@ -1246,32 +1397,46 @@
 
     .coupon-options {
       display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
     }
 
     .coupon-option {
+      position: relative;
       display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 8px;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
       align-items: start;
-      padding: 9px 10px;
-      border: 1px solid var(--line);
+      min-height: 106px;
+      padding: 14px 16px;
+      border: 1px solid #e2dacd;
       border-radius: 6px;
       background: #fff;
       color: var(--ink);
       font-size: 12px;
       font-weight: 900;
       line-height: 1.35;
+      transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
     }
 
     .coupon-option input {
-      margin-top: 2px;
+      grid-column: 2;
+      grid-row: 1;
+      width: 18px;
+      height: 18px;
+      margin: 0;
       accent-color: var(--leaf);
+    }
+
+    .coupon-option:has(input:checked) {
+      border-color: #071d15;
+      background: #f7f8f6;
+      box-shadow: inset 0 0 0 1px #071d15;
     }
 
     .coupon-option small {
       display: block;
-      margin-top: 2px;
+      margin-top: 5px;
       color: var(--muted);
       font-size: 11px;
       font-weight: 800;
@@ -1298,8 +1463,8 @@
       min-height: 20px;
       padding: 2px 8px;
       border-radius: 999px;
-      color: #fff;
-      background: linear-gradient(135deg, var(--mango), var(--terracotta));
+      color: #071d15;
+      background: #e9e5da;
       font-size: 11px;
       font-weight: 950;
       letter-spacing: 0.02em;
@@ -1307,8 +1472,12 @@
 
     .checkout-form {
       display: grid;
-      gap: 12px;
-      padding: 14px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      padding: 30px;
+      border: 1px solid #e3dacf;
+      border-radius: 6px;
+      background: #fff;
     }
 
     .field {
@@ -1317,17 +1486,17 @@
     }
 
     .field span {
-      font-size: 13px;
-      font-weight: 900;
+      font-size: 14px;
+      font-weight: 500;
     }
 
     .field input,
     .field select,
     .field textarea {
       width: 100%;
-      min-height: 42px;
-      padding: 9px 10px;
-      border: 1px solid var(--line-strong);
+      min-height: 60px;
+      padding: 13px 14px;
+      border: 1px solid #e2dacd;
       border-radius: 6px;
       outline: none;
       color: var(--ink);
@@ -1336,8 +1505,13 @@
     }
 
     .field textarea {
-      min-height: 74px;
+      min-height: 118px;
       resize: vertical;
+    }
+
+    .field-wide,
+    .account-panel {
+      grid-column: 1 / -1;
     }
 
     .field input:focus,
@@ -1371,14 +1545,13 @@
 
     .payment-box {
       display: grid;
-      gap: 12px;
-      padding: 14px;
-      border: 1px solid rgba(45, 123, 51, 0.16);
-      border-radius: 18px;
-      background:
-        radial-gradient(circle at top right, rgba(245, 166, 35, 0.22), transparent 34%),
-        linear-gradient(145deg, #fffdf4, #f7fbef);
-      box-shadow: 0 14px 34px rgba(22, 69, 29, 0.08);
+      gap: 14px;
+      padding: 20px 0 0;
+      border: 0;
+      border-top: 1px dashed #ded8cf;
+      border-radius: 0;
+      background: #fff;
+      box-shadow: none;
     }
 
     .payment-box-head {
@@ -1388,11 +1561,11 @@
 
     .payment-kicker {
       width: fit-content;
-      padding: 4px 8px;
-      border-radius: 999px;
-      color: var(--leaf-deep);
-      background: rgba(45, 123, 51, 0.1);
-      font-size: 10px;
+      padding: 0;
+      border-radius: 0;
+      color: #071d15;
+      background: transparent;
+      font-size: 15px;
       font-weight: 1000;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -1416,13 +1589,13 @@
 
     .payment-choice {
       display: grid;
-      grid-template-columns: auto 1fr auto;
+      grid-template-columns: auto auto 1fr auto;
       align-items: center;
       gap: 10px;
-      padding: 12px;
-      border: 1px solid rgba(45, 123, 51, 0.18);
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.86);
+      padding: 16px;
+      border: 1px solid #e2dacd;
+      border-radius: 6px;
+      background: #fff;
       cursor: pointer;
       transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease, background 160ms ease;
     }
@@ -1440,9 +1613,9 @@
     }
 
     .payment-choice:has(input:checked) {
-      border-color: var(--leaf);
-      background: linear-gradient(135deg, #ffffff, rgba(222, 243, 207, 0.74));
-      box-shadow: 0 12px 28px rgba(45, 123, 51, 0.12), inset 0 0 0 1px rgba(45, 123, 51, 0.08);
+      border-color: #071d15;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px #071d15;
     }
 
     .payment-choice:has(input:disabled) {
@@ -1456,27 +1629,36 @@
     }
 
     .payment-choice-copy strong {
-      color: var(--leaf-deep);
-      font-size: 14px;
+      color: #071d15;
+      font-size: 17px;
+      letter-spacing: 0.05em;
     }
 
     .payment-choice-copy small {
       display: block;
       color: var(--muted);
-      font-size: 11px;
+      font-size: 13px;
       line-height: 1.4;
     }
 
     .payment-choice-icon {
-      width: 35px;
-      height: 35px;
+      width: 21px;
+      height: 21px;
       display: inline-grid;
       place-items: center;
-      border-radius: 12px;
-      color: var(--leaf-deep);
-      background: rgba(45, 123, 51, 0.1);
-      font-size: 16px;
+      border-radius: 999px;
+      color: #fff;
+      background: #073c2f;
+      font-size: 0;
       font-weight: 1000;
+    }
+
+    .payment-choice-icon::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: currentColor;
     }
 
     .payment-status {
@@ -1498,8 +1680,27 @@
 
     .checkout-button {
       width: 100%;
-      border-color: var(--rose);
-      background: linear-gradient(135deg, var(--rose), var(--berry));
+      min-height: 64px;
+      margin-top: 16px;
+      border-color: #062f25;
+      border-radius: 6px;
+      background: #06382c;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 1000;
+      letter-spacing: 0.06em;
+      box-shadow: 0 12px 22px rgba(6, 56, 44, 0.18);
+    }
+
+    .checkout-safe-note {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      color: #343d35;
+      font-size: 13px;
+      line-height: 1.4;
+      text-align: center;
     }
 
     .checkout-button:disabled {
@@ -2169,6 +2370,15 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .drawer-body {
+        grid-template-columns: 1fr;
+        width: min(100vw - 32px, 720px);
+      }
+
+      .checkout-section {
+        position: static;
+      }
+
     }
 
     @media (max-width: 767px) {
@@ -2320,42 +2530,92 @@
         width: 100vw;
         height: 100vh;
         max-height: 100dvh;
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
         border-radius: 0;
       }
 
-      .drawer-head,
-      .checkout-steps {
-        flex: 0 0 auto;
+      .drawer-head {
+        min-height: 64px;
+        grid-template-columns: auto 1fr auto;
+        padding: 0 12px;
+      }
+
+      .drawer-brand {
+        grid-column: 2;
+        gap: 8px;
+      }
+
+      .drawer-brand strong {
+        font-size: 21px;
+      }
+
+      .drawer-brand-mark {
+        width: 24px;
+        height: 24px;
+      }
+
+      .secure-checkout {
+        font-size: 0;
       }
 
       .drawer-body {
-        flex: 1 1 auto;
         display: block;
-        grid-template-columns: 1fr;
+        width: 100%;
         height: auto;
         min-height: 0;
         overflow-y: auto;
-        padding: 12px 12px 96px;
+        padding: 22px 12px 96px;
         overscroll-behavior-y: contain;
         -webkit-overflow-scrolling: touch;
       }
 
-      .cart-section {
-        margin-bottom: 12px;
+      .checkout-left {
+        gap: 24px;
+      }
+
+      .cart-section,
+      .delivery-section,
+      .checkout-section {
+        margin-bottom: 20px;
       }
 
       .checkout-section {
-        margin-bottom: 12px;
+        padding: 20px 16px;
       }
 
       .cart-items {
         min-height: 180px;
       }
 
+      .cart-item {
+        grid-template-columns: 88px minmax(0, 1fr);
+        gap: 12px;
+        padding: 12px;
+      }
+
+      .cart-item img {
+        width: 88px;
+        height: 88px;
+      }
+
+      .cart-item-top,
+      .cart-item-bottom {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .cart-item-price {
+        justify-items: start;
+      }
+
+      .coupon-options,
       .checkout-form {
-        padding-bottom: 24px;
+        grid-template-columns: 1fr;
+      }
+
+      .checkout-form {
+        padding: 18px;
       }
 
       .map-actions {
@@ -2489,7 +2749,7 @@
               <small data-account-dropdown-email></small>
             </div>
             <button class="account-dropdown-item is-primary" type="button" data-profile-login role="menuitem">Log In</button>
-            <button class="account-dropdown-item" type="button" data-profile-history role="menuitem" hidden>See order history</button>
+            <button class="account-dropdown-item" type="button" data-profile-history role="menuitem" hidden>Order History</button>
             <button class="account-dropdown-item is-danger" type="button" data-profile-logout role="menuitem" hidden>Log Out</button>
           </div>
         </div>
@@ -2639,38 +2899,100 @@
   <div class="drawer-overlay" data-cart-close></div>
   <aside class="cart-drawer" aria-label="Cart and checkout" aria-hidden="true">
     <div class="drawer-head">
-      <div>
-        <strong>Cart &amp; Order</strong>
-        <span data-drawer-subtitle>Add items, review summary, place order.</span>
+      <button class="close-button checkout-close-button" type="button" data-cart-close aria-label="Close cart">x</button>
+      <div class="drawer-brand">
+        <span class="drawer-brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="30" height="30" fill="none">
+            <path d="M25.4 5.3c-7.7-.4-13.5 2.1-16.9 7.2-3.1 4.7-2.5 10.2-.5 12.5 2.3 2.6 7.7 2.5 12.3-.7 4.9-3.5 6.7-9.7 5.1-19Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+            <path d="M8.5 24.6c4.4-5.8 8.8-9.1 14.1-10.9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <strong>Pulps &amp; Leaves</strong>
+        <span class="sr-only" data-drawer-subtitle>Add items, review summary, place order.</span>
       </div>
-      <button class="close-button" type="button" data-cart-close aria-label="Close cart">x</button>
+      <div class="secure-checkout">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+          <path d="M7 10V7a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        Secure Checkout
+      </div>
     </div>
     <div class="checkout-steps" aria-label="Checkout progress">
       <span class="step is-active">Cart</span>
       <span class="step is-active">Details</span>
       <span class="step is-active">Payment</span>
     </div>
-    <div class="drawer-body">
-      <section class="cart-section">
-        <div class="section-title">
-          <div class="cart-title-copy">
-            <strong>Shopping Cart</strong>
-            <span data-summary-subtitle>Cart is empty</span>
+    <form class="drawer-body checkout-layout" data-order-form>
+      <div class="checkout-left">
+        <section class="cart-section">
+          <div class="section-title">
+            <div class="cart-title-copy">
+              <strong>Review Your Cart</strong>
+              <span data-summary-subtitle>Cart is empty</span>
+            </div>
+            <button class="add-more-button" type="button" data-add-more>Add More Items</button>
           </div>
-          <button class="add-more-button" type="button" data-add-more>Add More Items</button>
-        </div>
-        <div class="cart-items" data-cart-items>
-          <div class="empty-cart"><strong>Your cart is empty</strong><span>Add products first, then click Cart to place your order here.</span></div>
-        </div>
-      </section>
+          <div class="cart-items" data-cart-items>
+            <div class="empty-cart"><strong>Your cart is empty</strong><span>Add products first, then click Cart to place your order here.</span></div>
+          </div>
+        </section>
+
+        <section class="delivery-section">
+          <div class="section-title checkout-details-title">
+            <strong>Delivery details</strong>
+            <button class="add-more-button" type="button" data-account-open>Use saved profile</button>
+          </div>
+          <div class="checkout-form">
+            <div class="account-panel" data-account-panel>
+              <div>
+                <strong data-account-name>Create account to order</strong>
+                <span data-account-email>Use Google once, then your delivery details can be saved for next time.</span>
+              </div>
+              <button type="button" data-account-open>Continue with Google</button>
+            </div>
+            <label class="field">
+              <span>Full Name</span>
+              <input name="name" autocomplete="name" required minlength="2" placeholder="e.g. Rahul Sharma">
+            </label>
+            <label class="field">
+              <span>Phone number</span>
+              <input name="phone" inputmode="numeric" autocomplete="tel" required placeholder="+91   98765 43210">
+            </label>
+            <label class="field">
+              <span>City</span>
+              <select name="city" required>
+                <option value="">Select city</option>
+                <option value="bangalore">Bengaluru</option>
+                <option value="hyderabad">Hyderabad</option>
+                <option value="pune">Pune</option>
+                <option value="mumbai">Mumbai</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Pincode</span>
+              <input name="pincode" inputmode="numeric" autocomplete="postal-code" placeholder="e.g. 560001">
+            </label>
+            <label class="field field-wide">
+              <span>Delivery address</span>
+              <textarea name="address" required minlength="8" placeholder="House/Flat No., Building Name, Street, Area" data-address-input></textarea>
+            </label>
+            <label class="field field-wide">
+              <span>Order notes (Optional)</span>
+              <input name="notes" placeholder="Any special instructions for delivery?">
+            </label>
+            <input type="hidden" name="cart_items" data-cart-items-input>
+            <input type="hidden" name="coupon_codes" data-coupon-codes-input>
+            <input type="hidden" name="checkout_token" data-checkout-token-input>
+          </div>
+        </section>
+      </div>
 
       <section class="checkout-section">
         <div class="section-title">
           <strong>Order Summary</strong>
-          <span>Review and pay</span>
         </div>
         <div class="price-summary">
-          <div class="summary-line"><span>Items total</span><strong data-subtotal>Rs 0</strong></div>
           <label class="coupon-field">
             <span>Apply coupons</span>
             <div class="coupon-options">
@@ -2685,84 +3007,45 @@
             </div>
             <small class="coupon-note" data-coupon-note>Select a coupon to apply savings.</small>
           </label>
-          <div class="summary-line"><span>Coupon discount</span><strong data-discount>Rs 0</strong></div>
+          <div class="summary-line"><span>Items total</span><strong data-subtotal>Rs 0</strong></div>
+          <div class="summary-line discount"><span>Coupon <span class="summary-code-pill" data-coupon-pill>Savings</span></span><strong data-discount>Rs 0</strong></div>
           <div class="summary-line"><span data-delivery-label>Delivery</span><strong data-delivery>Rs 0</strong></div>
-          <div class="summary-line total"><span>Order total</span><strong data-total>Rs 0</strong></div>
+          <div class="summary-line total"><span>Total<small>Inclusive of all taxes</small></span><strong data-total>Rs 0</strong></div>
           <div class="free-note" data-free-note></div>
         </div>
-        <div class="section-title checkout-details-title">
-          <strong>Delivery details</strong>
-          <span>Required</span>
+        <div class="payment-box">
+          <div class="payment-box-head">
+            <span class="payment-kicker">Payment Method</span>
+          </div>
+          <div class="payment-options">
+            <label class="payment-choice">
+              <input type="radio" name="payment_method" value="razorpay" {% if razorpay_enabled %}checked{% else %}disabled{% endif %}>
+              <span class="payment-choice-icon" aria-hidden="true">Online</span>
+              <span class="payment-choice-copy">
+                <strong data-online-payment-title>UPI / Cards / Netbanking</strong>
+                <small data-online-payment-copy>{% if razorpay_enabled %}Secure online payment via Razorpay.{% else %}Online payment will appear here once Razorpay keys are added in Vercel.{% endif %}</small>
+              </span>
+              <span class="payment-status {% if not razorpay_enabled %}is-muted{% endif %}" data-online-payment-status>{% if razorpay_enabled %}Secure{% else %}Soon{% endif %}</span>
+            </label>
+            <label class="payment-choice">
+              <input type="radio" name="payment_method" value="cod" {% if not razorpay_enabled %}checked{% endif %}>
+              <span class="payment-choice-icon" aria-hidden="true">COD</span>
+              <span class="payment-choice-copy">
+                <strong>Cash on Delivery (COD)</strong>
+                <small>Pay only after your order reaches your doorstep.</small>
+              </span>
+              <span class="payment-status">Available</span>
+            </label>
+          </div>
         </div>
-        <form class="checkout-form" data-order-form>
-          <div class="account-panel" data-account-panel>
-            <div>
-              <strong data-account-name>Create account to order</strong>
-              <span data-account-email>Use Google once, then your delivery details can be saved for next time.</span>
-            </div>
-            <button type="button" data-account-open>Continue with Google</button>
-          </div>
-          <label class="field">
-            <span>Full Name</span>
-            <input name="name" autocomplete="name" required minlength="2" placeholder="Your name">
-          </label>
-          <label class="field">
-            <span>Phone number</span>
-            <input name="phone" inputmode="numeric" autocomplete="tel" required placeholder="10-digit mobile">
-          </label>
-          <label class="field">
-            <span>City</span>
-            <select name="city" required>
-              <option value="">Select city</option>
-              <option value="bangalore">Bengaluru</option>
-              <option value="hyderabad">Hyderabad</option>
-              <option value="pune">Pune</option>
-              <option value="mumbai">Mumbai</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>Delivery address</span>
-            <textarea name="address" required minlength="8" placeholder="House no, street, area, pincode" data-address-input></textarea>
-          </label>
-          <label class="field">
-            <span>Order notes</span>
-            <input name="notes" placeholder="Optional delivery note">
-          </label>
-          <div class="payment-box">
-            <div class="payment-box-head">
-              <span class="payment-kicker">Payment method</span>
-              <strong>Choose your checkout option</strong>
-              <small>Order details are reviewed before confirmation. Your cart total includes coupons and delivery.</small>
-            </div>
-            <div class="payment-options">
-              <label class="payment-choice">
-                <input type="radio" name="payment_method" value="razorpay" {% if razorpay_enabled %}checked{% else %}disabled{% endif %}>
-                <span class="payment-choice-icon" aria-hidden="true">UPI</span>
-                <span class="payment-choice-copy">
-                  <strong data-online-payment-title>Secure online payment</strong>
-                  <small data-online-payment-copy>{% if razorpay_enabled %}Pay through Razorpay with UPI, cards, or netbanking before the order is saved.{% else %}Online payment will appear here once Razorpay keys are added in Vercel.{% endif %}</small>
-                </span>
-                <span class="payment-status {% if not razorpay_enabled %}is-muted{% endif %}" data-online-payment-status>{% if razorpay_enabled %}Live{% else %}Soon{% endif %}</span>
-              </label>
-              <label class="payment-choice">
-                <input type="radio" name="payment_method" value="cod" {% if not razorpay_enabled %}checked{% endif %}>
-                <span class="payment-choice-icon" aria-hidden="true">COD</span>
-                <span class="payment-choice-copy">
-                  <strong>Cash on Delivery</strong>
-                  <small>Pay only after your Pulps &amp; Leaves order reaches your doorstep.</small>
-                </span>
-                <span class="payment-status">Available</span>
-              </label>
-            </div>
-          </div>
-          <input type="hidden" name="cart_items" data-cart-items-input>
-          <input type="hidden" name="coupon_codes" data-coupon-codes-input>
-          <input type="hidden" name="checkout_token" data-checkout-token-input>
-          <button class="checkout-button" type="submit" data-submit-order disabled>Place Order</button>
-          <div class="order-result" data-order-result></div>
-        </form>
+        <button class="checkout-button" type="submit" data-submit-order disabled>Place Order</button>
+        <div class="checkout-safe-note">
+          <span aria-hidden="true">♢</span>
+          Your data is safe and encrypted.
+        </div>
+        <div class="order-result" data-order-result></div>
       </section>
-    </div>
+    </form>
   </aside>
 
   <div class="account-modal-overlay" data-account-modal aria-hidden="true">
@@ -2776,7 +3059,7 @@
         <button class="google-login-button" type="button" data-google-login {% if not google_login_enabled %}disabled{% endif %}>
           Continue with Google
         </button>
-        <button class="account-history-button" type="button" data-order-history>View order history</button>
+        <button class="account-history-button" type="button" data-order-history>Order History</button>
       </div>
       <div class="order-history-panel" data-order-history-panel>
         <div class="order-history-status" data-order-history-status>Sign in to see your past orders.</div>
@@ -2969,11 +3252,16 @@
         resetCheckoutToken(reason);
       }
 
+      function checkoutButtonLabel() {
+        const summary = totals();
+        return summary.count ? `Place Order • ${formatMoney(summary.total)}` : "Place Order";
+      }
+
       function setSubmitState(submit, isLoading, label) {
         if (!submit) return;
         submit.disabled = Boolean(isLoading) || totals().count === 0;
         submit.classList.toggle("is-loading", Boolean(isLoading));
-        submit.textContent = label;
+        submit.textContent = isLoading ? label : checkoutButtonLabel();
       }
 
       async function fetchJson(url, { method = "GET", body, timeoutMs = 35000, headers = {} } = {}, fallback = "Request failed.") {
@@ -3430,7 +3718,7 @@
             ? `${accountState.customer.email || "Signed in"} · View your order history and saved checkout details.`
             : "Continue with Google to view your past orders.";
           orderHistoryButton.hidden = false;
-          orderHistoryButton.textContent = "View order history";
+          orderHistoryButton.textContent = "Order History";
           setAccountModalOpen(true);
           if (accountState.authenticated) loadOrderHistory();
         } else if (intent === "checkout") {
@@ -3610,7 +3898,7 @@
         if (!isGuthliApplied && aam50Input?.checked) {
           couponMessage = "Apply GUTHLI10 first to unlock AAM50.";
         } else if (isGuthliApplied && !isAam50Eligible && subtotal > 0) {
-          couponMessage = "GUTHLI10 applied successfully. Buy above ₹599 to unlock AAM50.";
+          couponMessage = "GUTHLI10 applied successfully. Shop above ₹599 to unlock AAM50.";
         } else if (discount > 0) {
           couponMessage = `${appliedCoupons.join(" + ")} applied.`;
         } else if (isGuthliApplied && subtotal === 0) {
@@ -3672,7 +3960,7 @@
         });
       }
 
-      function renderSummary() {
+      function renderSummary(options = {}) {
         cartSection?.classList.remove("is-error");
         const summary = totals();
         const items = Array.from(cart.values());
@@ -3686,18 +3974,24 @@
         document.querySelector("[data-drawer-subtitle]").textContent = summary.count ? "Review items, enter details, place order." : "Add items first, then place your order.";
         document.querySelector("[data-subtotal]").textContent = formatMoney(summary.subtotal);
         document.querySelector("[data-discount]").textContent = summary.discount ? `- ${formatMoney(summary.discount)}` : "Rs 0";
-        document.querySelector("[data-delivery-label]").textContent = summary.delivery ? "Delivery (Free above Rs 599)" : "Delivery";
+        document.querySelector("[data-delivery-label]").textContent = "Delivery";
         document.querySelector("[data-delivery]").textContent = summary.delivery ? formatMoney(summary.delivery) : "Free";
         document.querySelector("[data-total]").textContent = formatMoney(summary.total);
+        const couponPill = document.querySelector("[data-coupon-pill]");
+        if (couponPill) couponPill.textContent = summary.appliedCoupons.length ? summary.appliedCoupons.join(" + ") : "Savings";
         if (couponNote) couponNote.textContent = summary.couponMessage;
-        document.querySelector("[data-free-note]").textContent = summary.subtotal > deliveryFreeAbove ? "You unlocked free delivery." : "";
+        document.querySelector("[data-free-note]").textContent = "";
         document.querySelector("[data-cart-items-input]").value = JSON.stringify(cartPayload());
         document.querySelector("[data-coupon-codes-input]").value = JSON.stringify(couponPayload());
         const tokenInput = document.querySelector("[data-checkout-token-input]");
         if (tokenInput) tokenInput.value = checkoutState.currentToken || "";
-        document.querySelector("[data-submit-order]").disabled = checkoutState.pending || summary.count === 0;
+        const submitButton = document.querySelector("[data-submit-order]");
+        if (submitButton) {
+          submitButton.disabled = checkoutState.pending || summary.count === 0;
+          if (!checkoutState.pending) submitButton.textContent = checkoutButtonLabel();
+        }
 
-        if (appliedCouponKey && appliedCouponKey !== lastCouponKey && !suppressCouponCelebration) {
+        if (appliedCouponKey && appliedCouponKey !== lastCouponKey && !suppressCouponCelebration && !options.skipCouponCelebration) {
           showCelebration({
             badge: "Coupon Applied",
             emoji: "🎊",
@@ -3716,23 +4010,39 @@
           return;
         }
 
-        itemMount.innerHTML = items.map((item) => `
+        itemMount.innerHTML = items.map((item) => {
+          const linePrice = item.price * item.qty;
+          const lineMrp = item.mrp ? item.mrp * item.qty : 0;
+          return `
           <article class="cart-item">
             <img src="${item.image}" alt="${item.name}">
             <div class="cart-item-main">
-              <strong>${item.name}</strong>
-              <small>${item.variant}</small>
+              <div class="cart-item-top">
+                <div>
+                  <strong>${item.name}</strong>
+                  <div class="cart-item-badges">
+                    <span class="cart-item-badge">Seasonal drop</span>
+                    <small>${item.variant}</small>
+                  </div>
+                </div>
+                <div class="cart-item-price">
+                  <strong>${formatMoney(linePrice)}</strong>
+                  ${lineMrp ? `<s>${formatMoney(lineMrp)}</s>` : ""}
+                </div>
+              </div>
+              <div class="cart-item-divider"></div>
               <div class="cart-item-bottom">
+                <span class="cart-dispatch" aria-label="Dispatch estimate">🚚 Dispatch in 2-3 days</span>
                 <div class="mini-stepper">
                   <button type="button" data-decrease="${item.id}" aria-label="Decrease ${item.name}">-</button>
                   <span>${item.qty}</span>
                   <button type="button" data-increase="${item.id}" aria-label="Increase ${item.name}">+</button>
                 </div>
-                <strong>${formatMoney(item.price * item.qty)}</strong>
               </div>
             </div>
           </article>
-        `).join("");
+        `;
+        }).join("");
         updateAddRows();
       }
 
@@ -3851,7 +4161,7 @@
           title: "Order placed successfully",
           message: "Your Pulps & Leaves order is now in our system.",
           orderId,
-          subcopy: "Please save this Order ID for tracking and support.",
+          subcopy: "📦 Check All Your Orders Under Order History",
           duration: 6200,
         });
       }
@@ -3905,7 +4215,7 @@
           form.reset();
           checkoutState.currentToken = "";
           checkoutState.currentRequestId = "";
-          renderSummary();
+          renderSummary({ skipCouponCelebration: true });
           if (accountState.authenticated) {
             await refreshAccount();
           }

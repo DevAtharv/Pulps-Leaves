@@ -98,18 +98,25 @@ class SheetsHandler:
     def backend_name(self):
         return "Google Sheets" if self._worksheet else "Local Excel"
 
+    @staticmethod
+    def _sheet_update(worksheet, range_name, values, **kwargs):
+        return worksheet.update(values, range_name=range_name, **kwargs)
+
     def append_order(self, order):
         if self._worksheet:
             worksheet = self._worksheet
             self._worksheet = worksheet
             self._ensure_order_header_best_effort(worksheet)
             headers = self._headers or ORDER_HEADERS.copy()
+            self._compact_data_rows(worksheet, headers, key_column=0)
             row = [order.get(header, "") for header in headers]
+            next_row = self._next_available_row(worksheet, key_column=0)
             self._retry_sheet_write(
-                lambda: self._worksheet.append_row(
-                    row,
+                lambda: self._sheet_update(
+                    worksheet,
+                    f"A{next_row}:{rowcol_to_a1(next_row, len(headers))}",
+                    [row],
                     value_input_option="USER_ENTERED",
-                    table_range="A1",
                 )
             )
             return
@@ -174,8 +181,12 @@ class SheetsHandler:
         if self._worksheet:
             for worksheet in self._order_worksheets():
                 headers = self._prepare_worksheet(worksheet)
-                records = worksheet.get_all_records()
-                for index, record in enumerate(records, start=2):
+                rows = worksheet.get_all_values()
+                row_headers = self._order_headers_from_row(rows[0]) if rows else ORDER_HEADERS
+                for index, row in enumerate(rows[1:], start=2):
+                    if not any(str(value).strip() for value in row):
+                        continue
+                    record = self._record_from_row(row, row_headers, ORDER_HEADERS)
                     if str(record.get("Order ID", "")).strip().upper() == order_id:
                         for header, value in normalized_updates.items():
                             column = headers.index(header) + 1
@@ -215,45 +226,55 @@ class SheetsHandler:
             existing = self.find_customer(google_subject=google_subject, email=email)
         except Exception:
             existing = None
+        existing_phone = existing.get("Phone", "") if existing else ""
+        existing_city = existing.get("Default City", "") if existing else ""
+        existing_address = existing.get("Default Address", "") if existing else ""
+        profile_phone = str(profile.get("phone", "")).strip()
+        profile_city = str(profile.get("city", "")).strip()
+        profile_address = str(profile.get("address", "")).strip()
         customer = {
             "Google Subject": google_subject,
             "Email": email,
             "Name": str(profile.get("name", "")).strip(),
             "Picture": str(profile.get("picture", "")).strip(),
-            "Phone": existing.get("Phone", "") if existing else str(profile.get("phone", "")).strip(),
-            "Default City": existing.get("Default City", "") if existing else str(profile.get("city", "")).strip(),
-            "Default Address": existing.get("Default Address", "") if existing else str(profile.get("address", "")).strip(),
+            "Phone": profile_phone or existing_phone,
+            "Default City": profile_city or existing_city,
+            "Default Address": profile_address or existing_address,
             "Created At": existing.get("Created At", now) if existing else now,
             "Updated At": now,
         }
 
         if self._worksheet:
-            worksheet = self._customers_worksheet(prepare=False)
+            worksheet = self._customers_worksheet()
             rows = worksheet.get_all_values()
             if not rows:
-                self._retry_sheet_write(lambda: worksheet.update("A1", [CUSTOMER_HEADERS], value_input_option="USER_ENTERED"))
+                self._retry_sheet_write(lambda: self._sheet_update(worksheet, "A1", [CUSTOMER_HEADERS], value_input_option="USER_ENTERED"))
                 rows = [CUSTOMER_HEADERS]
             headers = self._customer_headers_from_row(rows[0])
             for index, row in enumerate(rows[1:], start=2):
                 record = self._record_from_row(row, headers, CUSTOMER_HEADERS)
                 if str(record.get("Google Subject", "")).strip() == google_subject or str(record.get("Email", "")).strip().lower() == email:
-                    customer["Phone"] = record.get("Phone", "")
-                    customer["Default City"] = record.get("Default City", "")
-                    customer["Default Address"] = record.get("Default Address", "")
+                    customer["Phone"] = profile_phone or record.get("Phone", "")
+                    customer["Default City"] = profile_city or record.get("Default City", "")
+                    customer["Default Address"] = profile_address or record.get("Default Address", "")
                     customer["Created At"] = record.get("Created At", now) or now
                     self._retry_sheet_write(
-                        lambda: worksheet.update(
+                        lambda: self._sheet_update(
+                            worksheet,
                             f"A{index}:{rowcol_to_a1(index, len(CUSTOMER_HEADERS))}",
                             [[customer.get(header, "") for header in CUSTOMER_HEADERS]],
                             value_input_option="USER_ENTERED",
                         )
                     )
                     return customer
+            self._compact_data_rows(worksheet, CUSTOMER_HEADERS, key_column=0)
+            next_row = self._next_available_row(worksheet, key_column=0)
             self._retry_sheet_write(
-                lambda: worksheet.append_row(
-                    [customer.get(header, "") for header in CUSTOMER_HEADERS],
+                lambda: self._sheet_update(
+                    worksheet,
+                    f"A{next_row}:{rowcol_to_a1(next_row, len(CUSTOMER_HEADERS))}",
+                    [[customer.get(header, "") for header in CUSTOMER_HEADERS]],
                     value_input_option="USER_ENTERED",
-                    table_range="A1",
                 )
             )
             return customer
@@ -283,10 +304,10 @@ class SheetsHandler:
         allowed_updates = {key: str(value).strip() for key, value in allowed_updates.items() if value is not None}
 
         if self._worksheet:
-            worksheet = self._customers_worksheet(prepare=False)
+            worksheet = self._customers_worksheet()
             rows = worksheet.get_all_values()
             if not rows:
-                self._retry_sheet_write(lambda: worksheet.update("A1", [CUSTOMER_HEADERS], value_input_option="USER_ENTERED"))
+                self._retry_sheet_write(lambda: self._sheet_update(worksheet, "A1", [CUSTOMER_HEADERS], value_input_option="USER_ENTERED"))
                 rows = [CUSTOMER_HEADERS]
             headers = self._customer_headers_from_row(rows[0])
             for index, row in enumerate(rows[1:], start=2):
@@ -295,7 +316,8 @@ class SheetsHandler:
                     merged = {header: str(record.get(header, "")) for header in CUSTOMER_HEADERS}
                     merged.update(allowed_updates)
                     self._retry_sheet_write(
-                        lambda: worksheet.update(
+                        lambda: self._sheet_update(
+                            worksheet,
                             f"A{index}:{rowcol_to_a1(index, len(CUSTOMER_HEADERS))}",
                             [[merged.get(header, "") for header in CUSTOMER_HEADERS]],
                             value_input_option="USER_ENTERED",
@@ -316,7 +338,7 @@ class SheetsHandler:
 
     def get_all_customers(self):
         if self._worksheet:
-            worksheet = self._customers_worksheet(prepare=False)
+            worksheet = self._customers_worksheet()
             rows = worksheet.get_all_values()
             if not rows:
                 return []
@@ -386,9 +408,10 @@ class SheetsHandler:
         except gspread.WorksheetNotFound:
             worksheet = self._spreadsheet.add_worksheet(title="Customers", rows=1000, cols=len(CUSTOMER_HEADERS))
             worksheet.append_row(CUSTOMER_HEADERS, value_input_option="USER_ENTERED")
+            self._style_customer_worksheet(worksheet)
             return worksheet
         if prepare:
-            self._ensure_customer_headers(worksheet)
+            self._prepare_customer_worksheet(worksheet)
         return worksheet
 
     @staticmethod
@@ -446,16 +469,20 @@ class SheetsHandler:
         if first_row == canonical_headers:
             return canonical_headers
 
-        records = worksheet.get_all_records(default_blank="")
+        rows = worksheet.get_all_values()
+        source_headers = SheetsHandler._order_headers_from_row(first_row)
         normalized_rows = []
-        for record in records:
+        for row in rows[1:]:
+            if not any(str(value).strip() for value in row):
+                continue
+            record = SheetsHandler._record_from_row(row, source_headers, canonical_headers)
             if not str(record.get("Order ID", "")).strip():
                 continue
             normalized_rows.append([record.get(header, "") for header in canonical_headers])
 
         worksheet.clear()
         rows = [canonical_headers] + normalized_rows
-        worksheet.update("A1", rows, value_input_option="USER_ENTERED")
+        self._sheet_update(worksheet, "A1", rows, value_input_option="USER_ENTERED")
         return canonical_headers
 
     @staticmethod
@@ -465,8 +492,7 @@ class SheetsHandler:
             worksheet.append_row(CUSTOMER_HEADERS)
             return CUSTOMER_HEADERS.copy()
 
-        extras = [header for header in first_row if header and header not in CUSTOMER_HEADERS]
-        canonical_headers = CUSTOMER_HEADERS + extras
+        canonical_headers = CUSTOMER_HEADERS.copy()
         if first_row == canonical_headers:
             return canonical_headers
 
@@ -477,8 +503,14 @@ class SheetsHandler:
             if record.get("Google Subject") or record.get("Email")
         ]
         worksheet.clear()
-        worksheet.update("A1", [canonical_headers] + normalized_rows, value_input_option="USER_ENTERED")
+        self._sheet_update(worksheet, "A1", [canonical_headers] + normalized_rows, value_input_option="USER_ENTERED")
         return canonical_headers
+
+    def _prepare_customer_worksheet(self, worksheet):
+        headers = self._ensure_customer_headers(worksheet)
+        self._compact_data_rows(worksheet, headers, key_column=0)
+        self._style_customer_worksheet(worksheet)
+        return headers
 
     def _prepare_worksheet(self, worksheet):
         headers = self._ensure_worksheet_headers(worksheet)
@@ -492,7 +524,8 @@ class SheetsHandler:
             return
         try:
             self._retry_sheet_write(
-                lambda: worksheet.update(
+                lambda: self._sheet_update(
+                    worksheet,
                     f"A1:{rowcol_to_a1(1, len(ORDER_HEADERS))}",
                     [ORDER_HEADERS],
                     value_input_option="USER_ENTERED",
@@ -559,14 +592,48 @@ class SheetsHandler:
             # Formatting should never block saving a paid order.
             return
 
-    def _next_available_row(self, worksheet):
+    def _next_available_row(self, worksheet, key_column=0):
         rows = worksheet.get_all_values()
         last_real_row = 1
-        order_id_index = 0
         for row_number, row in enumerate(rows[1:], start=2):
-            if self._row_value(row, order_id_index):
+            if self._row_value(row, key_column):
                 last_real_row = row_number
         return last_real_row + 1
+
+    def _compact_data_rows(self, worksheet, headers, key_column=0):
+        rows = worksheet.get_all_values()
+        if len(rows) < 3:
+            return
+
+        compacted_rows = []
+        saw_blank_after_data = False
+        has_gap = False
+        for row in rows[1:]:
+            if self._row_value(row, key_column):
+                if saw_blank_after_data:
+                    has_gap = True
+                compacted_rows.append([row[index] if index < len(row) else "" for index in range(len(headers))])
+                continue
+            if compacted_rows and not any(str(value).strip() for value in row):
+                saw_blank_after_data = True
+
+        if not has_gap:
+            return
+
+        last_row = len(rows)
+        last_column = len(headers)
+        self._retry_sheet_write(
+            lambda: worksheet.batch_clear([f"A2:{rowcol_to_a1(last_row, last_column)}"])
+        )
+        if compacted_rows:
+            self._retry_sheet_write(
+                lambda: self._sheet_update(
+                    worksheet,
+                    f"A2:{rowcol_to_a1(len(compacted_rows) + 1, last_column)}",
+                    compacted_rows,
+                    value_input_option="USER_ENTERED",
+                )
+            )
 
     @staticmethod
     def is_rate_limit_error(error):
@@ -846,6 +913,109 @@ class SheetsHandler:
                         }
                     }
                 )
+
+        self._spreadsheet.batch_update({"requests": requests})
+
+    def _style_customer_worksheet(self, worksheet):
+        if not self._spreadsheet:
+            return
+
+        sheet_id = worksheet.id
+        column_count = len(CUSTOMER_HEADERS)
+        rows = worksheet.get_all_values()
+        row_count = max(len(rows) + 20, 200)
+        requests = [
+            {
+                "updateSheetProperties": {
+                    "properties": {
+                        "sheetId": sheet_id,
+                        "gridProperties": {
+                            "frozenRowCount": 1,
+                            "rowCount": row_count,
+                            "columnCount": column_count,
+                        },
+                        "tabColor": {"red": 0.93, "green": 0.57, "blue": 0.15},
+                    },
+                    "fields": "gridProperties.frozenRowCount,gridProperties.rowCount,gridProperties.columnCount,tabColor",
+                }
+            },
+            {
+                "repeatCell": {
+                    "range": {
+                        "sheetId": sheet_id,
+                        "startRowIndex": 1,
+                        "endRowIndex": row_count,
+                        "startColumnIndex": 0,
+                        "endColumnIndex": column_count,
+                    },
+                    "cell": {},
+                    "fields": "dataValidation",
+                }
+            },
+            {
+                "repeatCell": {
+                    "range": {
+                        "sheetId": sheet_id,
+                        "startRowIndex": 0,
+                        "endRowIndex": 1,
+                        "startColumnIndex": 0,
+                        "endColumnIndex": column_count,
+                    },
+                    "cell": {
+                        "userEnteredFormat": {
+                            "backgroundColor": {"red": 0.15, "green": 0.19, "blue": 0.12},
+                            "horizontalAlignment": "CENTER",
+                            "verticalAlignment": "MIDDLE",
+                            "textFormat": {
+                                "bold": True,
+                                "foregroundColor": {"red": 1, "green": 1, "blue": 1},
+                            },
+                            "wrapStrategy": "WRAP",
+                        }
+                    },
+                    "fields": "userEnteredFormat(backgroundColor,horizontalAlignment,verticalAlignment,textFormat,wrapStrategy)",
+                }
+            },
+            {
+                "setBasicFilter": {
+                    "filter": {
+                        "range": {
+                            "sheetId": sheet_id,
+                            "startRowIndex": 0,
+                            "endColumnIndex": column_count,
+                        }
+                    }
+                }
+            },
+        ]
+
+        widths = {
+            "Google Subject": 230,
+            "Email": 240,
+            "Name": 180,
+            "Picture": 220,
+            "Phone": 130,
+            "Default City": 140,
+            "Default Address": 320,
+            "Created At": 170,
+            "Updated At": 170,
+        }
+        for header, width in widths.items():
+            index = CUSTOMER_HEADERS.index(header)
+            requests.append(
+                {
+                    "updateDimensionProperties": {
+                        "range": {
+                            "sheetId": sheet_id,
+                            "dimension": "COLUMNS",
+                            "startIndex": index,
+                            "endIndex": index + 1,
+                        },
+                        "properties": {"pixelSize": width},
+                        "fields": "pixelSize",
+                    }
+                }
+            )
 
         self._spreadsheet.batch_update({"requests": requests})
 

@@ -19,9 +19,12 @@ def build_order_confirmation(order, support_phone, support_email):
     quantity = str(order.get("Quantity", "")).strip()
     total_amount = _money_label(order.get("Total Amount", "0"))
     payment_mode = str(order.get("Payment Mode", "")).strip() or "COD"
-    payment_status = str(order.get("Payment Status", "")).strip() or "Pending"
+    order_status = str(order.get("Order Status", "")).strip() or "Received"
+    payment_status = str(order.get("Payment Status", "")).strip()
     if payment_mode.upper() == "COD" and payment_status.lower() == "pending":
         payment_status = "To be collected on delivery"
+    if not payment_status:
+        payment_status = "Received" if payment_mode.upper() == "COD" else order_status
     city = str(order.get("City", "")).strip()
     address = str(order.get("Address", "")).strip()
 
@@ -34,6 +37,7 @@ def build_order_confirmation(order, support_phone, support_email):
         f"Items: {product}\n"
         f"Quantity: {quantity}\n"
         f"Total: {total_amount}\n"
+        f"Order status: {order_status}\n"
         f"Payment: {payment_mode} ({payment_status})\n"
         f"Delivery city: {city}\n"
         f"Delivery address: {address}\n\n"
@@ -60,6 +64,7 @@ def build_order_confirmation(order, support_phone, support_email):
         <tr><td style="padding:10px 0;color:#65705f;">Items</td><td style="padding:10px 0;text-align:right;font-weight:700;">{escape(product)}</td></tr>
         <tr><td style="padding:10px 0;color:#65705f;">Quantity</td><td style="padding:10px 0;text-align:right;font-weight:700;">{escape(quantity)}</td></tr>
         <tr><td style="padding:10px 0;color:#65705f;">Total</td><td style="padding:10px 0;text-align:right;font-weight:700;">{escape(total_amount)}</td></tr>
+        <tr><td style="padding:10px 0;color:#65705f;">Order status</td><td style="padding:10px 0;text-align:right;font-weight:700;">{escape(order_status)}</td></tr>
         <tr><td style="padding:10px 0;color:#65705f;">Payment</td><td style="padding:10px 0;text-align:right;font-weight:700;">{escape(payment_mode)} ({escape(payment_status)})</td></tr>
         <tr><td style="padding:10px 0;color:#65705f;">City</td><td style="padding:10px 0;text-align:right;font-weight:700;">{escape(city)}</td></tr>
       </table>

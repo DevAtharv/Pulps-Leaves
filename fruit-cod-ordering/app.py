@@ -93,6 +93,8 @@ def google_oauth_enabled():
 
 
 def customer_login_required():
+    if clean_env("ALLOW_GUEST_CHECKOUT", "true").lower() in {"1", "true", "yes", "on"}:
+        return False
     return clean_env("REQUIRE_CUSTOMER_LOGIN", "false").lower() in {"1", "true", "yes", "on"}
 
 
