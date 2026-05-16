@@ -2365,6 +2365,7 @@
 
     .account-history-button,
     .map-open-button,
+    .map-location-button,
     .map-use-button,
     .map-ghost-button {
       min-height: 40px;
@@ -2384,33 +2385,52 @@
     .order-history-panel {
       display: none;
       margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid var(--line);
+      padding: 14px;
+      border: 1px solid rgba(45, 123, 51, 0.12);
+      border-radius: 14px;
+      background: linear-gradient(180deg, #fbfff7, #fffaf1);
     }
 
     .order-history-panel.is-visible {
       display: grid;
-      gap: 10px;
+      gap: 12px;
     }
 
     .order-history-status {
-      color: var(--muted);
-      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--leaf-deep);
+      font-size: 14px;
       font-weight: 800;
+    }
+
+    .order-history-status::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--leaf);
+      box-shadow: 0 0 0 5px rgba(45, 123, 51, 0.12);
+    }
+
+    .order-history-panel.is-loading .order-history-status::before {
+      animation: pulseDot 900ms ease-in-out infinite;
     }
 
     .order-history-list {
       display: grid;
-      gap: 10px;
+      gap: 12px;
     }
 
     .history-card {
       display: grid;
-      gap: 8px;
-      padding: 12px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: #fbfdf8;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid rgba(45, 123, 51, 0.16);
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 12px 26px rgba(24, 34, 21, 0.07);
     }
 
     .history-card-head,
@@ -2423,6 +2443,61 @@
 
     .history-card strong {
       font-size: 14px;
+    }
+
+    .history-card-title {
+      display: grid;
+      gap: 3px;
+    }
+
+    .history-card-title small {
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .history-card-main {
+      display: grid;
+      gap: 6px;
+      padding: 10px;
+      border-radius: 10px;
+      background: #f7faef;
+    }
+
+    .history-card-address {
+      color: var(--muted);
+    }
+
+    .history-total {
+      color: var(--leaf-deep);
+      font-size: 18px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .history-empty,
+    .history-loading-card {
+      padding: 16px;
+      border: 1px dashed rgba(45, 123, 51, 0.26);
+      border-radius: 12px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.72);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+
+    .history-loading-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .history-loading-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+      animation: shimmer 1.25s linear infinite;
     }
 
     .history-card span,
@@ -2446,6 +2521,32 @@
       margin-top: 8px;
       color: var(--leaf-deep);
       background: var(--mint);
+    }
+
+    .address-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .map-location-button {
+      color: #fff;
+      border-color: var(--leaf);
+      background: linear-gradient(135deg, var(--leaf), var(--leaf-deep));
+    }
+
+    .location-status {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .location-status.is-error {
+      color: var(--rose);
     }
 
     .field-hint {
@@ -2539,6 +2640,23 @@
       color: #fff;
       border-color: var(--leaf);
       background: linear-gradient(135deg, var(--leaf), var(--leaf-deep));
+    }
+
+    @keyframes pulseDot {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.65;
+      }
+      50% {
+        transform: scale(1.25);
+        opacity: 1;
+      }
+    }
+
+    @keyframes shimmer {
+      to {
+        transform: translateX(100%);
+      }
     }
 
     .mobile-cart-bar {
@@ -3310,6 +3428,7 @@
         font-size: 14px;
       }
 
+      .address-actions,
       .map-actions {
         grid-template-columns: 1fr;
       }
@@ -4702,6 +4821,13 @@
             <label class="field field-wide">
               <span>Delivery address</span>
               <textarea name="address" required minlength="8" placeholder="House/Flat No., Building Name, Street, Area" data-address-input></textarea>
+              {% if google_maps_enabled %}
+              <div class="address-actions">
+                <button class="map-open-button" type="button" data-map-open>Search on map</button>
+                <button class="map-location-button" type="button" data-use-location>Use current location</button>
+              </div>
+              <small class="location-status" data-location-status>Tap current location and allow permission to auto-fill your address.</small>
+              {% endif %}
             </label>
             <label class="field field-wide">
               <span>Order notes (Optional)</span>
@@ -4800,6 +4926,27 @@
     </section>
   </div>
 
+  {% if google_maps_enabled %}
+  <div class="maps-modal-overlay" data-maps-modal aria-hidden="true">
+    <section class="maps-modal" role="dialog" aria-modal="true" aria-labelledby="mapsModalTitle">
+      <div class="maps-modal-head">
+        <div>
+          <h2 id="mapsModalTitle">Confirm delivery location</h2>
+          <p>Search your address, drop the pin, or use your current location. We currently deliver in Bengaluru, Hyderabad, Pune, and Mumbai only.</p>
+        </div>
+        <button class="close-button" type="button" data-map-close aria-label="Close map">x</button>
+      </div>
+      <input class="map-search" type="search" data-map-search placeholder="Search building, area, or landmark">
+      <div class="map-canvas" data-map-canvas></div>
+      <div class="map-address-preview" data-map-address>Search your address or move the marker to confirm the address.</div>
+      <div class="map-actions">
+        <button class="map-ghost-button" type="button" data-map-close>Enter manually</button>
+        <button class="map-use-button" type="button" data-map-use>Use this address</button>
+      </div>
+    </section>
+  </div>
+  {% endif %}
+
   <div class="mobile-cart-bar" data-mobile-cart>
     <div>
       <strong data-mobile-total>Rs 0</strong>
@@ -4836,7 +4983,7 @@
         razorpayKeyId: {{ razorpay_key_id | tojson }},
       };
       const mapsState = {
-        enabled: false,
+        enabled: {{ "true" if google_maps_enabled else "false" }},
         loaded: false,
         initialized: false,
         open: false,
@@ -4846,6 +4993,8 @@
         geocoder: null,
         autocomplete: null,
         selectedAddress: "",
+        selectedCity: "",
+        locating: false,
       };
       const cart = new Map();
       const productCards = Array.from(document.querySelectorAll("[data-product]"));
@@ -4905,6 +5054,7 @@
       const mapCanvas = document.querySelector("[data-map-canvas]");
       const mapAddress = document.querySelector("[data-map-address]");
       const mapUseButton = document.querySelector("[data-map-use]");
+      const locationStatus = document.querySelector("[data-location-status]");
       const heroSlides = Array.from(document.querySelectorAll("[data-hero-slide]"));
       const heroDots = Array.from(document.querySelectorAll("[data-hero-dot]"));
       const onlinePaymentTitle = document.querySelector("[data-online-payment-title]");
@@ -4927,10 +5077,10 @@
         google_not_configured: "Google sign-in is not configured yet.",
       };
       const cityCenters = {
-        bangalore: { lat: 12.9716, lng: 77.5946 },
-        hyderabad: { lat: 17.385, lng: 78.4867 },
-        pune: { lat: 18.5204, lng: 73.8567 },
-        mumbai: { lat: 19.076, lng: 72.8777 },
+        bangalore: { label: "Bengaluru", lat: 12.9716, lng: 77.5946, radiusKm: 60 },
+        hyderabad: { label: "Hyderabad", lat: 17.385, lng: 78.4867, radiusKm: 60 },
+        pune: { label: "Pune", lat: 18.5204, lng: 73.8567, radiusKm: 55 },
+        mumbai: { label: "Mumbai", lat: 19.076, lng: 72.8777, radiusKm: 70 },
       };
       let activeFilter = "Mangoes";
       let activeHeroSlide = 0;
@@ -5377,16 +5527,14 @@
 
       async function loadOrderHistory() {
         if (!accountState.authenticated || !orderHistoryPanel) return;
-        if (loadOrderHistory.pending) return;
         const now = Date.now();
         if (loadOrderHistory.cache && now - loadOrderHistory.cache.fetchedAt < 60000) {
           renderOrderHistory(loadOrderHistory.cache.orders);
           return;
         }
+        setOrderHistoryLoading();
+        if (loadOrderHistory.pending) return;
         loadOrderHistory.pending = true;
-        orderHistoryPanel.classList.add("is-visible");
-        orderHistoryStatus.textContent = "Fetching the order details...";
-        orderHistoryList.innerHTML = "";
 
         try {
           const response = await fetch("/api/me/orders");
@@ -5396,16 +5544,39 @@
           loadOrderHistory.cache = { fetchedAt: now, orders };
           renderOrderHistory(orders);
         } catch (error) {
+          orderHistoryPanel.classList.remove("is-loading");
           orderHistoryStatus.textContent = error.message;
+          orderHistoryList.innerHTML = "";
         } finally {
           loadOrderHistory.pending = false;
         }
       }
 
+      function setOrderHistoryLoading() {
+        orderHistoryPanel.classList.add("is-visible", "is-loading");
+        orderHistoryStatus.textContent = "Fetching your order details...";
+        orderHistoryList.innerHTML = '<div class="history-loading-card">Fetching your order details. This can take a few seconds while we check your saved orders.</div>';
+      }
+
+      function formatOrderDate(value) {
+        const raw = String(value || "").trim();
+        if (!raw) return "Recently placed";
+        const parsed = new Date(raw);
+        if (Number.isNaN(parsed.getTime())) return raw;
+        return parsed.toLocaleString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
       function renderOrderHistory(orders) {
+        orderHistoryPanel.classList.remove("is-loading");
         if (!orders.length) {
           orderHistoryStatus.textContent = "No orders yet. Your first order will appear here.";
-          orderHistoryList.innerHTML = "";
+          orderHistoryList.innerHTML = '<div class="history-empty">Your order history is empty right now. Once you place an order, it will appear here like an Amazon-style order card.</div>';
           return;
         }
 
@@ -5414,19 +5585,26 @@
           const amount = Number(order.total_amount || 0);
           const total = Number.isFinite(amount) && amount > 0 ? formatMoney(amount) : `Rs ${escapeHtml(order.total_amount || "0")}`;
           const payment = [order.payment_mode, order.payment_status].filter(Boolean).join(" · ") || "Payment pending";
+          const addressLine = [order.city, order.address].filter(Boolean).join(" · ");
+          const quantity = order.quantity ? `Quantity: ${escapeHtml(order.quantity)}` : "Pulps & Leaves order";
           return `
             <article class="history-card">
               <div class="history-card-head">
-                <strong>Order ${escapeHtml(order.order_id)}</strong>
+                <div class="history-card-title">
+                  <strong>Order ${escapeHtml(order.order_id)}</strong>
+                  <small>${escapeHtml(formatOrderDate(order.timestamp))}</small>
+                </div>
                 <span class="history-status-pill">${escapeHtml(order.order_status || "Received")}</span>
               </div>
-              <span>${escapeHtml(order.product || "Order items")}</span>
-              <div class="history-card-meta">
-                <small>${escapeHtml(order.timestamp || "")}</small>
-                <strong>${total}</strong>
+              <div class="history-card-main">
+                <span>${escapeHtml(order.product || "Order items")}</span>
+                <small>${quantity}</small>
               </div>
-              <small>${escapeHtml(payment)}</small>
-              <small>${escapeHtml(order.city || "")}${order.address ? ` · ${escapeHtml(order.address)}` : ""}</small>
+              <div class="history-card-meta">
+                <small>${escapeHtml(payment)}</small>
+                <span class="history-total">${total}</span>
+              </div>
+              ${addressLine ? `<small class="history-card-address">${escapeHtml(addressLine)}</small>` : ""}
             </article>
           `;
         }).join("");
@@ -5608,7 +5786,129 @@
 
       function currentMapCenter() {
         const cityValue = orderForm?.elements.city?.value || "bangalore";
-        return cityCenters[cityValue] || cityCenters.bangalore;
+        const center = cityCenters[cityValue] || cityCenters.bangalore;
+        return { lat: center.lat, lng: center.lng };
+      }
+
+      function setLocationStatus(message, type = "") {
+        if (!locationStatus) return;
+        locationStatus.textContent = message;
+        locationStatus.classList.toggle("is-error", type === "error");
+      }
+
+      function ensureMapsGeocoder() {
+        if (!window.google?.maps) return false;
+        if (!mapsState.geocoder) mapsState.geocoder = new google.maps.Geocoder();
+        return true;
+      }
+
+      function plainLocation(position) {
+        return {
+          lat: typeof position.lat === "function" ? position.lat() : Number(position.lat),
+          lng: typeof position.lng === "function" ? position.lng() : Number(position.lng),
+        };
+      }
+
+      function distanceKm(from, to) {
+        const radius = 6371;
+        const toRad = (value) => value * Math.PI / 180;
+        const dLat = toRad(to.lat - from.lat);
+        const dLng = toRad(to.lng - from.lng);
+        const lat1 = toRad(from.lat);
+        const lat2 = toRad(to.lat);
+        const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+        return radius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      }
+
+      function nearestDeliveryCity(location) {
+        return Object.entries(cityCenters)
+          .map(([key, center]) => ({ key, ...center, distance: distanceKm(location, center) }))
+          .sort((a, b) => a.distance - b.distance)
+          .find((city) => city.distance <= city.radiusKm);
+      }
+
+      function showLocationUnavailable() {
+        showCelebration({
+          badge: "Delivery unavailable",
+          emoji: "📍",
+          title: "Sorry, we are currently not available at your location",
+          message: "We currently deliver in Bengaluru, Hyderabad, Pune, and Mumbai. Please choose one of these cities or enter another delivery address.",
+          duration: 5200,
+        });
+      }
+
+      function applyResolvedLocation({ address, city, position }) {
+        if (!addressInput || !city) return;
+        addressInput.value = address;
+        addressInput.dispatchEvent(new Event("input", { bubbles: true }));
+        addressInput.dispatchEvent(new Event("change", { bubbles: true }));
+        if (orderForm?.elements.city) {
+          orderForm.elements.city.value = city.key;
+          orderForm.elements.city.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        mapsState.selectedAddress = address;
+        mapsState.selectedCity = city.key;
+        if (mapAddress) mapAddress.textContent = address;
+        if (mapSearch) mapSearch.value = address;
+        if (mapsState.map && mapsState.marker) updateMapMarker(position, false, address);
+        setLocationStatus(`Address filled from your current location. Delivery city: ${city.label}.`);
+        markCheckoutDirty("current_location");
+        showToast(`Location added for ${city.label}`);
+      }
+
+      function useCurrentLocation() {
+        if (!mapsState.enabled) {
+          setLocationStatus("Google Maps is not configured yet. Please enter your address manually.", "error");
+          return;
+        }
+        if (!navigator.geolocation) {
+          setLocationStatus("Current location is not supported on this browser. Please enter your address manually.", "error");
+          return;
+        }
+        if (!ensureMapsGeocoder()) {
+          setLocationStatus("Google Maps is loading. Please try again in a moment.", "error");
+          return;
+        }
+        if (mapsState.locating) return;
+
+        mapsState.locating = true;
+        setLocationStatus("Fetching your current location. Please tap Allow when your browser asks.");
+
+        navigator.geolocation.getCurrentPosition((position) => {
+          const userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          const city = nearestDeliveryCity(userLocation);
+          if (!city) {
+            mapsState.locating = false;
+            setLocationStatus("Sorry, we are currently not available at your location.", "error");
+            showLocationUnavailable();
+            return;
+          }
+
+          mapsState.geocoder.geocode({ location: userLocation }, (results, status) => {
+            mapsState.locating = false;
+            if (status !== "OK" || !results?.[0]) {
+              setLocationStatus("We found your city, but could not read the full address. Please search or enter it manually.", "error");
+              if (orderForm?.elements.city) orderForm.elements.city.value = city.key;
+              return;
+            }
+            applyResolvedLocation({
+              address: results[0].formatted_address,
+              city,
+              position: userLocation,
+            });
+          });
+        }, (error) => {
+          mapsState.locating = false;
+          const denied = error.code === error.PERMISSION_DENIED;
+          setLocationStatus(denied ? "Location permission was blocked. Please allow location or enter your address manually." : "Could not fetch your location. Please try again or enter manually.", "error");
+        }, {
+          enableHighAccuracy: true,
+          timeout: 12000,
+          maximumAge: 60000,
+        });
       }
 
       function initializeMapsPicker() {
@@ -5667,11 +5967,22 @@
 
       function updateMapMarker(position, shouldReverseGeocode = false, address = "") {
         if (!mapsState.map || !mapsState.marker) return;
+        const location = plainLocation(position);
+        const city = nearestDeliveryCity(location);
+        if (!city) {
+          mapsState.selectedAddress = "";
+          mapsState.selectedCity = "";
+          mapAddress.textContent = "Sorry, we are currently not available at this location.";
+          setLocationStatus("Sorry, we are currently not available at this location.", "error");
+          showLocationUnavailable();
+          return;
+        }
+        mapsState.selectedCity = city.key;
         mapsState.marker.setPosition(position);
         mapsState.map.panTo(position);
         if (address) {
           mapsState.selectedAddress = address;
-          mapAddress.textContent = address;
+          mapAddress.textContent = `${address} · Delivery city: ${city.label}`;
           if (mapSearch) mapSearch.value = address;
           return;
         }
@@ -5695,7 +6006,8 @@
         mapsState.geocoder.geocode({ location: position }, (results, status) => {
           if (status === "OK" && results?.[0]) {
             mapsState.selectedAddress = results[0].formatted_address;
-            mapAddress.textContent = mapsState.selectedAddress;
+            const city = cityCenters[mapsState.selectedCity];
+            mapAddress.textContent = city ? `${mapsState.selectedAddress} · Delivery city: ${city.label}` : mapsState.selectedAddress;
             if (mapSearch) mapSearch.value = mapsState.selectedAddress;
           } else {
             const typedAddress = String(mapSearch?.value || "").trim();
@@ -6249,6 +6561,7 @@
         const mapOpenButton = event.target.closest("[data-map-open]");
         const mapCloseButton = event.target.closest("[data-map-close]");
         const mapUseButton = event.target.closest("[data-map-use]");
+        const locationButton = event.target.closest("[data-use-location]");
         const homeLink = event.target.closest("[data-home-link]");
         const insideAccountMenu = event.target.closest(".account-menu");
 
@@ -6333,11 +6646,18 @@
         if (googleLogin) startGoogleLogin();
         if (mapOpenButton) setMapsModalOpen(true);
         if (mapCloseButton) setMapsModalOpen(false);
+        if (locationButton) useCurrentLocation();
         if (mapUseButton) {
           if (mapsState.selectedAddress && addressInput) {
             addressInput.value = mapsState.selectedAddress;
             addressInput.dispatchEvent(new Event("input", { bubbles: true }));
             addressInput.dispatchEvent(new Event("change", { bubbles: true }));
+            if (mapsState.selectedCity && orderForm?.elements.city) {
+              orderForm.elements.city.value = mapsState.selectedCity;
+              orderForm.elements.city.dispatchEvent(new Event("change", { bubbles: true }));
+              const city = cityCenters[mapsState.selectedCity];
+              if (city) setLocationStatus(`Address selected from map. Delivery city: ${city.label}.`);
+            }
           }
           setMapsModalOpen(false);
         }
@@ -6414,5 +6734,8 @@
       if (initialProductId) openProductDetail(initialProductId);
     })();
   </script>
+  {% if google_maps_enabled %}
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initPLMaps" async defer></script>
+  {% endif %}
 </body>
 </html>
