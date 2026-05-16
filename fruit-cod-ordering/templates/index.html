@@ -62,6 +62,7 @@
 
     body.product-detail-open .announcement,
     body.product-detail-open .hero,
+    body.product-detail-open .mango-origin,
     body.product-detail-open .store,
     body.product-detail-open .city-banner,
     body.product-detail-open .stories {
@@ -3393,7 +3394,8 @@
     }
 
     .brand strong,
-    .footer h2 {
+    .footer h2,
+    .footer-brand {
       font-family: var(--serif);
       color: #4f2f05;
       font-size: 25px;
@@ -3941,6 +3943,259 @@
       }
     }
 
+    /* Launch refinements */
+    [data-home-link] {
+      cursor: pointer;
+    }
+
+    .footer-brand {
+      display: inline-block;
+      color: #704608;
+      font-size: 34px;
+      line-height: 1;
+      text-decoration: none;
+    }
+
+    .drawer-brand {
+      border: 0;
+      background: transparent;
+      padding: 0;
+    }
+
+    .cart-item-bottom {
+      justify-content: flex-end;
+    }
+
+    .cart-dispatch {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .hero {
+        min-height: 500px;
+        grid-template-columns: 0.86fr 1.06fr;
+        margin: 34px auto 64px;
+      }
+
+      .hero h1 {
+        max-width: 390px;
+        font-size: clamp(46px, 5.6vw, 68px);
+        line-height: 0.96;
+      }
+
+      .hero-visual {
+        align-self: start;
+        transform: translateY(-18px);
+      }
+
+      .hero-visual img {
+        height: min(500px, 46vw);
+      }
+    }
+
+    .mango-origin {
+      width: var(--container);
+      display: grid;
+      grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
+      gap: clamp(22px, 4vw, 42px);
+      align-items: center;
+      margin: -28px auto 72px;
+      padding: 18px;
+      border: 1px solid rgba(122, 75, 8, 0.1);
+      border-radius: 18px;
+      background: #fffaf1;
+      box-shadow: 0 18px 46px rgba(67, 48, 23, 0.07);
+    }
+
+    .mango-origin img {
+      width: 100%;
+      aspect-ratio: 1.6 / 1;
+      object-fit: cover;
+      border-radius: 14px;
+    }
+
+    .mango-origin-copy {
+      display: grid;
+      gap: 8px;
+    }
+
+    .mango-origin-copy span,
+    .product-name-highlight {
+      color: #3f7138;
+      font-weight: 800;
+    }
+
+    .mango-origin-copy h2 {
+      color: #704608;
+      font-family: var(--serif);
+      font-size: clamp(32px, 4vw, 46px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .mango-origin-copy p {
+      color: #4f473d;
+      line-height: 1.75;
+    }
+
+    .pantry-preview {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(22px, 4vw, 42px);
+      margin-top: 64px;
+    }
+
+    .pantry-card {
+      display: grid;
+      gap: 16px;
+      padding: 24px;
+      border: 1px solid rgba(122, 75, 8, 0.12);
+      border-radius: 16px;
+      background: #fffaf1;
+    }
+
+    .pantry-card h3 {
+      color: #704608;
+      font-family: var(--serif);
+      font-size: 34px;
+      line-height: 1;
+    }
+
+    .pantry-card img {
+      width: 100%;
+      aspect-ratio: 1.7 / 1;
+      object-fit: cover;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .pantry-card span {
+      color: #756d62;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .footer-social a svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    .drawer-head {
+      min-height: 96px;
+    }
+
+    .drawer-brand strong {
+      display: none;
+    }
+
+    .drawer-brand-mark,
+    .drawer-brand-mark img {
+      width: 64px;
+      height: 64px;
+    }
+
+    .drawer-body {
+      background: #fbf7ea;
+    }
+
+    .section-title strong,
+    .checkout-section .section-title strong,
+    .summary-line.total span {
+      color: #436f3d;
+    }
+
+    .cart-section .section-title strong,
+    .delivery-section .section-title strong {
+      color: #436f3d;
+    }
+
+    .checkout-section {
+      border-color: #ded4c4;
+      border-radius: 10px;
+      box-shadow: 0 18px 42px rgba(48, 37, 20, 0.12);
+    }
+
+    .coupon-option:has(input:checked),
+    .payment-choice:has(input:checked) {
+      border-color: #47743f;
+      background: #eef8e8;
+      box-shadow: inset 0 0 0 1px #47743f;
+    }
+
+    .coupon-option:nth-child(2) {
+      border-color: #f1c34a;
+      background: #fff6df;
+    }
+
+    .summary-line.total {
+      margin-top: 18px;
+      padding: 22px;
+      border: 1px solid #eadfc9;
+      border-radius: 7px;
+      background: #fbf7ea;
+    }
+
+    .payment-choice-icon {
+      background: #47743f;
+    }
+
+    .checkout-button {
+      background: #4d7445;
+      border-color: #4d7445;
+      box-shadow: 0 16px 28px rgba(77, 116, 69, 0.22);
+    }
+
+    .checkout-safe-note {
+      color: #5c7e55;
+      font-weight: 800;
+    }
+
+    @media (max-width: 767px) {
+      .hero {
+        margin-top: 22px;
+      }
+
+      .hero h1 {
+        max-width: 320px;
+        font-size: clamp(38px, 12vw, 50px);
+      }
+
+      .hero-visual {
+        margin-top: -8px;
+      }
+
+      .mango-origin,
+      .pantry-preview {
+        grid-template-columns: 1fr;
+      }
+
+      .mango-origin {
+        width: var(--container);
+        margin: -22px auto 52px;
+      }
+
+      .pantry-card {
+        padding: 18px;
+      }
+
+      .drawer-head {
+        min-height: 76px;
+      }
+
+      .drawer-brand-mark,
+      .drawer-brand-mark img {
+        width: 50px;
+        height: 50px;
+      }
+
+      .summary-line.total {
+        padding: 16px;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *,
       *::before,
@@ -3968,7 +4223,7 @@
 
   <header class="header">
     <div class="container nav">
-      <a class="brand" href="#shop" aria-label="Pulps and Leaves home">
+      <a class="brand" href="#shop" data-home-link aria-label="Pulps and Leaves home">
         <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Pulps and Leaves logo">
         <span>
           <strong>Pulps &amp; Leaves</strong>
@@ -4028,6 +4283,15 @@
     </div>
     <div class="hero-visual">
       <img src="{{ url_for('static', filename='img/home_image.png') }}" alt="Pulps and Leaves fresh mango harvest">
+    </div>
+  </section>
+
+  <section class="mango-origin" data-reveal>
+    <img src="{{ url_for('static', filename='img/home_slider_2.png') }}" alt="Original Malda mango harvest">
+    <div class="mango-origin-copy">
+      <span>Original Malda Mango</span>
+      <h2>From orchard to your table.</h2>
+      <p>Another glimpse of our Malda harvest, selected for aroma, sweetness, and careful packing.</p>
     </div>
   </section>
 
@@ -4136,7 +4400,7 @@
         </div>
         <div class="product-info">
           <span class="product-category">{{ product.category }}</span>
-          <h3 class="product-title">{{ product.display_title }} {{ product.unit }}</h3>
+          <h3 class="product-title"><span class="product-name-highlight">{{ product.display_title }}</span> {{ product.unit }}</h3>
           <span class="variant">{{ product.pieces_label }}</span>
           <div class="rating-line"><span class="rating">{{ rating }} star</span><span>Seasonal drop</span></div>
           <div class="price-row"><strong>Rs {{ product.price }}</strong><s>Rs {{ product.mrp }}</s></div>
@@ -4182,6 +4446,19 @@
       </article>
     </section>
 
+    <section class="pantry-preview" aria-label="Coming soon pantry products" data-reveal>
+      <article class="pantry-card">
+        <span>Coming soon</span>
+        <h3>Tea</h3>
+        <img src="{{ url_for('static', filename='img/tea.png') }}" alt="Pulps and Leaves tea">
+      </article>
+      <article class="pantry-card">
+        <span>Coming soon</span>
+        <h3>Makhana</h3>
+        <img src="{{ url_for('static', filename='img/makhana.png') }}" alt="Pulps and Leaves makhana">
+      </article>
+    </section>
+
   </main>
 
   <section class="container city-banner" aria-label="Delivery cities" data-reveal>
@@ -4213,7 +4490,7 @@
           <div class="stars">★★★★★</div>
           <blockquote>"A seasonal luxury we eagerly wait for. The sweetness is perfectly balanced, and the delivery was incredibly careful."</blockquote>
         </div>
-        <cite>Priya K.<br>New Delhi</cite>
+        <cite>Priya K.</cite>
       </article>
     </div>
   </section>
@@ -4221,12 +4498,12 @@
   <footer class="footer">
     <div class="container footer-grid">
       <div>
-        <h2>Pulps &amp; Leaves</h2>
+        <a class="footer-brand" href="#shop" data-home-link>Pulps &amp; Leaves</a>
         <p>Premium mangoes, tea, and makhana for modern Indian homes with clear ordering, delivery details, and payment choices.</p>
         <div class="footer-social">
-          <a href="https://www.facebook.com/share/1XsbRh4rcg/" target="_blank" rel="noopener" aria-label="Facebook">f</a>
-          <a href="https://www.instagram.com/pulpsandleaves?igsh=bW1vMndtM2k3cjZo" target="_blank" rel="noopener" aria-label="Instagram">ig</a>
-          <a href="https://www.youtube.com/@Pulps_and_Leaves" target="_blank" rel="noopener" aria-label="YouTube">yt</a>
+          <a href="https://www.facebook.com/share/1XsbRh4rcg/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-3.3 0-5 2-5 5v3H6v4h3v8h4v-8h3.3l.7-4h-4V9c0-.7.3-1 1-1Z"/></svg></a>
+          <a href="https://www.instagram.com/pulpsandleaves?igsh=bW1vMndtM2k3cjZo" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm5 6.2A3.8 3.8 0 1 0 12 15.8 3.8 3.8 0 0 0 12 8.2Zm5.2-.9a1 1 0 1 0-1-1 1 1 0 0 0 1 1Z"/></svg></a>
+          <a href="https://www.youtube.com/@Pulps_and_Leaves" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.7 4.6 12 4.6 12 4.6s-5.7 0-7.5.5a3 3 0 0 0-2.1 2.1A31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.8.5 7.5.5 7.5.5s5.7 0 7.5-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8ZM10 15.3V8.7l5.5 3.3Z"/></svg></a>
         </div>
       </div>
       <div class="footer-links">
@@ -4240,7 +4517,7 @@
         <strong>Contact</strong>
         <a href="tel:+919835496666">+91 98354 96666</a>
         <a href="mailto:pulpsandleaves@gmail.com">pulpsandleaves@gmail.com</a>
-        <span>Malda, Bihar, India</span>
+        <span>Bihar, India</span>
       </div>
     </div>
     <div class="footer-note">© 2024 Pulps &amp; Leaves. Cultivating the sun in Malda.</div>
@@ -4250,13 +4527,13 @@
   <aside class="cart-drawer" aria-label="Cart and checkout" aria-hidden="true">
     <div class="drawer-head">
       <button class="close-button checkout-close-button" type="button" data-cart-close aria-label="Close cart">x</button>
-      <div class="drawer-brand">
+      <button class="drawer-brand" type="button" data-home-link aria-label="Pulps and Leaves home">
         <span class="drawer-brand-mark" aria-hidden="true">
           <img src="{{ url_for('static', filename='img/logo.png') }}" alt="">
         </span>
         <strong>Pulps &amp; Leaves</strong>
         <span class="sr-only" data-drawer-subtitle>Add items, review summary, place order.</span>
-      </div>
+      </button>
       <div class="secure-checkout">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
           <path d="M7 10V7a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -4467,6 +4744,7 @@
       const productDetail = document.querySelector("[data-product-detail]");
       const homeSections = [
         document.querySelector(".hero"),
+        document.querySelector(".mango-origin"),
         document.querySelector(".store"),
         document.querySelector(".city-banner"),
       ].filter(Boolean);
@@ -5430,16 +5708,6 @@
           if (!checkoutState.pending) submitButton.textContent = checkoutButtonLabel();
         }
 
-        if (appliedCouponKey && appliedCouponKey !== lastCouponKey && !suppressCouponCelebration && !options.skipCouponCelebration) {
-          showCelebration({
-            badge: "Coupon Applied",
-            emoji: "🎊",
-            title: summary.appliedCoupons.length > 1 ? "Savings stacked" : "Coupon unlocked",
-            message: summary.couponMessage,
-            subcopy: summary.discount ? `You saved ${formatMoney(summary.discount)} on this cart.` : "",
-            duration: 2600,
-          });
-        }
         lastCouponKey = appliedCouponKey;
 
         const itemMount = document.querySelector("[data-cart-items]");
@@ -5471,7 +5739,6 @@
               </div>
               <div class="cart-item-divider"></div>
               <div class="cart-item-bottom">
-                <span class="cart-dispatch" aria-label="Dispatch estimate">🚚 Dispatch in 2-3 days</span>
                 <div class="mini-stepper">
                   <button type="button" data-decrease="${item.id}" aria-label="Decrease ${item.name}">-</button>
                   <span>${item.qty}</span>
@@ -5582,6 +5849,16 @@
         if (heroSlides.length < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
         window.clearInterval(heroTimer);
         heroTimer = window.setInterval(() => setHeroSlide(activeHeroSlide + 1), 4200);
+      }
+
+      function goHome() {
+        setAccountMenuOpen(false);
+        setProductDetailVisible(false);
+        setCartOpen(false);
+        setMapsModalOpen(false);
+        setAccountModalOpen(false);
+        document.getElementById("shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        window.history.replaceState({}, "", `${window.location.pathname}${window.location.search}#shop`);
       }
 
       function moveCustomerHomeAfterOrder(orderId) {
@@ -5819,9 +6096,16 @@
         const mapOpenButton = event.target.closest("[data-map-open]");
         const mapCloseButton = event.target.closest("[data-map-close]");
         const mapUseButton = event.target.closest("[data-map-use]");
+        const homeLink = event.target.closest("[data-home-link]");
         const insideAccountMenu = event.target.closest(".account-menu");
 
         if (!insideAccountMenu) setAccountMenuOpen(false);
+
+        if (homeLink) {
+          event.preventDefault();
+          goHome();
+          return;
+        }
 
         if (addButton) {
           addToCart(addButton.dataset.add);
