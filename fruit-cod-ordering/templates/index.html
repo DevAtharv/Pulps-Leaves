@@ -43,10 +43,15 @@
     html {
       scroll-behavior: smooth;
       scroll-padding-top: 92px;
+      width: 100%;
+      overflow-x: hidden;
     }
 
     body {
       margin: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
       color: var(--ink);
       font-family: var(--font);
       font-size: 15px;
@@ -1067,6 +1072,17 @@
       line-height: 1.7;
     }
 
+    .detail-note {
+      width: fit-content;
+      margin-top: -8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      color: #6a5d4d;
+      background: #fff7e8;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
     .detail-price-row {
       display: flex;
       flex-wrap: wrap;
@@ -1171,6 +1187,15 @@
       color: #7b4300;
       border: 2px solid #9b5a0a;
       background: rgba(255, 255, 255, 0.72);
+    }
+
+    .detail-primary:disabled,
+    .detail-secondary:disabled {
+      cursor: not-allowed;
+      color: #8b8275;
+      border-color: #ded4c4;
+      background: #f3eee6;
+      box-shadow: none;
     }
 
     .detail-promise-grid {
@@ -3556,7 +3581,9 @@
     }
 
     .hero-visual {
+      position: relative;
       width: 100%;
+      aspect-ratio: 1 / 1;
       overflow: hidden;
       border-radius: var(--radius-lg);
       background: #f2eadf;
@@ -3565,9 +3592,26 @@
 
     .hero-visual img {
       width: 100%;
-      height: min(560px, 55vw);
+      height: 100%;
       object-fit: cover;
       object-position: 66% center;
+    }
+
+    .hero-visual .hero-track,
+    .hero-visual .hero-slide {
+      display: block;
+      position: absolute;
+      inset: 0;
+    }
+
+    .hero-visual .hero-dots {
+      position: absolute;
+      left: 50%;
+      bottom: 16px;
+      z-index: 4;
+      display: flex;
+      gap: 8px;
+      transform: translateX(-50%);
     }
 
     .store {
@@ -3651,7 +3695,7 @@
     }
 
     .product-card[data-unavailable="true"] {
-      display: none;
+      cursor: pointer;
     }
 
     .product-media {
@@ -3664,6 +3708,16 @@
 
     .product-media img {
       border-radius: 10px;
+    }
+
+    .product-card[data-unavailable="true"] .product-media {
+      aspect-ratio: 1.45 / 1;
+      background: #fffaf1;
+    }
+
+    .product-card[data-unavailable="true"] .product-media img {
+      object-fit: contain;
+      padding: 18px;
     }
 
     .discount {
@@ -3989,7 +4043,7 @@
       }
 
       .hero-visual img {
-        height: min(500px, 46vw);
+        height: 100%;
       }
     }
 
@@ -3999,7 +4053,7 @@
       grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
       gap: clamp(22px, 4vw, 42px);
       align-items: center;
-      margin: -28px auto 72px;
+      margin: 0 auto 92px;
       padding: 18px;
       border: 1px solid rgba(122, 75, 8, 0.1);
       border-radius: 18px;
@@ -4039,7 +4093,7 @@
     }
 
     .pantry-preview {
-      display: grid;
+      display: none;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: clamp(22px, 4vw, 42px);
       margin-top: 64px;
@@ -4174,7 +4228,7 @@
 
       .mango-origin {
         width: var(--container);
-        margin: -22px auto 52px;
+        margin: 0 auto 52px;
       }
 
       .pantry-card {
@@ -4234,7 +4288,6 @@
       <nav class="nav-center" aria-label="Primary navigation">
         <a href="#products">Our Orchards</a>
         <a href="#products">The Harvest</a>
-        <a href="#stories">Gifting</a>
         <a href="#stories">Our Story</a>
       </nav>
 
@@ -4282,16 +4335,18 @@
       </div>
     </div>
     <div class="hero-visual">
-      <img src="{{ url_for('static', filename='img/home_image.png') }}" alt="Pulps and Leaves fresh mango harvest">
-    </div>
-  </section>
-
-  <section class="mango-origin" data-reveal>
-    <img src="{{ url_for('static', filename='img/home_slider_2.png') }}" alt="Original Malda mango harvest">
-    <div class="mango-origin-copy">
-      <span>Original Malda Mango</span>
-      <h2>From orchard to your table.</h2>
-      <p>Another glimpse of our Malda harvest, selected for aroma, sweetness, and careful packing.</p>
+      <div class="hero-track">
+        <figure class="hero-slide is-active" data-hero-slide>
+          <img src="{{ url_for('static', filename='img/home_image.png') }}" alt="Pulps and Leaves fresh mango harvest">
+        </figure>
+        <figure class="hero-slide" data-hero-slide>
+          <img src="{{ url_for('static', filename='img/home_image2.png') }}" alt="Real Pulps and Leaves mango box">
+        </figure>
+      </div>
+      <div class="hero-dots" aria-label="Hero image slides">
+        <button class="hero-dot is-active" type="button" data-hero-dot="0" aria-label="Show fresh mango harvest"></button>
+        <button class="hero-dot" type="button" data-hero-dot="1" aria-label="Show real mango box"></button>
+      </div>
     </div>
   </section>
 
@@ -4309,6 +4364,7 @@
         <span class="detail-kicker" data-detail-variant>Seasonal box</span>
         <h1 data-detail-name>Malda Mango Box</h1>
         <p data-detail-description>Farm-fresh Malda mangoes selected for aroma, sweetness, and careful home delivery.</p>
+        <small class="detail-note">The box shown in the picture may vary.</small>
         <div class="detail-price-row">
           <strong data-detail-price>Rs 0</strong>
           <s data-detail-mrp>Rs 0</s>
@@ -4446,19 +4502,6 @@
       </article>
     </section>
 
-    <section class="pantry-preview" aria-label="Coming soon pantry products" data-reveal>
-      <article class="pantry-card">
-        <span>Coming soon</span>
-        <h3>Tea</h3>
-        <img src="{{ url_for('static', filename='img/tea.png') }}" alt="Pulps and Leaves tea">
-      </article>
-      <article class="pantry-card">
-        <span>Coming soon</span>
-        <h3>Makhana</h3>
-        <img src="{{ url_for('static', filename='img/makhana.png') }}" alt="Pulps and Leaves makhana">
-      </article>
-    </section>
-
   </main>
 
   <section class="container city-banner" aria-label="Delivery cities" data-reveal>
@@ -4495,6 +4538,15 @@
     </div>
   </section>
 
+  <section class="mango-origin" data-reveal>
+    <img src="{{ url_for('static', filename='img/home_slider_2.png') }}" alt="Original Malda mango harvest">
+    <div class="mango-origin-copy">
+      <span>Original Malda Mango</span>
+      <h2>From orchard to your table.</h2>
+      <p>Another glimpse of our Malda harvest, selected for aroma, sweetness, and careful packing.</p>
+    </div>
+  </section>
+
   <footer class="footer">
     <div class="container footer-grid">
       <div>
@@ -4520,7 +4572,7 @@
         <span>Bihar, India</span>
       </div>
     </div>
-    <div class="footer-note">© 2024 Pulps &amp; Leaves. Cultivating the sun in Malda.</div>
+    <div class="footer-note">© 2026 Pulps &amp; Leaves. Cultivating the sun in Malda.</div>
   </footer>
 
   <div class="drawer-overlay" data-cart-close></div>
@@ -5015,6 +5067,8 @@
       const productDescriptions = {
         "malda-mango-5kg-box": "A generous family box of hand-selected Malda mangoes, packed for aroma, sweetness, and careful doorstep delivery.",
         "malda-mango-3kg-box": "A compact seasonal box of farm-fresh Malda mangoes, ideal for gifting, first orders, and smaller homes.",
+        "assam-breakfast-tea": "A future tea line built for slow mornings, rounded aroma, and a clean everyday cup.",
+        "roasted-himalayan-makhana": "A future light snack range with crisp makhana made for clean, modern Indian pantry moments.",
       };
 
       function productTitle(product) {
@@ -5038,18 +5092,14 @@
         const qtyNode = document.querySelector("[data-detail-qty]");
         if (qtyNode) qtyNode.textContent = detailQty;
         const decreaseButton = document.querySelector("[data-detail-decrease]");
-        if (decreaseButton) decreaseButton.disabled = detailQty <= 0;
+        if (decreaseButton) decreaseButton.disabled = detailQty <= 1;
       }
 
       function openProductDetail(id) {
         const product = products.get(id);
         if (!product) return;
-        if (product.unavailable) {
-          showToast(`${product.name} is coming soon`);
-          return;
-        }
         detailProductId = id;
-        detailQty = cart.get(id)?.qty || 0;
+        detailQty = Math.max(1, cart.get(id)?.qty || 1);
         const discountPercent = product.mrp ? Math.round(((product.mrp - product.price) * 100) / product.mrp) : 0;
         document.querySelector("[data-detail-category]").textContent = product.category || "Mangoes";
         document.querySelector("[data-detail-image]").src = product.image;
@@ -5057,9 +5107,13 @@
         document.querySelector("[data-detail-variant]").textContent = product.variant || "Seasonal box";
         document.querySelector("[data-detail-name]").textContent = productTitle(product);
         document.querySelector("[data-detail-description]").textContent = productDescriptions[id] || "Premium Pulps & Leaves produce, selected fresh and packed with care.";
-        document.querySelector("[data-detail-price]").textContent = formatMoney(product.price);
-        document.querySelector("[data-detail-mrp]").textContent = product.mrp ? formatMoney(product.mrp) : "";
-        document.querySelector("[data-detail-save]").textContent = discountPercent ? `Save ${discountPercent}%` : "Fresh price";
+        document.querySelector("[data-detail-price]").textContent = product.unavailable ? "Coming soon" : formatMoney(product.price);
+        document.querySelector("[data-detail-mrp]").textContent = product.unavailable ? "" : (product.mrp ? formatMoney(product.mrp) : "");
+        document.querySelector("[data-detail-save]").textContent = product.unavailable ? "Preview" : (discountPercent ? `Save ${discountPercent}%` : "Fresh price");
+        document.querySelector("[data-detail-add]").disabled = product.unavailable;
+        document.querySelector("[data-detail-buy]").disabled = product.unavailable;
+        document.querySelector("[data-detail-add]").textContent = product.unavailable ? "Coming Soon" : "Add to Cart";
+        document.querySelector("[data-detail-buy]").textContent = product.unavailable ? "Notify Soon" : "Buy Now";
         updateDetailQty();
         setProductDetailVisible(true);
         window.history.replaceState({}, "", `${window.location.pathname}${window.location.search}#product-${id}`);
@@ -6118,7 +6172,7 @@
           updateDetailQty();
         }
         if (detailDecrease) {
-          detailQty = Math.max(0, detailQty - 1);
+          detailQty = Math.max(1, detailQty - 1);
           updateDetailQty();
         }
         if (detailAdd) addDetailQuantityToCart();
@@ -6244,6 +6298,7 @@
       mapSearch?.addEventListener("keydown", (event) => {
         if (event.key === "Enter") event.preventDefault();
       });
+      applyFilters();
       startHeroSlider();
       initRevealMotion();
       applyCustomer(accountState.customer);
