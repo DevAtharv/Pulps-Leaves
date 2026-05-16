@@ -4683,7 +4683,6 @@
             <small class="coupon-note" data-coupon-note>Select a coupon to apply savings.</small>
           </label>
           <div class="summary-line"><span>Items total</span><strong data-subtotal>Rs 0</strong></div>
-          <div class="summary-line discount" data-discount-row hidden><span>Coupon <span class="summary-code-pill" data-coupon-pill>Savings</span></span><strong data-discount>Rs 0</strong></div>
           <div class="summary-line"><span data-delivery-label>Delivery</span><strong data-delivery>Rs 0</strong></div>
           <div class="summary-line total"><span>Total<small>Inclusive of all taxes</small></span><strong data-total>Rs 0</strong></div>
           <div class="free-note" data-free-note></div>
@@ -4885,7 +4884,7 @@
       let lastCouponKey = "";
       let suppressCouponCelebration = false;
       let detailProductId = "";
-      let detailQty = 1;
+      let detailQty = 0;
 
       const formatMoney = (value) => `Rs ${value.toLocaleString("en-IN")}`;
       paymentState.isTestKey = String(paymentState.razorpayKeyId || "").startsWith("rzp_test_");
@@ -5092,14 +5091,14 @@
         const qtyNode = document.querySelector("[data-detail-qty]");
         if (qtyNode) qtyNode.textContent = detailQty;
         const decreaseButton = document.querySelector("[data-detail-decrease]");
-        if (decreaseButton) decreaseButton.disabled = detailQty <= 1;
+        if (decreaseButton) decreaseButton.disabled = detailQty <= 0;
       }
 
       function openProductDetail(id) {
         const product = products.get(id);
         if (!product) return;
         detailProductId = id;
-        detailQty = Math.max(1, cart.get(id)?.qty || 1);
+        detailQty = cart.get(id)?.qty || 0;
         const discountPercent = product.mrp ? Math.round(((product.mrp - product.price) * 100) / product.mrp) : 0;
         document.querySelector("[data-detail-category]").textContent = product.category || "Mangoes";
         document.querySelector("[data-detail-image]").src = product.image;
@@ -5742,14 +5741,9 @@
         document.querySelector("[data-summary-subtitle]").textContent = summary.count ? `${summary.count} item${summary.count === 1 ? "" : "s"} in cart` : "Cart is empty";
         document.querySelector("[data-drawer-subtitle]").textContent = summary.count ? "Review items, enter details, place order." : "Add items first, then place your order.";
         document.querySelector("[data-subtotal]").textContent = formatMoney(summary.subtotal);
-        const discountRow = document.querySelector("[data-discount-row]");
-        if (discountRow) discountRow.hidden = summary.discount <= 0;
-        document.querySelector("[data-discount]").textContent = summary.discount ? `- ${formatMoney(summary.discount)}` : "";
         document.querySelector("[data-delivery-label]").textContent = "Delivery";
         document.querySelector("[data-delivery]").textContent = summary.delivery ? formatMoney(summary.delivery) : "Free";
         document.querySelector("[data-total]").textContent = formatMoney(summary.total);
-        const couponPill = document.querySelector("[data-coupon-pill]");
-        if (couponPill) couponPill.textContent = summary.appliedCoupons.length ? summary.appliedCoupons.join(" + ") : "Savings";
         if (couponNote) couponNote.textContent = summary.couponMessage;
         document.querySelector("[data-free-note]").textContent = "";
         document.querySelector("[data-cart-items-input]").value = JSON.stringify(cartPayload());
@@ -6172,7 +6166,7 @@
           updateDetailQty();
         }
         if (detailDecrease) {
-          detailQty = Math.max(1, detailQty - 1);
+          detailQty = Math.max(0, detailQty - 1);
           updateDetailQty();
         }
         if (detailAdd) addDetailQuantityToCart();
