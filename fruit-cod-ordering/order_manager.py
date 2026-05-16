@@ -20,7 +20,7 @@ WEB_CART_PRODUCTS = {
 }
 DELIVERY_FREE_ABOVE = 599
 DELIVERY_CHARGE = 30
-AAM50_MINIMUM_AFTER_GUTHLI = 599
+COUPON_MINIMUM_SUBTOTAL = 599
 
 
 class OrderManager:
@@ -234,8 +234,7 @@ class OrderManager:
             discount += guthli_discount
             applied_coupons.append("GUTHLI10")
 
-        subtotal_after_guthli = subtotal - discount
-        if "AAM50" in coupon_codes and "GUTHLI10" in coupon_codes and subtotal_after_guthli >= AAM50_MINIMUM_AFTER_GUTHLI:
+        if "AAM50" in coupon_codes and subtotal >= COUPON_MINIMUM_SUBTOTAL:
             discount += 50
             applied_coupons.append("AAM50")
 
