@@ -1371,6 +1371,10 @@
       color: #9b1010;
     }
 
+    .summary-line[hidden] {
+      display: none;
+    }
+
     .summary-line.total {
       align-items: end;
       margin-top: 20px;
@@ -3201,7 +3205,7 @@
             <small class="coupon-note" data-coupon-note>Select a coupon to apply savings.</small>
           </label>
           <div class="summary-line"><span>Items total</span><strong data-subtotal>Rs 0</strong></div>
-          <div class="summary-line discount"><span>Coupon <span class="summary-code-pill" data-coupon-pill>Savings</span></span><strong data-discount>Rs 0</strong></div>
+          <div class="summary-line discount" data-discount-row hidden><span>Coupon <span class="summary-code-pill" data-coupon-pill>Savings</span></span><strong data-discount>Rs 0</strong></div>
           <div class="summary-line"><span data-delivery-label>Delivery</span><strong data-delivery>Rs 0</strong></div>
           <div class="summary-line total"><span>Total<small>Inclusive of all taxes</small></span><strong data-total>Rs 0</strong></div>
           <div class="free-note" data-free-note></div>
@@ -4181,7 +4185,9 @@
         document.querySelector("[data-summary-subtitle]").textContent = summary.count ? `${summary.count} item${summary.count === 1 ? "" : "s"} in cart` : "Cart is empty";
         document.querySelector("[data-drawer-subtitle]").textContent = summary.count ? "Review items, enter details, place order." : "Add items first, then place your order.";
         document.querySelector("[data-subtotal]").textContent = formatMoney(summary.subtotal);
-        document.querySelector("[data-discount]").textContent = summary.discount ? `- ${formatMoney(summary.discount)}` : "Rs 0";
+        const discountRow = document.querySelector("[data-discount-row]");
+        if (discountRow) discountRow.hidden = summary.discount <= 0;
+        document.querySelector("[data-discount]").textContent = summary.discount ? `- ${formatMoney(summary.discount)}` : "";
         document.querySelector("[data-delivery-label]").textContent = "Delivery";
         document.querySelector("[data-delivery]").textContent = summary.delivery ? formatMoney(summary.delivery) : "Free";
         document.querySelector("[data-total]").textContent = formatMoney(summary.total);
