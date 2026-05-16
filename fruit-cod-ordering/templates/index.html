@@ -5123,6 +5123,7 @@
         const product = products.get(detailProductId);
         if (!product || product.unavailable) return;
         detailQty = Math.max(1, detailQty);
+        updateDetailQty();
         cart.set(detailProductId, { ...product, qty: detailQty });
         markCheckoutDirty("detail_cart_set");
         product.card.classList.remove("is-added");
