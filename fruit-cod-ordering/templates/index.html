@@ -180,8 +180,8 @@
     }
 
     .brand img {
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       object-fit: contain;
@@ -191,7 +191,7 @@
 
     .brand strong {
       display: block;
-      font-size: 18px;
+      font-size: 20px;
       line-height: 1.1;
     }
 
@@ -1772,7 +1772,11 @@
     }
 
     .summary-line.discount strong {
-      color: #9b1010;
+      color: #1a6d24;
+    }
+
+    .summary-line.discount span {
+      color: #1a6d24;
     }
 
     .summary-line[hidden] {
@@ -2966,12 +2970,12 @@
       }
 
       .brand img {
-        width: 42px;
-        height: 42px;
+        width: 46px;
+        height: 46px;
       }
 
       .brand strong {
-        font-size: 16px;
+        font-size: 18px;
       }
 
       .brand small,
@@ -3465,8 +3469,8 @@
     }
 
     .brand img {
-      width: 31px;
-      height: 31px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       box-shadow: none;
     }
@@ -3476,7 +3480,7 @@
     .footer-brand {
       font-family: var(--serif);
       color: #4f2f05;
-      font-size: 25px;
+      font-size: 28px;
       font-weight: 600;
       letter-spacing: -0.03em;
     }
@@ -3999,7 +4003,7 @@
       }
 
       .brand strong {
-        font-size: 22px;
+        font-size: 24px;
       }
 
       .hero {
@@ -4798,6 +4802,7 @@
             <small class="coupon-note" data-coupon-note>Select a coupon to apply savings.</small>
           </label>
           <div class="summary-line"><span>Items total</span><strong data-subtotal>Rs 0</strong></div>
+          <div class="summary-line discount" data-discount-line hidden><span>Coupon savings<small data-discount-copy></small></span><strong data-discount>-Rs 0</strong></div>
           <div class="summary-line"><span data-delivery-label>Delivery<small>Free on order above Rs 599</small></span><strong data-delivery>Rs 0</strong></div>
           <div class="summary-line total"><span>Total<small>Inclusive of all taxes</small></span><strong data-total>Rs 0</strong></div>
           <div class="free-note" data-free-note></div>
@@ -4933,6 +4938,9 @@
       const orderForm = document.querySelector("[data-order-form]");
       const cartSection = document.querySelector(".cart-section");
       const checkoutSection = document.querySelector(".checkout-section");
+      const discountLine = document.querySelector("[data-discount-line]");
+      const discountValue = document.querySelector("[data-discount]");
+      const discountCopy = document.querySelector("[data-discount-copy]");
       const accountButton = document.querySelector("[data-account-toggle]");
       const accountButtonLabel = document.querySelector("[data-account-label]");
       const accountDropdown = document.querySelector("[data-account-dropdown]");
@@ -5805,6 +5813,11 @@
         document.querySelector("[data-summary-subtitle]").textContent = summary.count ? `${summary.count} item${summary.count === 1 ? "" : "s"} in cart` : "Cart is empty";
         document.querySelector("[data-drawer-subtitle]").textContent = summary.count ? "Review items, enter details, place order." : "Add items first, then place your order.";
         document.querySelector("[data-subtotal]").textContent = formatMoney(summary.subtotal);
+        if (discountLine && discountValue) {
+          discountLine.hidden = summary.discount <= 0;
+          discountValue.textContent = `-${formatMoney(summary.discount)}`;
+          if (discountCopy) discountCopy.textContent = summary.appliedCoupons.length ? `${summary.appliedCoupons.join(" + ")} applied` : "";
+        }
         document.querySelector("[data-delivery-label]").innerHTML = "Delivery<small>Free on order above Rs 599</small>";
         document.querySelector("[data-delivery]").textContent = summary.delivery ? formatMoney(summary.delivery) : "Free";
         document.querySelector("[data-total]").textContent = formatMoney(summary.total);
