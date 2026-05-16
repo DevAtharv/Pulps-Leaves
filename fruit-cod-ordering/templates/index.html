@@ -60,6 +60,13 @@
       overflow: hidden;
     }
 
+    body.product-detail-open .announcement,
+    body.product-detail-open .hero,
+    body.product-detail-open .store,
+    body.product-detail-open .city-banner {
+      display: none !important;
+    }
+
     img {
       max-width: 100%;
       display: block;
@@ -104,6 +111,10 @@
       clip: rect(0, 0, 0, 0);
       white-space: nowrap;
       border: 0;
+    }
+
+    [hidden] {
+      display: none !important;
     }
 
     .announcement {
@@ -4078,6 +4089,7 @@
       }
 
       function setProductDetailVisible(isVisible) {
+        document.body.classList.toggle("product-detail-open", isVisible);
         productDetail.hidden = !isVisible;
         productDetail.classList.toggle("is-visible", isVisible);
         homeSections.forEach((section) => {
