@@ -99,9 +99,7 @@ def google_oauth_enabled():
 
 
 def customer_login_required():
-    if clean_env("ALLOW_GUEST_CHECKOUT", "true").lower() in {"1", "true", "yes", "on"}:
-        return False
-    return clean_env("REQUIRE_CUSTOMER_LOGIN", "false").lower() in {"1", "true", "yes", "on"}
+    return True
 
 
 def razorpay_config():
@@ -623,6 +621,7 @@ def create_razorpay_order():
 @app.post("/api/payments/razorpay/verify")
 def verify_razorpay_payment():
     payload = request.get_json(silent=True) or {}
+    customer = current_customer()
     razorpay_order_id = str(payload.get("razorpay_order_id", "")).strip()
     razorpay_payment_id = str(payload.get("razorpay_payment_id", "")).strip()
     razorpay_signature = str(payload.get("razorpay_signature", "")).strip()
@@ -631,7 +630,11 @@ def verify_razorpay_payment():
         "payment_verify_received",
         razorpay_order_id=razorpay_order_id,
         razorpay_payment_id=razorpay_payment_id,
+        authenticated=bool(customer),
     )
+    if customer_login_required() and not customer:
+        log_checkout("payment_verify_auth_required", razorpay_order_id=razorpay_order_id)
+        return jsonify({"ok": False, "auth_required": True, "error": "Please create your account with Google before completing payment."}), 401
     if not razorpay_order_id or not razorpay_payment_id or not razorpay_signature:
         log_checkout("payment_verify_missing_fields", razorpay_order_id=razorpay_order_id)
         return jsonify({"ok": False, "error": "Missing payment verification fields."}), 400
@@ -662,7 +665,6 @@ def verify_razorpay_payment():
         log_checkout("payment_verify_signature_failed", razorpay_order_id=razorpay_order_id, razorpay_payment_id=razorpay_payment_id)
         return jsonify({"ok": False, "error": "Razorpay payment verification failed."}), 400
 
-    customer = current_customer()
     order_payload = dict(pending["payload"])
     if customer:
         order_payload["customer_email"] = customer_payload(customer)["email"]
