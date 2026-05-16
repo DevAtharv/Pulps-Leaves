@@ -4853,12 +4853,10 @@
             <label class="field field-wide">
               <span>Delivery address</span>
               <textarea name="address" required minlength="8" placeholder="House/Flat No., Building Name, Street, Area" data-address-input></textarea>
-              {% if google_maps_enabled %}
               <div class="address-actions">
                 <button class="map-location-button" type="button" data-use-location>Use current location</button>
               </div>
               <small class="location-status" data-location-status>Tap current location and allow permission to fill your delivery address.</small>
-              {% endif %}
             </label>
             <label class="field field-wide">
               <span>Order notes (Optional)</span>
@@ -4959,27 +4957,6 @@
     </section>
   </div>
 
-  {% if google_maps_enabled %}
-  <div class="maps-modal-overlay" data-maps-modal aria-hidden="true">
-    <section class="maps-modal" role="dialog" aria-modal="true" aria-labelledby="mapsModalTitle">
-      <div class="maps-modal-head">
-        <div>
-          <h2 id="mapsModalTitle">Confirm delivery location</h2>
-          <p>Search your address, drop the pin, or use your current location. We currently deliver in Bengaluru, Hyderabad, Pune, and Mumbai only.</p>
-        </div>
-        <button class="close-button" type="button" data-map-close aria-label="Close map">x</button>
-      </div>
-      <input class="map-search" type="search" data-map-search placeholder="Search building, area, or landmark">
-      <div class="map-canvas" data-map-canvas></div>
-      <div class="map-address-preview" data-map-address>Search your address or move the marker to confirm the address.</div>
-      <div class="map-actions">
-        <button class="map-ghost-button" type="button" data-map-close>Enter manually</button>
-        <button class="map-use-button" type="button" data-map-use>Use this address</button>
-      </div>
-    </section>
-  </div>
-  {% endif %}
-
   <div class="mobile-cart-bar" data-mobile-cart>
     <div>
       <strong data-mobile-total>Rs 0</strong>
@@ -5016,7 +4993,7 @@
         razorpayKeyId: {{ razorpay_key_id | tojson }},
       };
       const mapsState = {
-        enabled: {{ "true" if google_maps_enabled else "false" }},
+        enabled: false,
         loaded: false,
         initialized: false,
         open: false,
@@ -6797,8 +6774,5 @@
       if (initialProductId) openProductDetail(initialProductId);
     })();
   </script>
-  {% if google_maps_enabled %}
-  <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initPLMaps" async defer></script>
-  {% endif %}
 </body>
 </html>
