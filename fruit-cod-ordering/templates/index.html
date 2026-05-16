@@ -3862,6 +3862,21 @@
       font-weight: 800;
     }
 
+    .footer-social a[aria-label="Facebook"] {
+      color: #1877f2;
+      background: #eaf2ff;
+    }
+
+    .footer-social a[aria-label="Instagram"] {
+      color: #fff;
+      background: radial-gradient(circle at 30% 110%, #feda75 0 18%, #fa7e1e 28%, #d62976 52%, #962fbf 74%, #4f5bd5 100%);
+    }
+
+    .footer-social a[aria-label="YouTube"] {
+      color: #ff0000;
+      background: #fff0f0;
+    }
+
     .footer-note {
       width: var(--container);
       margin: 0 auto;
@@ -4553,9 +4568,9 @@
         <a class="footer-brand" href="#shop" data-home-link>Pulps &amp; Leaves</a>
         <p>Premium mangoes, tea, and makhana for modern Indian homes with clear ordering, delivery details, and payment choices.</p>
         <div class="footer-social">
-          <a href="https://www.facebook.com/share/1XsbRh4rcg/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-3.3 0-5 2-5 5v3H6v4h3v8h4v-8h3.3l.7-4h-4V9c0-.7.3-1 1-1Z"/></svg></a>
-          <a href="https://www.instagram.com/pulpsandleaves?igsh=bW1vMndtM2k3cjZo" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm5 6.2A3.8 3.8 0 1 0 12 15.8 3.8 3.8 0 0 0 12 8.2Zm5.2-.9a1 1 0 1 0-1-1 1 1 0 0 0 1 1Z"/></svg></a>
-          <a href="https://www.youtube.com/@Pulps_and_Leaves" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.7 4.6 12 4.6 12 4.6s-5.7 0-7.5.5a3 3 0 0 0-2.1 2.1A31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.8.5 7.5.5 7.5.5s5.7 0 7.5-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8ZM10 15.3V8.7l5.5 3.3Z"/></svg></a>
+          <a href="https://www.facebook.com/share/1XsbRh4rcg/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.412c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971h-1.514c-1.491 0-1.955.931-1.955 1.886v2.265h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073Z"/></svg></a>
+          <a href="https://www.instagram.com/pulpsandleaves?igsh=bW1vMndtM2k3cjZo" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.25-2.35a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3Z"/></svg></a>
+          <a href="https://www.youtube.com/@Pulps_and_Leaves" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.13-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.37.51A3.02 3.02 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3.02 3.02 0 0 0 2.13 2.14c1.87.51 9.37.51 9.37.51s7.5 0 9.37-.51a3.02 3.02 0 0 0 2.13-2.14A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8ZM9.6 15.57V8.43L15.82 12 9.6 15.57Z"/></svg></a>
         </div>
       </div>
       <div class="footer-links">
@@ -5088,10 +5103,30 @@
       }
 
       function updateDetailQty() {
+        const product = products.get(detailProductId);
         const qtyNode = document.querySelector("[data-detail-qty]");
         if (qtyNode) qtyNode.textContent = detailQty;
         const decreaseButton = document.querySelector("[data-detail-decrease]");
-        if (decreaseButton) decreaseButton.disabled = detailQty <= 0;
+        const increaseButton = document.querySelector("[data-detail-increase]");
+        if (decreaseButton) decreaseButton.disabled = product?.unavailable || detailQty <= 0;
+        if (increaseButton) increaseButton.disabled = product?.unavailable;
+      }
+
+      function syncDetailQuantityToCart() {
+        const product = products.get(detailProductId);
+        if (!product || product.unavailable) return;
+        if (detailQty <= 0) {
+          cart.delete(detailProductId);
+        } else {
+          cart.set(detailProductId, { ...product, qty: detailQty });
+        }
+        markCheckoutDirty("detail_quantity_change");
+        product.card.classList.remove("is-added");
+        if (detailQty > 0) {
+          void product.card.offsetWidth;
+          product.card.classList.add("is-added");
+        }
+        renderSummary();
       }
 
       function openProductDetail(id) {
@@ -5124,12 +5159,7 @@
         if (!product || product.unavailable) return;
         detailQty = Math.max(1, detailQty);
         updateDetailQty();
-        cart.set(detailProductId, { ...product, qty: detailQty });
-        markCheckoutDirty("detail_cart_set");
-        product.card.classList.remove("is-added");
-        void product.card.offsetWidth;
-        product.card.classList.add("is-added");
-        renderSummary();
+        syncDetailQuantityToCart();
         showToast(`${productTitle(product)} added`);
         if (openCheckout) setCartOpen(true);
       }
@@ -6165,10 +6195,12 @@
         if (detailIncrease) {
           detailQty = Math.min(50, detailQty + 1);
           updateDetailQty();
+          syncDetailQuantityToCart();
         }
         if (detailDecrease) {
           detailQty = Math.max(0, detailQty - 1);
           updateDetailQty();
+          syncDetailQuantityToCart();
         }
         if (detailAdd) addDetailQuantityToCart();
         if (detailBuy) addDetailQuantityToCart({ openCheckout: true });
