@@ -234,7 +234,7 @@ class OrderManager:
             discount += guthli_discount
             applied_coupons.append("GUTHLI10")
 
-        if "AAM50" in coupon_codes and subtotal >= COUPON_MINIMUM_SUBTOTAL:
+        if "AAM50" in coupon_codes and subtotal > COUPON_MINIMUM_SUBTOTAL:
             discount += 50
             applied_coupons.append("AAM50")
 

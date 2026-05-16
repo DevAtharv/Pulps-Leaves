@@ -3930,6 +3930,43 @@
       background: #fff0f0;
     }
 
+    .fssai-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .fssai-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 86px;
+      min-height: 34px;
+      padding: 4px 10px;
+      border: 2px solid #1f7a3a;
+      border-left-color: #f07d22;
+      border-radius: 6px;
+      color: #1f7a3a;
+      background: #fff;
+      font-family: "Manrope", Arial, sans-serif;
+      font-size: 18px;
+      font-weight: 1000;
+      letter-spacing: 0;
+      line-height: 1;
+      text-transform: lowercase;
+    }
+
+    .fssai-logo::before {
+      content: "";
+      width: 8px;
+      height: 20px;
+      margin-right: 7px;
+      border-radius: 999px;
+      background: #f07d22;
+    }
+
     .footer-note {
       width: var(--container);
       margin: 0 auto;
@@ -4631,7 +4668,6 @@
         <a href="#products">Products</a>
         <a href="#products">About Our Brand</a>
         <a href="#stories">Our Story</a>
-        <a href="#stories">FAQs</a>
       </div>
       <div class="footer-contact">
         <strong>Contact</strong>
@@ -4639,7 +4675,10 @@
         <a href="mailto:pulpsandleaves@gmail.com">pulpsandleaves@gmail.com</a>
         <span>Bihar, India</span>
         <span>GST - 10JKIPS9038F1ZW</span>
-        <span>FSSAI - 20426004000341</span>
+        <span class="fssai-mark" aria-label="FSSAI license 20426004000341">
+          <span class="fssai-logo" aria-hidden="true">fssai</span>
+          <span>License No. 20426004000341</span>
+        </span>
       </div>
     </div>
     <div class="footer-note">© 2026 Pulps &amp; Leaves. Cultivating the sun in Malda.</div>
@@ -4690,10 +4729,6 @@
           </div>
           <div class="checkout-form">
             <div class="account-panel" data-account-panel>
-              <div>
-                <strong data-account-name>Join the Pulps &amp; Leaves with us</strong>
-                <span data-account-email>Use Google once, then your delivery details can be saved for next time.</span>
-              </div>
               <button type="button" data-account-open>
                 <span class="google-action-copy">Continue with
                   <span class="google-mark google-wordmark" role="img" aria-label="Google">
@@ -4757,7 +4792,7 @@
               </label>
               <label class="coupon-option">
                 <input type="checkbox" value="AAM50" data-coupon="AAM50">
-                <span>AAM50<small class="coupon-copy-secondary">On Order Above Rs 599*</small></span>
+                <span>AAM50<small class="coupon-copy-secondary">On product value above Rs 599*</small></span>
               </label>
             </div>
             <small class="coupon-note" data-coupon-note>Select a coupon to apply savings.</small>
@@ -5342,8 +5377,8 @@
           profileLoginButton.hidden = true;
           profileHistoryButton.hidden = false;
           profileLogoutButton.hidden = false;
-          accountName.textContent = customerDisplayName(accountState.customer);
-          accountEmail.textContent = accountState.customer.email || "Signed in with Google";
+          if (accountName) accountName.textContent = customerDisplayName(accountState.customer);
+          if (accountEmail) accountEmail.textContent = accountState.customer.email || "Signed in with Google";
           accountPanel.querySelector("button").textContent = "Sign out";
           accountPanel.querySelector("button").dataset.logout = "true";
           accountModalTitle.textContent = "Your account";
@@ -5360,8 +5395,8 @@
         profileLoginButton.hidden = false;
         profileHistoryButton.hidden = true;
         profileLogoutButton.hidden = true;
-        accountName.textContent = "Join the Pulps & Leaves with us";
-        accountEmail.textContent = "Use Google once, then your delivery details can be saved for next time.";
+        if (accountName) accountName.textContent = "";
+        if (accountEmail) accountEmail.textContent = "";
         accountPanel.querySelector("button").innerHTML = googleActionMarkup();
         delete accountPanel.querySelector("button").dataset.logout;
         accountModalTitle.textContent = "Create your account";
@@ -5641,7 +5676,7 @@
         const aam50Input = couponInputs.find((input) => input.value === "AAM50");
         const isGuthliApplied = Boolean(guthliInput?.checked);
         const guthliDiscount = isGuthliApplied ? Math.round(subtotal * 0.1) : 0;
-        const isAam50Eligible = subtotal >= couponMinimum;
+        const isAam50Eligible = subtotal > couponMinimum;
 
         if (aam50Input) {
           aam50Input.disabled = !isAam50Eligible;
@@ -5666,7 +5701,7 @@
         discount = Math.min(discount, subtotal);
 
         if (aam50Input?.checked && !isAam50Eligible && subtotal > 0) {
-          couponMessage = "Shop above Rs 599 to unlock AAM50.";
+          couponMessage = "Add products above Rs 599 to unlock AAM50.";
         } else if (discount > 0) {
           couponMessage = `${appliedCoupons.join(" + ")} applied.`;
         } else if ((isGuthliApplied || aam50Input?.checked) && subtotal === 0) {
