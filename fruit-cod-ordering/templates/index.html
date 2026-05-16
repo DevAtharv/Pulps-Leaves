@@ -2401,10 +2401,7 @@
       gap: 9px;
     }
 
-    .account-history-button,
-    .map-location-button,
-    .map-use-button,
-    .map-ghost-button {
+    .account-history-button {
       min-height: 40px;
       border: 1px solid var(--line-strong);
       border-radius: var(--radius);
@@ -2554,122 +2551,11 @@
       white-space: nowrap;
     }
 
-    .address-actions {
-      display: grid;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .map-location-button {
-      color: #fff;
-      border-color: var(--leaf);
-      background: linear-gradient(135deg, var(--leaf), var(--leaf-deep));
-    }
-
-    .location-status {
-      display: block;
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 800;
-      line-height: 1.45;
-    }
-
-    .location-status.is-error {
-      color: var(--rose);
-    }
-
     .field-hint {
       color: var(--muted);
       font-size: 11px;
       font-weight: 800;
       line-height: 1.4;
-    }
-
-    .maps-modal-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 130;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      background: rgba(15, 24, 15, 0.58);
-      animation: fadeIn 180ms ease forwards;
-    }
-
-    .maps-modal-open .maps-modal-overlay {
-      display: flex;
-    }
-
-    .maps-modal {
-      width: min(760px, 100%);
-      max-height: calc(100vh - 36px);
-      overflow: auto;
-      padding: 18px;
-      border-radius: var(--radius);
-      background: #fff;
-      box-shadow: var(--shadow-strong);
-    }
-
-    .maps-modal-head {
-      display: flex;
-      align-items: start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .maps-modal h2 {
-      margin: 0;
-      font-size: 22px;
-    }
-
-    .maps-modal p {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-    }
-
-    .map-search {
-      width: 100%;
-      min-height: 44px;
-      margin-bottom: 10px;
-      padding: 0 12px;
-      border: 1px solid var(--line-strong);
-      border-radius: 6px;
-      font: inherit;
-    }
-
-    .map-canvas {
-      min-height: 320px;
-      border-radius: var(--radius);
-      background: #edf3e8;
-      overflow: hidden;
-    }
-
-    .map-address-preview {
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 6px;
-      color: var(--leaf-deep);
-      background: var(--mint);
-      font-size: 13px;
-      font-weight: 850;
-      line-height: 1.5;
-    }
-
-    .map-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .map-use-button {
-      color: #fff;
-      border-color: var(--leaf);
-      background: linear-gradient(135deg, var(--leaf), var(--leaf-deep));
     }
 
     @keyframes pulseDot {
@@ -3456,15 +3342,6 @@
       .checkout-button {
         min-height: 58px;
         font-size: 14px;
-      }
-
-      .address-actions,
-      .map-actions {
-        grid-template-columns: 1fr;
-      }
-
-      .map-canvas {
-        min-height: 260px;
       }
 
       .mobile-cart-bar.has-items {
@@ -4853,10 +4730,6 @@
             <label class="field field-wide">
               <span>Delivery address</span>
               <textarea name="address" required minlength="8" placeholder="House/Flat No., Building Name, Street, Area" data-address-input></textarea>
-              <div class="address-actions">
-                <button class="map-location-button" type="button" data-use-location>Use current location</button>
-              </div>
-              <small class="location-status" data-location-status>Tap current location and allow permission to fill your delivery address.</small>
             </label>
             <label class="field field-wide">
               <span>Order notes (Optional)</span>
@@ -4992,19 +4865,6 @@
         razorpayEnabled: {{ "true" if razorpay_enabled else "false" }},
         razorpayKeyId: {{ razorpay_key_id | tojson }},
       };
-      const mapsState = {
-        enabled: false,
-        loaded: false,
-        initialized: false,
-        open: false,
-        map: null,
-        marker: null,
-        geocoder: null,
-        autocomplete: null,
-        selectedAddress: "",
-        selectedCity: "",
-        locating: false,
-      };
       const cart = new Map();
       const productCards = Array.from(document.querySelectorAll("[data-product]"));
       const productGrid = document.querySelector("[data-product-grid]");
@@ -5058,12 +4918,6 @@
       const orderHistoryStatus = document.querySelector("[data-order-history-status]");
       const orderHistoryList = document.querySelector("[data-order-history-list]");
       const addressInput = document.querySelector("[data-address-input]");
-      const mapModal = document.querySelector("[data-maps-modal]");
-      const mapSearch = document.querySelector("[data-map-search]");
-      const mapCanvas = document.querySelector("[data-map-canvas]");
-      const mapAddress = document.querySelector("[data-map-address]");
-      const mapUseButton = document.querySelector("[data-map-use]");
-      const locationStatus = document.querySelector("[data-location-status]");
       const heroSlides = Array.from(document.querySelectorAll("[data-hero-slide]"));
       const heroDots = Array.from(document.querySelectorAll("[data-hero-dot]"));
       const onlinePaymentTitle = document.querySelector("[data-online-payment-title]");
@@ -5084,12 +4938,6 @@
         access_denied: "Google sign-in was cancelled. Please continue with Google to place the order.",
         google_auth_failed: "Google sign-in could not be completed. Please try again after checking the redirect URL setup.",
         google_not_configured: "Google sign-in is not configured yet.",
-      };
-      const cityCenters = {
-        bangalore: { label: "Bengaluru", lat: 12.9716, lng: 77.5946, radiusKm: 60 },
-        hyderabad: { label: "Hyderabad", lat: 17.385, lng: 78.4867, radiusKm: 60 },
-        pune: { label: "Pune", lat: 18.5204, lng: 73.8567, radiusKm: 55 },
-        mumbai: { label: "Mumbai", lat: 19.076, lng: 72.8777, radiusKm: 70 },
       };
       let activeFilter = "Mangoes";
       let activeHeroSlide = 0;
@@ -5448,17 +5296,6 @@
         accountButton.setAttribute("aria-expanded", String(accountMenuOpen));
       }
 
-      function setMapsModalOpen(isOpen) {
-        if (!mapsState.enabled || !mapModal) return;
-        mapsState.open = isOpen;
-        document.body.classList.toggle("maps-modal-open", isOpen);
-        mapModal.setAttribute("aria-hidden", String(!isOpen));
-        if (isOpen) {
-          initializeMapsPicker();
-          mapSearch?.focus();
-        }
-      }
-
       function customerDisplayName(customer) {
         return customer?.name || customer?.email || "Log In";
       }
@@ -5795,294 +5632,6 @@
         window.location.href = `/auth/google?next=${encodeURIComponent(nextUrl)}`;
       }
 
-      function currentMapCenter() {
-        const cityValue = orderForm?.elements.city?.value || "bangalore";
-        const center = cityCenters[cityValue] || cityCenters.bangalore;
-        return { lat: center.lat, lng: center.lng };
-      }
-
-      function setLocationStatus(message, type = "") {
-        if (!locationStatus) return;
-        locationStatus.textContent = message;
-        locationStatus.classList.toggle("is-error", type === "error");
-      }
-
-      function ensureMapsGeocoder() {
-        if (!window.google?.maps) return false;
-        if (!mapsState.geocoder) mapsState.geocoder = new google.maps.Geocoder();
-        return true;
-      }
-
-      function waitForMapsGeocoder(timeoutMs = 8000) {
-        if (ensureMapsGeocoder()) return Promise.resolve(true);
-        return new Promise((resolve) => {
-          const startedAt = Date.now();
-          const timer = window.setInterval(() => {
-            if (ensureMapsGeocoder()) {
-              window.clearInterval(timer);
-              resolve(true);
-              return;
-            }
-            if (Date.now() - startedAt >= timeoutMs) {
-              window.clearInterval(timer);
-              resolve(false);
-            }
-          }, 150);
-        });
-      }
-
-      function plainLocation(position) {
-        return {
-          lat: typeof position.lat === "function" ? position.lat() : Number(position.lat),
-          lng: typeof position.lng === "function" ? position.lng() : Number(position.lng),
-        };
-      }
-
-      function distanceKm(from, to) {
-        const radius = 6371;
-        const toRad = (value) => value * Math.PI / 180;
-        const dLat = toRad(to.lat - from.lat);
-        const dLng = toRad(to.lng - from.lng);
-        const lat1 = toRad(from.lat);
-        const lat2 = toRad(to.lat);
-        const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
-        return radius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      }
-
-      function nearestDeliveryCity(location) {
-        return Object.entries(cityCenters)
-          .map(([key, center]) => ({ key, ...center, distance: distanceKm(location, center) }))
-          .sort((a, b) => a.distance - b.distance)
-          .find((city) => city.distance <= city.radiusKm);
-      }
-
-      function showLocationUnavailable() {
-        showCelebration({
-          badge: "Delivery unavailable",
-          emoji: "📍",
-          title: "Sorry, we are currently not available at your location",
-          message: "We currently deliver in Bengaluru, Hyderabad, Pune, and Mumbai. Please choose one of these cities or enter another delivery address.",
-          duration: 5200,
-        });
-      }
-
-      function syncLocationFields({ address, city }) {
-        if (!addressInput || !city) return;
-        addressInput.value = address;
-        addressInput.dispatchEvent(new Event("input", { bubbles: true }));
-        addressInput.dispatchEvent(new Event("change", { bubbles: true }));
-        if (orderForm?.elements.city) {
-          orderForm.elements.city.value = city.key;
-          orderForm.elements.city.dispatchEvent(new Event("change", { bubbles: true }));
-        }
-      }
-
-      function applyResolvedLocation({ address, city, position }) {
-        if (!addressInput || !city) return;
-        syncLocationFields({ address, city });
-        mapsState.selectedAddress = address;
-        mapsState.selectedCity = city.key;
-        if (mapAddress) mapAddress.textContent = address;
-        if (mapSearch) mapSearch.value = address;
-        if (mapsState.map && mapsState.marker) updateMapMarker(position, false, address);
-        setLocationStatus(`Address filled from your current location. Delivery city: ${city.label}.`);
-        markCheckoutDirty("current_location");
-        showToast(`Location added for ${city.label}`);
-      }
-
-      function applyApproximateLocation({ city, position }) {
-        if (!addressInput || !city) return;
-        const address = `Current location near ${city.label}`;
-        syncLocationFields({ address, city });
-        mapsState.selectedAddress = address;
-        mapsState.selectedCity = city.key;
-        if (mapAddress) mapAddress.textContent = address;
-        if (mapSearch) mapSearch.value = address;
-        setLocationStatus("We could not read the exact street address. Please add your house, building, or street details before placing the order.", "error");
-        markCheckoutDirty("current_location_approximate");
-        showToast(`Please add address details for ${city.label}`);
-      }
-
-      async function reverseGeocodeCurrentLocation(location) {
-        const params = new URLSearchParams({
-          lat: String(location.lat),
-          lng: String(location.lng),
-        });
-        const { response, data } = await fetchJson(
-          `/api/reverse-geocode?${params.toString()}`,
-          { timeoutMs: 14000 },
-          "Could not read the address for this location."
-        );
-        if (!response.ok || !data.ok || !data.address) {
-          throw new Error(data.error || "Could not read the address for this location.");
-        }
-        return data.address;
-      }
-
-      function useCurrentLocation() {
-        if (!navigator.geolocation) {
-          setLocationStatus("Current location is not supported on this browser. Please enter your address manually.", "error");
-          return;
-        }
-        if (mapsState.locating) return;
-
-        mapsState.locating = true;
-        setLocationStatus("Fetching your current location. Please tap Allow when your browser asks.");
-
-        navigator.geolocation.getCurrentPosition(async (position) => {
-          const userLocation = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          const city = nearestDeliveryCity(userLocation);
-          if (!city) {
-            mapsState.locating = false;
-            setLocationStatus("Sorry, we are currently not available at your location.", "error");
-            showLocationUnavailable();
-            return;
-          }
-
-          setLocationStatus("Location found. Reading your address...");
-          try {
-            const address = await reverseGeocodeCurrentLocation(userLocation);
-            mapsState.locating = false;
-            applyResolvedLocation({
-              address,
-              city,
-              position: userLocation,
-            });
-          } catch (error) {
-            mapsState.locating = false;
-            applyApproximateLocation({ city, position: userLocation });
-          }
-        }, (error) => {
-          mapsState.locating = false;
-          const denied = error.code === error.PERMISSION_DENIED;
-          setLocationStatus(denied ? "Location permission was blocked. Please allow location or enter your address manually." : "Could not fetch your location. Please try again or enter manually.", "error");
-        }, {
-          enableHighAccuracy: true,
-          timeout: 12000,
-          maximumAge: 60000,
-        });
-      }
-
-      function initializeMapsPicker() {
-        if (!mapsState.enabled || !mapCanvas) return;
-        if (!window.google?.maps) {
-          mapAddress.textContent = "Google Maps is loading. Please wait a moment.";
-          return;
-        }
-
-        if (!mapsState.initialized) {
-          const center = currentMapCenter();
-          mapsState.geocoder = new google.maps.Geocoder();
-          mapsState.map = new google.maps.Map(mapCanvas, {
-            center,
-            zoom: 14,
-            mapTypeControl: false,
-            fullscreenControl: false,
-            streetViewControl: false,
-          });
-          mapsState.marker = new google.maps.Marker({
-            map: mapsState.map,
-            position: center,
-            draggable: true,
-          });
-          mapsState.map.addListener("click", (event) => updateMapMarker(event.latLng, true));
-          mapsState.marker.addListener("dragend", () => updateMapMarker(mapsState.marker.getPosition(), true));
-
-          if (google.maps.places && mapSearch) {
-            mapsState.autocomplete = new google.maps.places.Autocomplete(mapSearch, {
-              componentRestrictions: { country: "in" },
-              fields: ["formatted_address", "geometry", "name"],
-            });
-            mapsState.autocomplete.addListener("place_changed", () => {
-              const place = mapsState.autocomplete.getPlace();
-              if (!place.geometry?.location) return;
-              const address = place.formatted_address || place.name || "";
-              updateMapMarker(place.geometry.location, false, address);
-            });
-          }
-
-          mapsState.initialized = true;
-        }
-
-        const address = addressInput?.value?.trim();
-        if (address) {
-          geocodeAddress(address);
-        } else {
-          updateMapMarker(currentMapCenter(), false);
-          mapsState.selectedAddress = "";
-          mapAddress.textContent = "Search your address or move the marker to confirm the address.";
-          if (mapSearch) mapSearch.value = "";
-        }
-
-        window.setTimeout(() => google.maps.event.trigger(mapsState.map, "resize"), 80);
-      }
-
-      function updateMapMarker(position, shouldReverseGeocode = false, address = "") {
-        if (!mapsState.map || !mapsState.marker) return;
-        const location = plainLocation(position);
-        const city = nearestDeliveryCity(location);
-        if (!city) {
-          mapsState.selectedAddress = "";
-          mapsState.selectedCity = "";
-          mapAddress.textContent = "Sorry, we are currently not available at this location.";
-          setLocationStatus("Sorry, we are currently not available at this location.", "error");
-          showLocationUnavailable();
-          return;
-        }
-        mapsState.selectedCity = city.key;
-        mapsState.marker.setPosition(position);
-        mapsState.map.panTo(position);
-        if (address) {
-          mapsState.selectedAddress = address;
-          mapAddress.textContent = `${address} · Delivery city: ${city.label}`;
-          if (mapSearch) mapSearch.value = address;
-          return;
-        }
-        if (shouldReverseGeocode) reverseGeocode(position);
-      }
-
-      function geocodeAddress(address) {
-        if (!mapsState.geocoder || !address) return;
-        mapsState.geocoder.geocode({ address, componentRestrictions: { country: "IN" } }, (results, status) => {
-          if (status === "OK" && results?.[0]) {
-            updateMapMarker(results[0].geometry.location, false, results[0].formatted_address);
-          } else {
-            mapsState.selectedAddress = address;
-            mapAddress.textContent = `Using typed address: ${address}`;
-          }
-        });
-      }
-
-      function reverseGeocode(position) {
-        if (!mapsState.geocoder) return;
-        mapsState.geocoder.geocode({ location: position }, (results, status) => {
-          if (status === "OK" && results?.[0]) {
-            mapsState.selectedAddress = results[0].formatted_address;
-            const city = cityCenters[mapsState.selectedCity];
-            mapAddress.textContent = city ? `${mapsState.selectedAddress} · Delivery city: ${city.label}` : mapsState.selectedAddress;
-            if (mapSearch) mapSearch.value = mapsState.selectedAddress;
-          } else {
-            const typedAddress = String(mapSearch?.value || "").trim();
-            if (typedAddress) {
-              mapsState.selectedAddress = typedAddress;
-              mapAddress.textContent = `Using typed address: ${typedAddress}`;
-              return;
-            }
-            mapsState.selectedAddress = "";
-            mapAddress.textContent = "Search your address above, or use Enter manually if Google cannot read this pin.";
-          }
-        });
-      }
-
-      window.initPLMaps = () => {
-        mapsState.loaded = true;
-        if (mapsState.open) initializeMapsPicker();
-      };
-      window.initMap = window.initPLMaps;
-
       function totals() {
         const items = Array.from(cart.values());
         const count = items.reduce((sum, item) => sum + item.qty, 0);
@@ -6375,7 +5924,6 @@
         setAccountMenuOpen(false);
         setProductDetailVisible(false);
         setCartOpen(false);
-        setMapsModalOpen(false);
         setAccountModalOpen(false);
         document.getElementById("shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
         window.history.replaceState({}, "", `${window.location.pathname}${window.location.search}#shop`);
@@ -6383,7 +5931,6 @@
 
       function moveCustomerHomeAfterOrder(orderId) {
         setCartOpen(false);
-        setMapsModalOpen(false);
         const homeSection = document.getElementById("shop");
         if (homeSection) {
           homeSection.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -6613,9 +6160,6 @@
         const profileLogin = event.target.closest("[data-profile-login]");
         const profileHistory = event.target.closest("[data-profile-history]");
         const profileLogout = event.target.closest("[data-profile-logout]");
-        const mapCloseButton = event.target.closest("[data-map-close]");
-        const mapUseButton = event.target.closest("[data-map-use]");
-        const locationButton = event.target.closest("[data-use-location]");
         const homeLink = event.target.closest("[data-home-link]");
         const insideAccountMenu = event.target.closest(".account-menu");
 
@@ -6698,22 +6242,6 @@
         }
         if (accountCloseButton) setAccountModalOpen(false);
         if (googleLogin) startGoogleLogin();
-        if (mapCloseButton) setMapsModalOpen(false);
-        if (locationButton) useCurrentLocation();
-        if (mapUseButton) {
-          if (mapsState.selectedAddress && addressInput) {
-            addressInput.value = mapsState.selectedAddress;
-            addressInput.dispatchEvent(new Event("input", { bubbles: true }));
-            addressInput.dispatchEvent(new Event("change", { bubbles: true }));
-            if (mapsState.selectedCity && orderForm?.elements.city) {
-              orderForm.elements.city.value = mapsState.selectedCity;
-              orderForm.elements.city.dispatchEvent(new Event("change", { bubbles: true }));
-              const city = cityCenters[mapsState.selectedCity];
-              if (city) setLocationStatus(`Address selected from map. Delivery city: ${city.label}.`);
-            }
-          }
-          setMapsModalOpen(false);
-        }
       });
 
       document.addEventListener("submit", (event) => {
@@ -6741,7 +6269,6 @@
         if (event.key === "Escape") setCartOpen(false);
         if (event.key === "Escape") setAccountModalOpen(false);
         if (event.key === "Escape") setAccountMenuOpen(false);
-        if (event.key === "Escape") setMapsModalOpen(false);
         if (event.key === "Escape" && celebration) {
           celebration.classList.remove("is-visible");
           celebration.setAttribute("aria-hidden", "true");
@@ -6764,9 +6291,6 @@
         markCheckoutDirty(`payment_${input.value}`);
         renderSummary();
       }));
-      mapSearch?.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") event.preventDefault();
-      });
       applyFilters();
       startHeroSlider();
       initRevealMotion();
