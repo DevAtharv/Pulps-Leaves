@@ -5794,6 +5794,7 @@
         const appliedCoupons = [];
         let discount = onlineDiscount;
         let couponMessage = subtotal === 0 ? "Add products to use coupons." : "Select a coupon to apply savings.";
+        let onlineOfferMessage = "";
 
         if (isGuthliApplied) {
           discount += guthliDiscount;
@@ -5802,14 +5803,18 @@
 
         discount = Math.min(discount, subtotal);
 
-        if (appliedCoupons.length && onlineDiscount > 0) {
-          couponMessage = `${appliedCoupons.join(" + ")} applied. Online payment Rs 50 off added.`;
-        } else if (appliedCoupons.length) {
+        if (appliedCoupons.length) {
           couponMessage = `${appliedCoupons.join(" + ")} applied.`;
-        } else if (onlineDiscount > 0) {
-          couponMessage = "Online payment Rs 50 off applied.";
-        } else if (subtotal > 0 && !isOnlineDiscountEligible) {
-          couponMessage = "Pay online on product value above Rs 599 to get Rs 50 off.";
+        }
+
+        if (subtotal > couponMinimum && isOnlineDiscountEligible) {
+          onlineOfferMessage = "Online payment Rs 50 off applied.";
+        } else if (subtotal > couponMinimum && !isOnlinePayment) {
+          onlineOfferMessage = "Choose UPI / online payment to get Rs 50 off.";
+        } else if (subtotal > 0 && isOnlinePayment) {
+          onlineOfferMessage = "Add products above Rs 599 to unlock Rs 50 off.";
+        } else if (subtotal > 0) {
+          onlineOfferMessage = "Pay online above Rs 599 and get Rs 50 off.";
         }
 
         const delivery = subtotal === 0 || subtotal > deliveryFreeAbove ? 0 : deliveryCharge;
@@ -5823,6 +5828,7 @@
           delivery,
           total: subtotal - discount + delivery,
           couponMessage,
+          onlineOfferMessage,
           appliedCoupons,
         };
       }
@@ -5845,7 +5851,7 @@
       }
 
       function selectedPaymentMethod(form) {
-        return new FormData(form).get("payment_method") || "cod";
+        return paymentInputs.find((input) => input.checked)?.value || (form ? new FormData(form).get("payment_method") : "") || "cod";
       }
 
       function updateAddRows() {
@@ -5894,7 +5900,7 @@
           }
           discountValue.textContent = `-${formatMoney(summary.discount)}`;
         }
-        document.querySelector("[data-delivery-label]").innerHTML = `Delivery<small>Free on order above Rs 599</small><small class="online-discount-note">Pay online above Rs 599 and get Rs 50 off</small>`;
+        document.querySelector("[data-delivery-label]").innerHTML = `Delivery<small>Free on order above Rs 599</small>${summary.onlineOfferMessage ? `<small class="online-discount-note">${summary.onlineOfferMessage}</small>` : ""}`;
         document.querySelector("[data-delivery]").textContent = summary.delivery ? formatMoney(summary.delivery) : "Free";
         document.querySelector("[data-total]").textContent = formatMoney(summary.total);
         if (couponNote) couponNote.textContent = summary.couponMessage;
@@ -6567,7 +6573,7 @@
       }));
       paymentInputs.forEach((input) => input.addEventListener("change", () => {
         markCheckoutDirty(`payment_${input.value}`);
-        renderSummary();
+        window.requestAnimationFrame(() => renderSummary());
       }));
       applyFilters();
       startHeroSlider();
