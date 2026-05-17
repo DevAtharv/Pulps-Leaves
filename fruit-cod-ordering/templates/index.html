@@ -3951,6 +3951,90 @@
       box-shadow: none;
     }
 
+    .mango-memory {
+      width: 100%;
+      padding: 76px 0 88px;
+      border-top: 1px solid rgba(122, 75, 8, 0.08);
+      background:
+        linear-gradient(180deg, #fffdfa 0%, #fbf8f4 100%);
+    }
+
+    .mango-memory-inner {
+      width: var(--container);
+      display: grid;
+      grid-template-columns: minmax(220px, 330px) minmax(0, 1fr);
+      gap: clamp(30px, 6vw, 72px);
+      align-items: start;
+      margin: 0 auto;
+    }
+
+    .mango-memory-media {
+      justify-self: center;
+      width: min(100%, 310px);
+      margin: 0;
+    }
+
+    .mango-memory-media img {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      border: 1px solid rgba(122, 75, 8, 0.12);
+      border-radius: 12px;
+      box-shadow: 0 24px 54px rgba(67, 48, 23, 0.13);
+    }
+
+    .mango-memory-copy {
+      max-width: 760px;
+    }
+
+    .mango-memory-kicker {
+      display: inline-flex;
+      margin-bottom: 12px;
+      color: #6f4508;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .mango-memory h2 {
+      max-width: 680px;
+      color: #704608;
+      font-family: var(--serif);
+      font-size: clamp(36px, 5vw, 58px);
+      font-weight: 600;
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+    }
+
+    .mango-memory-body {
+      display: grid;
+      gap: 13px;
+      margin-top: 26px;
+      color: #3d3529;
+      font-size: 15px;
+      line-height: 1.9;
+    }
+
+    .mango-memory-body p {
+      margin: 0;
+    }
+
+    .mango-memory-dialogue {
+      color: #6f4508;
+      font-weight: 800;
+    }
+
+    .mango-memory-sign {
+      display: block;
+      margin-top: 24px;
+      color: #4f2f05;
+      font-family: var(--serif);
+      font-size: 28px;
+      font-style: normal;
+      font-weight: 600;
+    }
+
     .footer {
       border-top: 1px solid rgba(122, 75, 8, 0.08);
     }
@@ -4095,6 +4179,28 @@
 
       .product-title {
         font-size: 26px;
+      }
+
+      .mango-memory {
+        padding: 58px 0 62px;
+      }
+
+      .mango-memory-inner {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+
+      .mango-memory-media {
+        width: min(76vw, 280px);
+      }
+
+      .mango-memory h2 {
+        font-size: 38px;
+      }
+
+      .mango-memory-body {
+        font-size: 14px;
+        line-height: 1.8;
       }
 
       .footer-grid {
@@ -4584,6 +4690,29 @@
     </section>
 
   </main>
+
+  <section class="mango-memory" lang="hi" data-reveal>
+    <div class="mango-memory-inner">
+      <figure class="mango-memory-media">
+        <img src="{{ url_for('static', filename='img/pl-product-poster.jpeg') }}" alt="Pulps and Leaves mango memory poster" width="640" height="800" loading="lazy" decoding="async">
+      </figure>
+      <article class="mango-memory-copy">
+        <span class="mango-memory-kicker">Malda Memories</span>
+        <h2>बिहार का मालदा और बचपन की वापसी</h2>
+        <div class="mango-memory-body">
+          <p>बिहार की गर्मियों का अपना ही एक रंग होता था। सुबह-सुबह सूरज पूरी तरह निकला भी नहीं होता था और हम दोस्त पहले ही बगीचे की तरफ निकल पड़ते थे। दूर से ही पेड़ों पर लटके मालदा आम ऐसे चमकते थे जैसे पेड़ों ने पीले-पीले बल्ब पहन लिए हों।</p>
+          <p>दादी हमेशा पीछे से आवाज़ लगाती थीं — <span class="mango-memory-dialogue">“अरे ओ, कच्चा आम तोड़ोगे तो पेट दर्द करेगा!”</span></p>
+          <p>लेकिन उस उम्र में चेतावनी भी किसी मज़ाक जैसी लगती थी। हम पेड़ के नीचे खड़े होकर हिसाब लगाते — <span class="mango-memory-dialogue">“वो वाला मेरा… ऊपर वाला तुम्हारा…”</span></p>
+          <p>कभी पेड़ पर चढ़ना, कभी गिरे हुए आम को पहले पकड़ने की दौड़, और फिर घर आकर बाल्टी में ठंडे पानी में आम डुबोकर इंतज़ार करना... वो इंतज़ार भी किसी त्योहार जैसा होता था।</p>
+          <p>फिर समय धीरे-धीरे बदल गया। बिहार की गलियाँ छूट गईं, दोस्त छूट गए, और पढ़ाई-नौकरी के चक्कर में मैं बड़े शहर आ गया। एक दिन शाम को ऑफिस से लौटते हुए एक दुकान पर मालदा आम दिख गया। मैंने मुस्कुराकर खरीद लिया।</p>
+          <p>घर आकर आम काटा… पहला टुकड़ा मुंह में रखा… और अचानक कुछ अजीब हुआ। स्वाद वही था, मिठास भी वही थी… लेकिन कुछ कमी थी। तब समझ आया — कमी आम में नहीं थी।</p>
+          <p>कमी उस शोर की थी जिसमें दोस्त चिल्लाते थे, कमी दादी की डाँट की थी, कमी उस मिट्टी की थी जो पैरों में लग जाती थी, और कमी उस बचपन की थी… जो बिहार की गर्मियों में कहीं पीछे छूट गया था।</p>
+          <p>उस दिन मालदा आम खाते-खाते आंखों में हल्की सी मुस्कान भी थी और थोड़ी नमी भी। क्योंकि कुछ स्वाद सिर्फ ज़ुबान पर नहीं, यादों में बस जाते हैं। 🥭✨</p>
+        </div>
+        <cite class="mango-memory-sign">- माया</cite>
+      </article>
+    </div>
+  </section>
 
   <footer class="footer">
     <div class="container footer-grid">
