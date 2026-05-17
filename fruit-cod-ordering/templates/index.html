@@ -2633,6 +2633,75 @@
       font-weight: 900;
     }
 
+    .whatsapp-status-float {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 65;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      max-width: min(320px, calc(100vw - 36px));
+      padding: 10px 12px 10px 10px;
+      border: 1px solid rgba(24, 34, 21, 0.08);
+      border-radius: 999px;
+      color: #06382c;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 16px 36px rgba(24, 34, 21, 0.18);
+      text-decoration: none;
+      transform: translateY(0);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .whatsapp-status-float:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 44px rgba(24, 34, 21, 0.22);
+    }
+
+    .whatsapp-status-icon {
+      width: 46px;
+      height: 46px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 999px;
+      color: #fff;
+      background: #25d366;
+      box-shadow: inset 0 0 0 4px #fff, 0 8px 16px rgba(37, 211, 102, 0.32);
+    }
+
+    .whatsapp-status-icon svg {
+      width: 27px;
+      height: 27px;
+      fill: currentColor;
+    }
+
+    .whatsapp-status-copy {
+      display: grid;
+      gap: 1px;
+      padding-right: 4px;
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+
+    .whatsapp-status-copy strong {
+      color: #071d15;
+      font-size: 13px;
+    }
+
+    .whatsapp-status-copy span {
+      color: #5f695c;
+      font-size: 11px;
+    }
+
+    .cart-open .whatsapp-status-float,
+    .account-modal-open .whatsapp-status-float,
+    .product-detail-open .whatsapp-status-float {
+      display: none;
+    }
+
     .toast {
       position: fixed;
       left: 50%;
@@ -3365,6 +3434,21 @@
 
       .mobile-cart-bar.has-items {
         display: flex;
+      }
+
+      .whatsapp-status-float {
+        right: 14px;
+        bottom: 84px;
+        padding: 8px;
+      }
+
+      .whatsapp-status-copy {
+        display: none;
+      }
+
+      .whatsapp-status-icon {
+        width: 52px;
+        height: 52px;
       }
 
       .toast {
@@ -4862,6 +4946,18 @@
     </div>
     <button type="button" data-cart-open>View cart</button>
   </div>
+
+  <a class="whatsapp-status-float" href="https://wa.me/919835496666?text=Hi%20Pulps%20%26%20Leaves%2C%20I%20want%20to%20know%20my%20latest%20order%20status." target="_blank" rel="noopener" aria-label="Message Pulps and Leaves on WhatsApp for latest order status">
+    <span class="whatsapp-status-icon" aria-hidden="true">
+      <svg viewBox="0 0 32 32" focusable="false">
+        <path d="M16.04 3.2A12.77 12.77 0 0 0 5.18 22.7L3.8 28.8l6.25-1.33A12.79 12.79 0 1 0 16.04 3.2Zm0 2.29a10.5 10.5 0 0 1 8.9 16.08 10.48 10.48 0 0 1-13.95 3.7l-.42-.23-3.55.76.78-3.42-.27-.45A10.49 10.49 0 0 1 16.04 5.5Zm-4.43 5.6c-.24 0-.62.09-.95.45-.33.36-1.24 1.21-1.24 2.96s1.27 3.43 1.45 3.67c.18.24 2.45 3.92 6.07 5.34 3.01 1.18 3.62.95 4.27.89.65-.06 2.1-.86 2.4-1.69.3-.83.3-1.54.21-1.69-.09-.15-.33-.24-.68-.42-.36-.18-2.1-1.04-2.43-1.15-.33-.12-.57-.18-.8.18-.24.35-.92 1.15-1.13 1.39-.21.24-.42.27-.77.09-.36-.18-1.5-.55-2.86-1.76-1.06-.94-1.77-2.11-1.98-2.46-.21-.36-.02-.55.16-.73.16-.16.36-.42.53-.62.18-.21.24-.36.36-.59.12-.24.06-.45-.03-.62-.09-.18-.8-1.94-1.1-2.65-.29-.7-.58-.59-.8-.6l-.75-.02Z"/>
+      </svg>
+    </span>
+    <span class="whatsapp-status-copy">
+      <strong>Order status?</strong>
+      <span>Say hi on WhatsApp</span>
+    </span>
+  </a>
 
   <div class="toast" data-toast>Added to cart</div>
   <div class="celebration-overlay" data-celebration aria-hidden="true">
