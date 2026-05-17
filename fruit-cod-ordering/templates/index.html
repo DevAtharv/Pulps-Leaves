@@ -4341,11 +4341,11 @@
   <div class="announcement">
     <div class="container">
       <div class="announcement-track">
-        <span>Free delivery above Rs 599 | Flat 10% off + Additional Rs 50*</span>
-        <span>Flat 10% off + Additional Rs 50*</span>
+        <span>Free delivery above Rs 599 | Flat 10% off + Rs 50 online on Rs 599+</span>
+        <span>Flat 10% off + Rs 50 online on Rs 599+</span>
         <span>Fresh seasonal Malda mangoes</span>
         <span>Free delivery above Rs 599</span>
-        <span>Flat 10% off + Additional Rs 50*</span>
+        <span>Flat 10% off + Rs 50 online on Rs 599+</span>
         <span>Fresh seasonal Malda mangoes</span>
       </div>
     </div>
@@ -5689,7 +5689,7 @@
         const guthliInput = couponInputs.find((input) => input.value === "GUTHLI10");
         const paymentMethod = orderForm ? selectedPaymentMethod(orderForm) : "cod";
         const isOnlinePayment = paymentMethod === "razorpay" && paymentState.razorpayEnabled;
-        const isOnlineDiscountEligible = isOnlinePayment && subtotal > couponMinimum;
+        const isOnlineDiscountEligible = isOnlinePayment && subtotal >= couponMinimum;
         const onlineDiscount = isOnlineDiscountEligible ? Math.min(onlinePaymentDiscount, subtotal) : 0;
 
         if (guthliInput) {
@@ -5715,14 +5715,14 @@
           couponMessage = `${appliedCoupons.join(" + ")} applied.`;
         }
 
-        if (subtotal > couponMinimum && isOnlineDiscountEligible) {
+        if (subtotal >= couponMinimum && isOnlineDiscountEligible) {
           onlineOfferMessage = "Online payment Rs 50 off applied.";
-        } else if (subtotal > couponMinimum && !isOnlinePayment) {
+        } else if (subtotal >= couponMinimum && !isOnlinePayment) {
           onlineOfferMessage = "Choose UPI / online payment to get Rs 50 off.";
         } else if (subtotal > 0 && isOnlinePayment) {
-          onlineOfferMessage = "Add products above Rs 599 to unlock Rs 50 off.";
+          onlineOfferMessage = "Add products worth Rs 599 to unlock Rs 50 off.";
         } else if (subtotal > 0) {
-          onlineOfferMessage = "Pay online above Rs 599 and get Rs 50 off.";
+          onlineOfferMessage = "Pay online on Rs 599+ and get Rs 50 off.";
         }
 
         const delivery = subtotal === 0 || subtotal > deliveryFreeAbove ? 0 : deliveryCharge;
