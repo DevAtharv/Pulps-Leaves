@@ -43,6 +43,10 @@ def clean_env(name, default=""):
 app.config["SECRET_KEY"] = clean_env("SECRET_KEY", "dev-secret-change-me")
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = bool(os.getenv("VERCEL"))
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 31536000
+
+STATIC_CACHE_CONTROL = "public, max-age=31536000, s-maxage=31536000, immutable"
+HTML_CACHE_CONTROL = "private, no-store"
 
 
 def wants_json_response():
@@ -60,6 +64,16 @@ def log_checkout(event, **details):
         app.logger.info(json.dumps(payload, default=str, ensure_ascii=True))
     except Exception:
         app.logger.info(f"{event} {details}")
+
+
+@app.after_request
+def add_cache_headers(response):
+    if request.path.startswith("/static/") or request.path == "/favicon.ico":
+        response.headers["Cache-Control"] = STATIC_CACHE_CONTROL
+    elif response.content_type and response.content_type.startswith("text/html"):
+        response.headers["Cache-Control"] = HTML_CACHE_CONTROL
+        response.headers["Vary"] = "Cookie"
+    return response
 
 
 @app.errorhandler(HTTPException)
@@ -364,7 +378,7 @@ def index():
 
 @app.get("/favicon.ico")
 def favicon():
-    return send_from_directory(app.static_folder, "img/logo.png", mimetype="image/png")
+    return send_from_directory(app.static_folder, "img/logo-favicon.png", mimetype="image/png")
 
 
 @app.get("/robots.txt")

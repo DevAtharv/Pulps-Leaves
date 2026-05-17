@@ -1,3 +1,10 @@
+{% macro responsive_image(stem, alt, widths, fallback_width, width, height, sizes, picture_class="optimized-picture", img_class="", loading="lazy", fetchpriority="auto") -%}
+<picture class="{{ picture_class }}">
+  <source type="image/avif" srcset="{%- for width_value in widths -%}{{ url_for('static', filename='img/' ~ stem ~ '-' ~ width_value ~ '.avif') }} {{ width_value }}w{{ ', ' if not loop.last else '' }}{%- endfor -%}" sizes="{{ sizes }}">
+  <source type="image/webp" srcset="{%- for width_value in widths -%}{{ url_for('static', filename='img/' ~ stem ~ '-' ~ width_value ~ '.webp') }} {{ width_value }}w{{ ', ' if not loop.last else '' }}{%- endfor -%}" sizes="{{ sizes }}">
+  <img{% if img_class %} class="{{ img_class }}"{% endif %} src="{{ url_for('static', filename='img/' ~ stem ~ '-' ~ fallback_width ~ '.webp') }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="{{ loading }}" decoding="async" fetchpriority="{{ fetchpriority }}">
+</picture>
+{%- endmacro %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,11 +14,12 @@
   <meta property="og:title" content="Pulps & Leaves | Fresh Natural Foods">
   <meta property="og:description" content="Buy mangoes, tea, and makhana with a smooth cart and order summary.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="{{ url_for('static', filename='img/logo.png') }}">
+  <meta property="og:image" content="{{ url_for('static', filename='img/logo-320.webp') }}">
   <title>Pulps & Leaves | Fresh Natural Foods</title>
+  <link rel="preload" as="image" href="{{ url_for('static', filename='img/home_image-1024.avif') }}" imagesrcset="{{ url_for('static', filename='img/home_image-480.avif') }} 480w, {{ url_for('static', filename='img/home_image-768.avif') }} 768w, {{ url_for('static', filename='img/home_image-1024.avif') }} 1024w" imagesizes="(max-width: 767px) calc(100vw - 32px), 590px" type="image/avif" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --page: #f6f8f1;
@@ -69,7 +77,6 @@
     body.product-detail-open .hero,
     body.product-detail-open .mango-origin,
     body.product-detail-open .store,
-    body.product-detail-open .city-banner,
     body.product-detail-open .stories {
       display: none !important;
     }
@@ -77,6 +84,21 @@
     img {
       max-width: 100%;
       display: block;
+    }
+
+    .optimized-picture {
+      display: block;
+    }
+
+    .hero-slide .optimized-picture,
+    .product-media .optimized-picture,
+    .detail-more-card .optimized-picture {
+      width: 100%;
+      height: 100%;
+    }
+
+    .mango-origin .optimized-picture {
+      width: 100%;
     }
 
     button,
@@ -1281,6 +1303,19 @@
       box-shadow: 0 20px 36px rgba(24, 34, 21, 0.12);
     }
 
+    .detail-more-card .optimized-picture {
+      width: 210px;
+      height: 210px;
+      justify-self: end;
+      transform: translate(38px, 38px);
+    }
+
+    .detail-more-card .optimized-picture img {
+      width: 100%;
+      height: 100%;
+      transform: none;
+    }
+
     .detail-more-copy {
       position: relative;
       z-index: 1;
@@ -1386,7 +1421,8 @@
       background: #fff8e8;
     }
 
-    .drawer-brand-mark img {
+    .drawer-brand-mark img,
+    .drawer-brand-mark .optimized-picture {
       width: 100%;
       height: 100%;
       object-fit: contain;
@@ -2856,31 +2892,6 @@
       font-weight: 900;
     }
 
-    .city-banner {
-      margin: 12px auto 38px;
-      padding: 10px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      background:
-        radial-gradient(circle at 12% 0%, rgba(247, 178, 55, 0.16), transparent 34%),
-        linear-gradient(180deg, #fffdf6 0%, #fff 100%);
-      box-shadow: var(--shadow);
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-    }
-
-    .city-banner img {
-      display: block;
-      width: 100%;
-      height: auto;
-      max-width: 1120px;
-      border: 1px solid rgba(26, 93, 50, 0.1);
-      border-radius: 18px;
-      background: #fffdf6;
-      box-shadow: 0 16px 42px rgba(25, 75, 46, 0.12);
-    }
-
     .footer {
       border-top: 1px solid var(--line);
       background: #fff;
@@ -3175,6 +3186,18 @@
         transform: translate(34px, 34px);
       }
 
+      .detail-more-card .optimized-picture {
+        width: 150px;
+        height: 150px;
+        transform: translate(34px, 34px);
+      }
+
+      .detail-more-card .optimized-picture img {
+        width: 100%;
+        height: 100%;
+        transform: none;
+      }
+
       .product-media {
         padding: 8px;
         aspect-ratio: 1 / 0.88;
@@ -3182,23 +3205,6 @@
 
       .product-info {
         padding: 10px;
-      }
-
-      .city-banner {
-        width: 100%;
-        margin: 8px auto 28px;
-        padding: 0;
-        border: 0;
-        border-radius: 0;
-        background: transparent;
-        box-shadow: none;
-      }
-
-      .city-banner img {
-        width: 100%;
-        border: 0;
-        border-radius: 12px;
-        box-shadow: 0 14px 34px rgba(25, 75, 46, 0.14);
       }
 
       .product-title {
@@ -3262,7 +3268,8 @@
         font-size: 21px;
       }
 
-      .drawer-brand-mark {
+      .drawer-brand-mark,
+      .drawer-brand-mark .optimized-picture {
         width: 34px;
         height: 34px;
       }
@@ -3941,10 +3948,6 @@
       box-shadow: none;
     }
 
-    .city-banner {
-      display: none;
-    }
-
     .stories {
       width: 100%;
       padding: 92px 0;
@@ -4322,7 +4325,8 @@
     }
 
     .drawer-brand-mark,
-    .drawer-brand-mark img {
+    .drawer-brand-mark img,
+    .drawer-brand-mark .optimized-picture {
       width: 64px;
       height: 64px;
     }
@@ -4416,7 +4420,8 @@
       }
 
       .drawer-brand-mark,
-      .drawer-brand-mark img {
+      .drawer-brand-mark img,
+      .drawer-brand-mark .optimized-picture {
         width: 50px;
         height: 50px;
       }
@@ -4454,7 +4459,7 @@
   <header class="header">
     <div class="container nav">
       <a class="brand" href="#shop" data-home-link aria-label="Pulps and Leaves home">
-        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Pulps and Leaves logo">
+        {{ responsive_image("logo", "Pulps and Leaves logo", [60, 120, 180], 120, 120, 120, "60px", "optimized-picture brand-logo-picture", "", "eager", "low") }}
         <span>
           <strong>Pulps &amp; Leaves</strong>
           <small>Experience Nature's Premium</small>
@@ -4513,10 +4518,10 @@
     <div class="hero-visual">
       <div class="hero-track">
         <figure class="hero-slide is-active" data-hero-slide>
-          <img src="{{ url_for('static', filename='img/home_image.png') }}" alt="Pulps and Leaves fresh mango harvest">
+          {{ responsive_image("home_image", "Pulps and Leaves fresh mango harvest", [480, 768, 1024], 1024, 1024, 683, "(max-width: 767px) calc(100vw - 32px), 590px", "optimized-picture", "", "eager", "high") }}
         </figure>
         <figure class="hero-slide" data-hero-slide>
-          <img src="{{ url_for('static', filename='img/home_image2.png') }}" alt="Real Pulps and Leaves mango box">
+          {{ responsive_image("home_image2", "Real Pulps and Leaves mango box", [480, 768, 1024], 768, 1024, 1280, "(max-width: 767px) calc(100vw - 32px), 590px", "optimized-picture", "", "lazy", "low") }}
         </figure>
       </div>
       <div class="hero-dots" aria-label="Hero image slides">
@@ -4534,7 +4539,7 @@
     <div class="product-detail-hero">
       <div class="detail-gallery">
         <span class="detail-grade">Premium Grade</span>
-        <img class="detail-image" src="" alt="" data-detail-image>
+        <img class="detail-image" src="" alt="" width="700" height="574" loading="lazy" decoding="async" data-detail-image>
       </div>
       <article class="detail-copy">
         <span class="detail-kicker" data-detail-variant>Seasonal box</span>
@@ -4575,7 +4580,7 @@
             <strong>Artisan Teas</strong>
             <p>Slow morning blends for homes that like their tea with character.</p>
           </div>
-          <img src="{{ url_for('static', filename='img/tea.png') }}" alt="Premium tea collection">
+          {{ responsive_image("tea", "Premium tea collection", [240, 420, 700], 420, 700, 700, "(max-width: 767px) 150px, 210px", "optimized-picture", "", "lazy", "low") }}
         </article>
         <article class="detail-more-card is-makhana">
           <div class="detail-more-copy">
@@ -4583,7 +4588,7 @@
             <strong>Crunchy Makhana</strong>
             <p>A light, roasted snack range joining the Pulps &amp; Leaves pantry.</p>
           </div>
-          <img src="{{ url_for('static', filename='img/makhana.png') }}" alt="Roasted makhana collection">
+          {{ responsive_image("makhana", "Roasted makhana collection", [240, 420, 700], 420, 700, 875, "(max-width: 767px) 150px, 210px", "optimized-picture", "", "lazy", "low") }}
         </article>
       </div>
     </div>
@@ -4612,7 +4617,11 @@
 
     <section class="product-grid" data-product-grid aria-label="Products">
       {% for product in products %}
-      {% set image_url = url_for('static', filename='img/5kg.png') if product.slug == 'malda-mango-5kg-box' else url_for('static', filename='img/3kg_mangoes.png') %}
+      {% set image_stem = '5kg' if product.slug == 'malda-mango-5kg-box' else '3kg_mangoes' %}
+      {% set image_url = url_for('static', filename='img/' ~ image_stem ~ '-700.webp') %}
+      {% set image_srcset = url_for('static', filename='img/' ~ image_stem ~ '-420.webp') ~ ' 420w, ' ~ url_for('static', filename='img/' ~ image_stem ~ '-700.webp') ~ ' 700w, ' ~ url_for('static', filename='img/' ~ image_stem ~ '-960.webp') ~ ' 960w' %}
+      {% set image_width = 960 %}
+      {% set image_height = 640 if image_stem == '5kg' else 768 %}
       {% set rating = '4.9' if loop.index == 1 else '4.8' %}
       {% set discount_percent = (((product.mrp - product.price) * 100) / product.mrp) | round(0, 'common') | int %}
       <article class="product-card"
@@ -4625,9 +4634,11 @@
         data-price="{{ product.price }}"
         data-mrp="{{ product.mrp }}"
         data-rating="{{ rating }}"
-        data-image="{{ image_url }}">
+        data-image="{{ image_url }}"
+        data-image-srcset="{{ image_srcset }}"
+        data-image-sizes="(max-width: 767px) calc(50vw - 22px), 560px">
         <div class="product-media">
-          <img src="{{ image_url }}" alt="{{ product.display_title }} {{ product.unit }}">
+          {{ responsive_image(image_stem, product.display_title ~ " " ~ product.unit, [240, 420, 700, 960], 420, image_width, image_height, "(max-width: 767px) calc(50vw - 22px), 560px", "optimized-picture", "", "lazy", "low") }}
           <span class="discount">{{ discount_percent }}% OFF</span>
         </div>
         <div class="product-info">
@@ -4643,9 +4654,9 @@
       </article>
       {% endfor %}
 
-      <article class="product-card" data-product data-reveal data-unavailable="true" data-id="assam-breakfast-tea" data-name="Husk and Dew" data-category="Tea" data-variant="250 g Tin" data-price="449" data-mrp="549" data-rating="4.8" data-image="{{ url_for('static', filename='img/tea.png') }}">
+      <article class="product-card" data-product data-reveal data-unavailable="true" data-id="assam-breakfast-tea" data-name="Husk and Dew" data-category="Tea" data-variant="250 g Tin" data-price="449" data-mrp="549" data-rating="4.8" data-image="{{ url_for('static', filename='img/tea-700.webp') }}" data-image-srcset="{{ url_for('static', filename='img/tea-420.webp') }} 420w, {{ url_for('static', filename='img/tea-700.webp') }} 700w" data-image-sizes="(max-width: 767px) calc(50vw - 22px), 560px">
         <div class="product-media">
-          <img src="{{ url_for('static', filename='img/tea.png') }}" alt="Husk and Dew">
+          {{ responsive_image("tea", "Husk and Dew", [240, 420, 700], 420, 700, 700, "(max-width: 767px) calc(50vw - 22px), 560px", "optimized-picture", "", "lazy", "low") }}
           <span class="coming-soon-badge">Coming soon</span>
         </div>
         <div class="product-info">
@@ -4660,9 +4671,9 @@
         </div>
       </article>
 
-      <article class="product-card" data-product data-reveal data-unavailable="true" data-id="roasted-himalayan-makhana" data-name="Naivedyam Makhana" data-category="Makhana" data-variant="100 g Pouch" data-price="349" data-mrp="449" data-rating="4.9" data-image="{{ url_for('static', filename='img/makhana.png') }}">
+      <article class="product-card" data-product data-reveal data-unavailable="true" data-id="roasted-himalayan-makhana" data-name="Naivedyam Makhana" data-category="Makhana" data-variant="100 g Pouch" data-price="349" data-mrp="449" data-rating="4.9" data-image="{{ url_for('static', filename='img/makhana-700.webp') }}" data-image-srcset="{{ url_for('static', filename='img/makhana-420.webp') }} 420w, {{ url_for('static', filename='img/makhana-700.webp') }} 700w" data-image-sizes="(max-width: 767px) calc(50vw - 22px), 560px">
         <div class="product-media">
-          <img src="{{ url_for('static', filename='img/makhana.png') }}" alt="Naivedyam Makhana">
+          {{ responsive_image("makhana", "Naivedyam Makhana", [240, 420, 700], 420, 700, 875, "(max-width: 767px) calc(50vw - 22px), 560px", "optimized-picture", "", "lazy", "low") }}
           <span class="coming-soon-badge">Coming soon</span>
         </div>
         <div class="product-info">
@@ -4679,10 +4690,6 @@
     </section>
 
   </main>
-
-  <section class="container city-banner" aria-label="Delivery cities" data-reveal>
-    <img src="{{ url_for('static', filename='img/city.png') }}" alt="Pulps and Leaves delivers mangoes to Bengaluru, Hyderabad, Mumbai, and Pune">
-  </section>
 
   <section class="stories" id="stories" data-reveal>
     <div class="container">
@@ -4715,7 +4722,7 @@
   </section>
 
   <section class="mango-origin" data-reveal>
-    <img src="{{ url_for('static', filename='img/home_slider_2.png') }}" alt="Original Malda mango harvest">
+    {{ responsive_image("home_slider_2", "Original Malda mango harvest", [480, 768, 1120, 1400], 768, 1400, 747, "(max-width: 767px) calc(100vw - 32px), 520px", "optimized-picture", "", "lazy", "low") }}
     <div class="mango-origin-copy">
       <span>Original Malda Mango</span>
       <h2>From orchard to your table.</h2>
@@ -4758,7 +4765,7 @@
       <button class="close-button checkout-close-button" type="button" data-cart-close aria-label="Close cart">x</button>
       <button class="drawer-brand" type="button" data-home-link aria-label="Pulps and Leaves home">
         <span class="drawer-brand-mark" aria-hidden="true">
-          <img src="{{ url_for('static', filename='img/logo.png') }}" alt="">
+          {{ responsive_image("logo", "", [60, 120, 180], 120, 120, 120, "64px", "optimized-picture", "", "lazy", "low") }}
         </span>
         <strong>Pulps &amp; Leaves</strong>
         <span class="sr-only" data-drawer-subtitle>Add items, review summary, place order.</span>
@@ -4971,9 +4978,6 @@
     </section>
   </div>
 
-  {% if razorpay_enabled %}
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  {% endif %}
   <script>
     (() => {
       const accountState = {
@@ -4994,7 +4998,6 @@
         document.querySelector(".hero"),
         document.querySelector(".mango-origin"),
         document.querySelector(".store"),
-        document.querySelector(".city-banner"),
       ].filter(Boolean);
       const cartCount = document.querySelector("[data-cart-count]");
       const cartButton = document.querySelector("[data-cart-open].cart-button");
@@ -5074,6 +5077,7 @@
       let suppressCouponCelebration = false;
       let detailProductId = "";
       let detailQty = 0;
+      let razorpayCheckoutPromise = null;
 
       const formatMoney = (value) => `Rs ${value.toLocaleString("en-IN")}`;
       paymentState.isTestKey = String(paymentState.razorpayKeyId || "").startsWith("rzp_test_");
@@ -5168,6 +5172,33 @@
         }
       }
 
+      function loadRazorpayCheckout() {
+        if (window.Razorpay) return Promise.resolve(window.Razorpay);
+        if (!paymentState.razorpayEnabled) {
+          return Promise.reject(new Error("Online payment is not available right now."));
+        }
+        if (!razorpayCheckoutPromise) {
+          razorpayCheckoutPromise = new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = "https://checkout.razorpay.com/v1/checkout.js";
+            script.async = true;
+            script.onload = () => {
+              if (window.Razorpay) {
+                resolve(window.Razorpay);
+              } else {
+                reject(new Error("Razorpay checkout did not load correctly. Please try COD or refresh the page."));
+              }
+            };
+            script.onerror = () => {
+              razorpayCheckoutPromise = null;
+              reject(new Error("Razorpay checkout could not load. Please check your connection or choose COD."));
+            };
+            document.head.appendChild(script);
+          });
+        }
+        return razorpayCheckoutPromise;
+      }
+
       if (paymentState.razorpayEnabled && paymentState.isTestKey) {
         if (onlinePaymentTitle) onlinePaymentTitle.textContent = "Test online payment";
         if (onlinePaymentCopy) onlinePaymentCopy.textContent = "Use card or netbanking in test mode. UPI app QR or intent can fail until live Razorpay keys are used.";
@@ -5245,6 +5276,8 @@
           price: Number(card.dataset.price || 0),
           mrp: Number(card.dataset.mrp || 0),
           image: card.dataset.image,
+          imageSrcset: card.dataset.imageSrcset || "",
+          imageSizes: card.dataset.imageSizes || "",
           unavailable: card.dataset.unavailable === "true",
           card,
         };
@@ -5310,8 +5343,11 @@
         detailQty = cart.get(id)?.qty || 0;
         const discountPercent = product.mrp ? Math.round(((product.mrp - product.price) * 100) / product.mrp) : 0;
         document.querySelector("[data-detail-category]").textContent = product.category || "Mangoes";
-        document.querySelector("[data-detail-image]").src = product.image;
-        document.querySelector("[data-detail-image]").alt = product.name;
+        const detailImage = document.querySelector("[data-detail-image]");
+        detailImage.src = product.image;
+        detailImage.srcset = product.imageSrcset || "";
+        detailImage.sizes = product.imageSizes || "";
+        detailImage.alt = product.name;
         document.querySelector("[data-detail-variant]").textContent = product.variant || "Seasonal box";
         document.querySelector("[data-detail-name]").textContent = productTitle(product);
         document.querySelector("[data-detail-description]").textContent = productDescriptions[id] || "Premium Pulps & Leaves produce, selected fresh and packed with care.";
@@ -5943,7 +5979,7 @@
           const lineMrp = item.mrp ? item.mrp * item.qty : 0;
           return `
           <article class="cart-item">
-            <img src="${item.image}" alt="${item.name}">
+            <img src="${item.image}" ${item.imageSrcset ? `srcset="${item.imageSrcset}" sizes="118px"` : ""} alt="${item.name}" width="118" height="118" loading="lazy" decoding="async">
             <div class="cart-item-main">
               <div class="cart-item-top">
                 <div>
@@ -6068,8 +6104,29 @@
 
       function startHeroSlider() {
         if (heroSlides.length < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-        window.clearInterval(heroTimer);
-        heroTimer = window.setInterval(() => setHeroSlide(activeHeroSlide + 1), 4200);
+        const start = () => {
+          if (heroTimer || document.hidden) return;
+          heroTimer = window.setInterval(() => setHeroSlide(activeHeroSlide + 1), 5200);
+        };
+        const stop = () => {
+          window.clearInterval(heroTimer);
+          heroTimer = null;
+        };
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) {
+            stop();
+          } else {
+            start();
+          }
+        });
+        const schedule = window.requestIdleCallback
+          ? (callback) => window.requestIdleCallback(callback, { timeout: 2600 })
+          : (callback) => window.setTimeout(callback, 1600);
+        if (document.readyState === "complete") {
+          schedule(start);
+        } else {
+          window.addEventListener("load", () => schedule(start), { once: true });
+        }
       }
 
       function goHome() {
@@ -6194,9 +6251,10 @@
       }
 
       async function submitRazorpayOrder(form) {
-        if (!paymentState.razorpayEnabled || !window.Razorpay) {
-          throw new Error("Razorpay test checkout is not available. Please refresh and try again.");
+        if (!paymentState.razorpayEnabled) {
+          throw new Error("Online payment is not available right now. Please choose COD.");
         }
+        const RazorpayCheckout = await loadRazorpayCheckout();
         const orderPayload = formPayload(form);
         logCheckout("payment_initialized_requested", { paymentMethod: "razorpay" });
         const { response: orderResponse, data: orderData } = await fetchJson("/api/create-order", {
@@ -6212,7 +6270,7 @@
 
         return new Promise((resolve, reject) => {
           logCheckout("payment_modal_open", { razorpayOrderId: orderData.order_id });
-          const checkout = new Razorpay({
+          const checkout = new RazorpayCheckout({
             key: orderData.key_id,
             amount: orderData.amount,
             currency: orderData.currency,
