@@ -1831,6 +1831,29 @@
       display: none;
     }
 
+    .cart-confirmation-note {
+      display: grid;
+      gap: 5px;
+      padding: 14px 16px;
+      border: 1px dashed #d8c28d;
+      border-radius: 10px;
+      color: #4d3b16;
+      background: #fff8e8;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .cart-confirmation-note a {
+      color: #1a6d24;
+      font-weight: 950;
+      text-decoration: none;
+    }
+
+    .cart-confirmation-note a:hover {
+      text-decoration: underline;
+    }
+
     .coupon-field {
       display: grid;
       gap: 10px;
@@ -3456,13 +3479,13 @@
     }
 
     .nav {
-      min-height: 72px;
+      min-height: 86px;
       grid-template-columns: 1fr auto 1fr;
     }
 
     .brand img {
-      width: 42px;
-      height: 42px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       box-shadow: none;
     }
@@ -3472,7 +3495,7 @@
     .footer-brand {
       font-family: var(--serif);
       color: #4f2f05;
-      font-size: 32px;
+      font-size: 38px;
       font-weight: 600;
       letter-spacing: -0.03em;
     }
@@ -3958,7 +3981,12 @@
       }
 
       .brand strong {
-        font-size: 28px;
+        font-size: 31px;
+      }
+
+      .brand img {
+        width: 50px;
+        height: 50px;
       }
 
       .hero {
@@ -4757,6 +4785,10 @@
           <div class="summary-line"><span data-delivery-label>Delivery<small>Free on order above Rs 599</small></span><strong data-delivery>Rs 0</strong></div>
           <div class="summary-line" data-discount-line hidden><span>Coupon savings</span><strong data-discount>-Rs 0</strong></div>
           <div class="summary-line total"><span>Total<small>Inclusive of all taxes</small></span><strong data-total>Rs 0</strong></div>
+          <div class="cart-confirmation-note">
+            <span>Placed your order directly through the website?</span>
+            <a href="https://wa.me/919835496666?text=Hi%20Pulps%20%26%20Leaves%2C%20I%20placed%20an%20order%20through%20the%20website.%20Please%20confirm%20my%20order." target="_blank" rel="noopener">Message us on WhatsApp for order confirmation.</a>
+          </div>
           <div class="free-note" data-free-note></div>
         </div>
         <div class="payment-box">
