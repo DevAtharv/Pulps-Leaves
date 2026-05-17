@@ -75,7 +75,6 @@
 
     body.product-detail-open .announcement,
     body.product-detail-open .hero,
-    body.product-detail-open .mango-origin,
     body.product-detail-open .store,
     body.product-detail-open .stories {
       display: none !important;
@@ -95,10 +94,6 @@
     .detail-more-card .optimized-picture {
       width: 100%;
       height: 100%;
-    }
-
-    .mango-origin .optimized-picture {
-      width: 100%;
     }
 
     button,
@@ -4226,49 +4221,9 @@
       }
     }
 
-    .mango-origin {
-      width: var(--container);
-      display: grid;
-      grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
-      gap: clamp(22px, 4vw, 42px);
-      align-items: center;
-      margin: 0 auto 92px;
-      padding: 18px;
-      border: 1px solid rgba(122, 75, 8, 0.1);
-      border-radius: 18px;
-      background: #fffaf1;
-      box-shadow: 0 18px 46px rgba(67, 48, 23, 0.07);
-    }
-
-    .mango-origin img {
-      width: 100%;
-      aspect-ratio: 1.6 / 1;
-      object-fit: cover;
-      border-radius: 14px;
-    }
-
-    .mango-origin-copy {
-      display: grid;
-      gap: 8px;
-    }
-
-    .mango-origin-copy span,
     .product-name-highlight {
       color: #3f7138;
       font-weight: 800;
-    }
-
-    .mango-origin-copy h2 {
-      color: #704608;
-      font-family: var(--serif);
-      font-size: clamp(32px, 4vw, 46px);
-      line-height: 1;
-      letter-spacing: -0.04em;
-    }
-
-    .mango-origin-copy p {
-      color: #4f473d;
-      line-height: 1.75;
     }
 
     .pantry-preview {
@@ -4401,14 +4356,8 @@
         margin-top: -8px;
       }
 
-      .mango-origin,
       .pantry-preview {
         grid-template-columns: 1fr;
-      }
-
-      .mango-origin {
-        width: var(--container);
-        margin: 0 auto 52px;
       }
 
       .pantry-card {
@@ -4721,15 +4670,6 @@
     </div>
   </section>
 
-  <section class="mango-origin" data-reveal>
-    {{ responsive_image("home_slider_2", "Original Malda mango harvest", [480, 768, 1120, 1400], 768, 1400, 747, "(max-width: 767px) calc(100vw - 32px), 520px", "optimized-picture", "", "lazy", "low") }}
-    <div class="mango-origin-copy">
-      <span>Original Malda Mango</span>
-      <h2>From orchard to your table.</h2>
-      <p>Another glimpse of our Malda harvest, selected for aroma, sweetness, and careful packing.</p>
-    </div>
-  </section>
-
   <footer class="footer">
     <div class="container footer-grid">
       <div>
@@ -4996,7 +4936,6 @@
       const productDetail = document.querySelector("[data-product-detail]");
       const homeSections = [
         document.querySelector(".hero"),
-        document.querySelector(".mango-origin"),
         document.querySelector(".store"),
       ].filter(Boolean);
       const cartCount = document.querySelector("[data-cart-count]");
