@@ -75,8 +75,7 @@
 
     body.product-detail-open .announcement,
     body.product-detail-open .hero,
-    body.product-detail-open .store,
-    body.product-detail-open .stories {
+    body.product-detail-open .store {
       display: none !important;
     }
 
@@ -3794,8 +3793,7 @@
       margin-bottom: 34px;
     }
 
-    .toolbar h2,
-    .stories h2 {
+    .toolbar h2 {
       color: #704608;
       font-family: var(--serif);
       font-size: clamp(34px, 4vw, 44px);
@@ -3803,8 +3801,7 @@
       letter-spacing: -0.04em;
     }
 
-    .toolbar p,
-    .stories p {
+    .toolbar p {
       max-width: 560px;
       margin-top: 8px;
       color: #4f473d;
@@ -3954,52 +3951,6 @@
       box-shadow: none;
     }
 
-    .stories {
-      width: 100%;
-      padding: 92px 0;
-      background: var(--soft-cream);
-      text-align: center;
-    }
-
-    .story-grid {
-      width: var(--container);
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 30px;
-      margin: 54px auto 0;
-      text-align: left;
-    }
-
-    .story-card {
-      min-height: 210px;
-      display: grid;
-      align-content: space-between;
-      gap: 22px;
-      padding: 30px;
-      border-radius: 12px;
-      background: #fff;
-      box-shadow: 0 18px 45px rgba(67, 48, 23, 0.05);
-    }
-
-    .stars {
-      color: #e1a917;
-      letter-spacing: 0.12em;
-    }
-
-    .story-card blockquote {
-      margin: 0;
-      color: #30281f;
-      font-size: 13px;
-      line-height: 1.75;
-    }
-
-    .story-card cite {
-      color: #756d62;
-      font-size: 12px;
-      font-style: normal;
-      line-height: 1.5;
-    }
-
     .footer {
       border-top: 1px solid rgba(122, 75, 8, 0.08);
     }
@@ -4134,7 +4085,6 @@
       }
 
       .product-grid,
-      .story-grid,
       .footer-grid {
         grid-template-columns: 1fr;
       }
@@ -4145,16 +4095,6 @@
 
       .product-title {
         font-size: 26px;
-      }
-
-      .stories {
-        padding: 66px 0;
-      }
-
-      .story-grid {
-        width: var(--container);
-        gap: 16px;
-        margin-top: 34px;
       }
 
       .footer-grid {
@@ -4424,7 +4364,6 @@
       <nav class="nav-center" aria-label="Primary navigation">
         <a href="#products">Our Orchards</a>
         <a href="#products">The Harvest</a>
-        <a href="#stories">Our Story</a>
       </nav>
 
       <div class="nav-actions">
@@ -4646,36 +4585,6 @@
 
   </main>
 
-  <section class="stories" id="stories" data-reveal>
-    <div class="container">
-      <h2>The Harvest Stories</h2>
-      <p>Shared by our community of mango connoisseurs.</p>
-    </div>
-    <div class="story-grid">
-      <article class="story-card">
-        <div>
-          <div class="stars">★★★★★</div>
-          <blockquote>"The aroma filled the entire room before I even opened the box. Truly the gold standard of Malda mangoes."</blockquote>
-        </div>
-        <cite>Ananya R.<br>Bengaluru</cite>
-      </article>
-      <article class="story-card">
-        <div>
-          <div class="stars">★★★★★</div>
-          <blockquote>"Exceptional quality and packaging. You can taste the authenticity in every bite. Reminds me of my childhood summers."</blockquote>
-        </div>
-        <cite>Vikram S.<br>Mumbai</cite>
-      </article>
-      <article class="story-card">
-        <div>
-          <div class="stars">★★★★★</div>
-          <blockquote>"A seasonal luxury we eagerly wait for. The sweetness is perfectly balanced, and the delivery was incredibly careful."</blockquote>
-        </div>
-        <cite>Priya K.</cite>
-      </article>
-    </div>
-  </section>
-
   <footer class="footer">
     <div class="container footer-grid">
       <div>
@@ -4691,7 +4600,6 @@
         <strong>Quick links</strong>
         <a href="#products">Products</a>
         <a href="#products">About Our Brand</a>
-        <a href="#stories">Our Story</a>
       </div>
       <div class="footer-contact">
         <strong>Contact</strong>
