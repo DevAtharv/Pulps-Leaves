@@ -3953,45 +3953,74 @@
 
     .mango-memory {
       width: 100%;
-      padding: 76px 0 88px;
+      padding: 70px 0 86px;
       border-top: 1px solid rgba(122, 75, 8, 0.08);
       background:
-        linear-gradient(180deg, #fffdfa 0%, #fbf8f4 100%);
+        radial-gradient(circle at 14% 6%, rgba(242, 178, 75, 0.22) 0, rgba(242, 178, 75, 0) 34%),
+        linear-gradient(180deg, #fffdfa 0%, #f7efe3 100%);
+      overflow: hidden;
     }
 
     .mango-memory-inner {
       width: var(--container);
+      max-width: 1120px;
       display: grid;
-      grid-template-columns: minmax(220px, 330px) minmax(0, 1fr);
-      gap: clamp(30px, 6vw, 72px);
-      align-items: start;
+      grid-template-columns: minmax(220px, 310px) minmax(0, 1fr);
+      gap: clamp(26px, 5vw, 58px);
+      align-items: center;
       margin: 0 auto;
+      padding: clamp(18px, 3vw, 32px);
+      border: 1px solid rgba(122, 75, 8, 0.12);
+      border-radius: 32px;
+      background:
+        linear-gradient(135deg, rgba(255, 253, 247, 0.94), rgba(255, 246, 226, 0.86));
+      box-shadow: 0 26px 70px rgba(66, 44, 15, 0.12);
+      position: relative;
+    }
+
+    .mango-memory-inner::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 24px;
+      pointer-events: none;
     }
 
     .mango-memory-media {
+      position: relative;
+      z-index: 1;
       justify-self: center;
-      width: min(100%, 310px);
+      width: min(100%, 292px);
       margin: 0;
     }
 
     .mango-memory-media img {
+      display: block;
       width: 100%;
-      aspect-ratio: 4 / 5;
+      aspect-ratio: 3 / 4;
       object-fit: cover;
-      border: 1px solid rgba(122, 75, 8, 0.12);
-      border-radius: 12px;
-      box-shadow: 0 24px 54px rgba(67, 48, 23, 0.13);
+      object-position: center;
+      border: 6px solid #fff6e7;
+      border-radius: 24px;
+      box-shadow: 0 22px 52px rgba(54, 32, 4, 0.22);
     }
 
     .mango-memory-copy {
-      max-width: 760px;
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
     }
 
     .mango-memory-kicker {
       display: inline-flex;
-      margin-bottom: 12px;
-      color: #6f4508;
-      font-size: 12px;
+      margin-bottom: 14px;
+      padding: 8px 13px;
+      border: 1px solid rgba(123, 75, 8, 0.16);
+      border-radius: 999px;
+      background: rgba(255, 247, 226, 0.82);
+      color: #7d4b05;
+      font-size: 11px;
       font-weight: 800;
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -3999,21 +4028,21 @@
 
     .mango-memory h2 {
       max-width: 680px;
-      color: #704608;
+      color: #684007;
       font-family: var(--serif);
-      font-size: clamp(36px, 5vw, 58px);
+      font-size: clamp(34px, 4.4vw, 54px);
       font-weight: 600;
-      line-height: 0.98;
-      letter-spacing: -0.04em;
+      line-height: 1.03;
+      letter-spacing: -0.035em;
     }
 
     .mango-memory-body {
       display: grid;
-      gap: 13px;
-      margin-top: 26px;
-      color: #3d3529;
+      gap: 11px;
+      margin-top: 22px;
+      color: #403426;
       font-size: 15px;
-      line-height: 1.9;
+      line-height: 1.78;
     }
 
     .mango-memory-body p {
@@ -4027,8 +4056,8 @@
 
     .mango-memory-sign {
       display: block;
-      margin-top: 24px;
-      color: #4f2f05;
+      margin-top: 20px;
+      color: #5c3604;
       font-family: var(--serif);
       font-size: 28px;
       font-style: normal;
@@ -4182,25 +4211,27 @@
       }
 
       .mango-memory {
-        padding: 58px 0 62px;
+        padding: 52px 0 60px;
       }
 
       .mango-memory-inner {
         grid-template-columns: 1fr;
-        gap: 28px;
+        gap: 24px;
+        padding: 18px;
+        border-radius: 24px;
       }
 
       .mango-memory-media {
-        width: min(76vw, 280px);
+        width: min(72vw, 260px);
       }
 
       .mango-memory h2 {
-        font-size: 38px;
+        font-size: 34px;
       }
 
       .mango-memory-body {
         font-size: 14px;
-        line-height: 1.8;
+        line-height: 1.72;
       }
 
       .footer-grid {
@@ -4447,11 +4478,11 @@
   <div class="announcement">
     <div class="container">
       <div class="announcement-track">
-        <span>Free delivery above Rs 599 | Flat 10% off + Rs 50 online on Rs 599+</span>
-        <span>Flat 10% off + Rs 50 online on Rs 599+</span>
+        <span>Free delivery above Rs 599 | Flat 10% off + Rs 50 online above Rs 599</span>
+        <span>Flat 10% off + Rs 50 online above Rs 599</span>
         <span>Fresh seasonal Malda mangoes</span>
         <span>Free delivery above Rs 599</span>
-        <span>Flat 10% off + Rs 50 online on Rs 599+</span>
+        <span>Flat 10% off + Rs 50 online above Rs 599</span>
         <span>Fresh seasonal Malda mangoes</span>
       </div>
     </div>
@@ -4694,10 +4725,10 @@
   <section class="mango-memory" lang="hi" data-reveal>
     <div class="mango-memory-inner">
       <figure class="mango-memory-media">
-        <img src="{{ url_for('static', filename='img/pl-product-poster.jpeg') }}" alt="Pulps and Leaves mango memory poster" width="640" height="800" loading="lazy" decoding="async">
+        <img src="{{ url_for('static', filename='img/mitha-ehsaas-poster.webp') }}" alt="मीठा एहसास मालदा आम की यादों का पोस्टर" width="720" height="960" loading="lazy" decoding="async">
       </figure>
       <article class="mango-memory-copy">
-        <span class="mango-memory-kicker">Malda Memories</span>
+        <span class="mango-memory-kicker">मीठा एहसास</span>
         <h2>बिहार का मालदा और बचपन की वापसी</h2>
         <div class="mango-memory-body">
           <p>बिहार की गर्मियों का अपना ही एक रंग होता था। सुबह-सुबह सूरज पूरी तरह निकला भी नहीं होता था और हम दोस्त पहले ही बगीचे की तरफ निकल पड़ते थे। दूर से ही पेड़ों पर लटके मालदा आम ऐसे चमकते थे जैसे पेड़ों ने पीले-पीले बल्ब पहन लिए हों।</p>
@@ -5818,7 +5849,7 @@
         const guthliInput = couponInputs.find((input) => input.value === "GUTHLI10");
         const paymentMethod = orderForm ? selectedPaymentMethod(orderForm) : "cod";
         const isOnlinePayment = paymentMethod === "razorpay" && paymentState.razorpayEnabled;
-        const isOnlineDiscountEligible = isOnlinePayment && subtotal >= couponMinimum;
+        const isOnlineDiscountEligible = isOnlinePayment && subtotal > couponMinimum;
         const onlineDiscount = isOnlineDiscountEligible ? Math.min(onlinePaymentDiscount, subtotal) : 0;
 
         if (guthliInput) {
@@ -5844,14 +5875,14 @@
           couponMessage = `${appliedCoupons.join(" + ")} applied.`;
         }
 
-        if (subtotal >= couponMinimum && isOnlineDiscountEligible) {
+        if (subtotal > couponMinimum && isOnlineDiscountEligible) {
           onlineOfferMessage = "Online payment Rs 50 off applied.";
-        } else if (subtotal >= couponMinimum && !isOnlinePayment) {
+        } else if (subtotal > couponMinimum && !isOnlinePayment) {
           onlineOfferMessage = "Choose UPI / online payment to get Rs 50 off.";
         } else if (subtotal > 0 && isOnlinePayment) {
-          onlineOfferMessage = "Add products worth Rs 599 to unlock Rs 50 off.";
+          onlineOfferMessage = "Add products above Rs 599 to unlock Rs 50 off.";
         } else if (subtotal > 0) {
-          onlineOfferMessage = "Pay online on Rs 599+ and get Rs 50 off.";
+          onlineOfferMessage = "Pay online above Rs 599 and get Rs 50 off.";
         }
 
         const delivery = subtotal === 0 || subtotal > deliveryFreeAbove ? 0 : deliveryCharge;

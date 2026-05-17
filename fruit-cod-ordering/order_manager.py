@@ -246,7 +246,7 @@ class OrderManager:
 
     @staticmethod
     def _online_payment_discount(subtotal, payment_mode):
-        if payment_mode == "Razorpay" and subtotal >= COUPON_MINIMUM_SUBTOTAL:
+        if payment_mode == "Razorpay" and subtotal > COUPON_MINIMUM_SUBTOTAL:
             return min(ONLINE_PAYMENT_DISCOUNT, subtotal)
         return 0
 
