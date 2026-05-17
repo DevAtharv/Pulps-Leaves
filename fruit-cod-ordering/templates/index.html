@@ -1805,6 +1805,11 @@
       line-height: 1.3;
     }
 
+    .summary-line span small.online-discount-note {
+      color: var(--leaf-deep);
+      font-weight: 900;
+    }
+
     .summary-line[hidden] {
       display: none;
     }
@@ -1865,29 +1870,6 @@
       display: none;
     }
 
-    .cart-confirmation-note {
-      display: grid;
-      gap: 5px;
-      padding: 14px 16px;
-      border: 1px dashed #d8c28d;
-      border-radius: 10px;
-      color: #4d3b16;
-      background: #fff8e8;
-      font-size: 13px;
-      font-weight: 800;
-      line-height: 1.45;
-    }
-
-    .cart-confirmation-note a {
-      color: #1a6d24;
-      font-weight: 950;
-      text-decoration: none;
-    }
-
-    .cart-confirmation-note a:hover {
-      text-decoration: underline;
-    }
-
     .coupon-field {
       display: grid;
       gap: 10px;
@@ -1914,7 +1896,7 @@
 
     .coupon-options {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: minmax(0, 1fr);
       gap: 8px;
     }
 
@@ -1956,10 +1938,6 @@
 
     .coupon-copy-primary {
       color: #7b5520;
-    }
-
-    .coupon-copy-secondary {
-      color: var(--leaf-deep);
     }
 
     .coupon-code-line {
@@ -2700,23 +2678,48 @@
       bottom: 22px;
       z-index: 65;
       display: inline-flex;
+      flex-direction: column;
       align-items: center;
-      gap: 10px;
-      max-width: min(320px, calc(100vw - 36px));
-      padding: 10px 12px 10px 10px;
-      border: 1px solid rgba(24, 34, 21, 0.08);
-      border-radius: 999px;
+      gap: 6px;
+      max-width: 92px;
+      padding: 0;
+      border: 0;
       color: #06382c;
-      background: rgba(255, 255, 255, 0.96);
-      box-shadow: 0 16px 36px rgba(24, 34, 21, 0.18);
+      background: transparent;
+      box-shadow: none;
+      cursor: grab;
       text-decoration: none;
+      touch-action: none;
       transform: translateY(0);
       transition: transform 180ms ease, box-shadow 180ms ease;
+      user-select: none;
     }
 
     .whatsapp-status-float:hover {
       transform: translateY(-2px);
-      box-shadow: 0 20px 44px rgba(24, 34, 21, 0.22);
+    }
+
+    .whatsapp-status-float.is-dragging {
+      cursor: grabbing;
+      transform: none;
+      transition: none;
+    }
+
+    .whatsapp-status-message {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 6px 10px;
+      border: 1px solid rgba(24, 34, 21, 0.08);
+      border-radius: 999px;
+      color: #071d15;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 10px 24px rgba(24, 34, 21, 0.14);
+      font-size: 13px;
+      font-weight: 950;
+      line-height: 1;
+      white-space: nowrap;
     }
 
     .whatsapp-status-icon {
@@ -2735,26 +2738,6 @@
       width: 27px;
       height: 27px;
       fill: currentColor;
-    }
-
-    .whatsapp-status-copy {
-      display: grid;
-      gap: 1px;
-      padding-right: 4px;
-      font-size: 12px;
-      font-weight: 900;
-      line-height: 1.25;
-      white-space: nowrap;
-    }
-
-    .whatsapp-status-copy strong {
-      color: #071d15;
-      font-size: 13px;
-    }
-
-    .whatsapp-status-copy span {
-      color: #5f695c;
-      font-size: 11px;
     }
 
     .cart-open .whatsapp-status-float,
@@ -3473,11 +3456,7 @@
       .whatsapp-status-float {
         right: 14px;
         bottom: 84px;
-        padding: 8px;
-      }
-
-      .whatsapp-status-copy {
-        display: none;
+        padding: 0;
       }
 
       .whatsapp-status-icon {
@@ -4346,11 +4325,6 @@
       box-shadow: inset 0 0 0 1px #47743f;
     }
 
-    .coupon-option:nth-child(2) {
-      border-color: #f1c34a;
-      background: #fff6df;
-    }
-
     .summary-line.total {
       margin-top: 18px;
       padding: 22px;
@@ -4837,21 +4811,13 @@
                 <span><span class="coupon-code-line">GUTHLI10 <strong class="coupon-percent">10% OFF</strong></span><small class="coupon-copy-primary">Kyonki aam ke aam ghuthliyon k daam</small></span>
                 <button class="coupon-apply-button" type="button" value="GUTHLI10" data-coupon="GUTHLI10" aria-pressed="false">Apply</button>
               </article>
-              <article class="coupon-option" data-coupon-card="AAM50">
-                <span>AAM50<small class="coupon-copy-secondary">On product value above Rs 599*</small></span>
-                <button class="coupon-apply-button" type="button" value="AAM50" data-coupon="AAM50" aria-pressed="false">Apply</button>
-              </article>
             </div>
             <small class="coupon-note" data-coupon-note>Select a coupon to apply savings.</small>
           </div>
           <div class="summary-line"><span>Items total</span><strong data-subtotal>Rs 0</strong></div>
           <div class="summary-line"><span data-delivery-label>Delivery<small>Free on order above Rs 599</small></span><strong data-delivery>Rs 0</strong></div>
-          <div class="summary-line" data-discount-line hidden><span>Coupon savings</span><strong data-discount>-Rs 0</strong></div>
+          <div class="summary-line" data-discount-line hidden><span data-discount-label>Savings</span><strong data-discount>-Rs 0</strong></div>
           <div class="summary-line total"><span>Total<small>Inclusive of all taxes</small></span><strong data-total>Rs 0</strong></div>
-          <div class="cart-confirmation-note">
-            <span>Placed your order directly through the website?</span>
-            <a href="https://wa.me/919835496666?text=Hi%20Pulps%20%26%20Leaves%2C%20I%20placed%20an%20order%20through%20the%20website.%20Please%20confirm%20my%20order." target="_blank" rel="noopener">Message us on WhatsApp for order confirmation.</a>
-          </div>
           <div class="free-note" data-free-note></div>
         </div>
         <div class="payment-box">
@@ -4926,15 +4892,12 @@
     <button type="button" data-cart-open>View cart</button>
   </div>
 
-  <a class="whatsapp-status-float" href="https://wa.me/919835496666?text=Hi%20Pulps%20%26%20Leaves%2C%20I%20want%20to%20know%20my%20latest%20order%20status." target="_blank" rel="noopener" aria-label="Message Pulps and Leaves on WhatsApp for latest order status">
+  <a class="whatsapp-status-float" href="https://wa.me/919835496666?text=Hi%20Pulps%20%26%20Leaves" target="_blank" rel="noopener" aria-label="Say hi to Pulps and Leaves on WhatsApp" data-whatsapp-float>
+    <span class="whatsapp-status-message">Say hi</span>
     <span class="whatsapp-status-icon" aria-hidden="true">
       <svg viewBox="0 0 32 32" focusable="false">
         <path d="M16.04 3.2A12.77 12.77 0 0 0 5.18 22.7L3.8 28.8l6.25-1.33A12.79 12.79 0 1 0 16.04 3.2Zm0 2.29a10.5 10.5 0 0 1 8.9 16.08 10.48 10.48 0 0 1-13.95 3.7l-.42-.23-3.55.76.78-3.42-.27-.45A10.49 10.49 0 0 1 16.04 5.5Zm-4.43 5.6c-.24 0-.62.09-.95.45-.33.36-1.24 1.21-1.24 2.96s1.27 3.43 1.45 3.67c.18.24 2.45 3.92 6.07 5.34 3.01 1.18 3.62.95 4.27.89.65-.06 2.1-.86 2.4-1.69.3-.83.3-1.54.21-1.69-.09-.15-.33-.24-.68-.42-.36-.18-2.1-1.04-2.43-1.15-.33-.12-.57-.18-.8.18-.24.35-.92 1.15-1.13 1.39-.21.24-.42.27-.77.09-.36-.18-1.5-.55-2.86-1.76-1.06-.94-1.77-2.11-1.98-2.46-.21-.36-.02-.55.16-.73.16-.16.36-.42.53-.62.18-.21.24-.36.36-.59.12-.24.06-.45-.03-.62-.09-.18-.8-1.94-1.1-2.65-.29-.7-.58-.59-.8-.6l-.75-.02Z"/>
       </svg>
-    </span>
-    <span class="whatsapp-status-copy">
-      <strong>Order status?</strong>
-      <span>Say hi on WhatsApp</span>
     </span>
   </a>
 
@@ -4994,6 +4957,7 @@
       const checkoutSection = document.querySelector(".checkout-section");
       const discountLine = document.querySelector("[data-discount-line]");
       const discountValue = document.querySelector("[data-discount]");
+      const discountLabel = document.querySelector("[data-discount-label]");
       const accountButton = document.querySelector("[data-account-toggle]");
       const accountButtonLabel = document.querySelector("[data-account-label]");
       const accountDropdown = document.querySelector("[data-account-dropdown]");
@@ -5020,8 +4984,10 @@
       const onlinePaymentTitle = document.querySelector("[data-online-payment-title]");
       const onlinePaymentCopy = document.querySelector("[data-online-payment-copy]");
       const onlinePaymentStatus = document.querySelector("[data-online-payment-status]");
+      const whatsappFloat = document.querySelector("[data-whatsapp-float]");
       const deliveryFreeAbove = 599;
       const couponMinimum = 599;
+      const onlinePaymentDiscount = 50;
       const deliveryCharge = 30;
       const savedCheckoutKey = "pl_checkout_draft_v1";
       const checkoutState = {
@@ -5813,24 +5779,20 @@
         const count = items.reduce((sum, item) => sum + item.qty, 0);
         const subtotal = items.reduce((sum, item) => sum + item.qty * item.price, 0);
         const guthliInput = couponInputs.find((input) => input.value === "GUTHLI10");
-        const aam50Input = couponInputs.find((input) => input.value === "AAM50");
-        const isAam50Eligible = subtotal > couponMinimum;
+        const paymentMethod = orderForm ? selectedPaymentMethod(orderForm) : "cod";
+        const isOnlinePayment = paymentMethod === "razorpay" && paymentState.razorpayEnabled;
+        const isOnlineDiscountEligible = isOnlinePayment && subtotal > couponMinimum;
+        const onlineDiscount = isOnlineDiscountEligible ? Math.min(onlinePaymentDiscount, subtotal) : 0;
 
         if (guthliInput) {
           if (subtotal === 0) setCouponApplied(guthliInput, false);
           setCouponDisabled(guthliInput, subtotal === 0);
         }
 
-        if (aam50Input) {
-          if (!isAam50Eligible) setCouponApplied(aam50Input, false);
-          setCouponDisabled(aam50Input, !isAam50Eligible);
-        }
-
         const isGuthliApplied = Boolean(isCouponApplied(guthliInput) && !guthliInput?.disabled);
         const guthliDiscount = isGuthliApplied ? Math.round(subtotal * 0.1) : 0;
-        const isAam50Applied = Boolean(isCouponApplied(aam50Input) && !aam50Input?.disabled && isAam50Eligible);
         const appliedCoupons = [];
-        let discount = 0;
+        let discount = onlineDiscount;
         let couponMessage = subtotal === 0 ? "Add products to use coupons." : "Select a coupon to apply savings.";
 
         if (isGuthliApplied) {
@@ -5838,17 +5800,16 @@
           appliedCoupons.push("GUTHLI10");
         }
 
-        if (isAam50Applied) {
-          discount += 50;
-          appliedCoupons.push("AAM50");
-        }
-
         discount = Math.min(discount, subtotal);
 
-        if (discount > 0) {
+        if (appliedCoupons.length && onlineDiscount > 0) {
+          couponMessage = `${appliedCoupons.join(" + ")} applied. Online payment Rs 50 off added.`;
+        } else if (appliedCoupons.length) {
           couponMessage = `${appliedCoupons.join(" + ")} applied.`;
-        } else if (subtotal > 0 && !isAam50Eligible) {
-          couponMessage = "Add products above Rs 599 to unlock AAM50.";
+        } else if (onlineDiscount > 0) {
+          couponMessage = "Online payment Rs 50 off applied.";
+        } else if (subtotal > 0 && !isOnlineDiscountEligible) {
+          couponMessage = "Pay online on product value above Rs 599 to get Rs 50 off.";
         }
 
         const delivery = subtotal === 0 || subtotal > deliveryFreeAbove ? 0 : deliveryCharge;
@@ -5856,6 +5817,9 @@
           count,
           subtotal,
           discount,
+          onlineDiscount,
+          isOnlinePayment,
+          isOnlineDiscountEligible,
           delivery,
           total: subtotal - discount + delivery,
           couponMessage,
@@ -5875,6 +5839,7 @@
 
       function formPayload(form) {
         const payload = Object.fromEntries(new FormData(form).entries());
+        payload.payment_mode = selectedPaymentMethod(form) === "razorpay" ? "Razorpay" : "COD";
         payload.checkout_token = currentCheckoutToken();
         return payload;
       }
@@ -5922,9 +5887,14 @@
         document.querySelector("[data-subtotal]").textContent = formatMoney(summary.subtotal);
         if (discountLine && discountValue) {
           discountLine.hidden = summary.discount <= 0;
+          if (discountLabel) {
+            discountLabel.textContent = summary.onlineDiscount > 0
+              ? (summary.appliedCoupons.length ? "Total savings" : "Online payment savings")
+              : "Coupon savings";
+          }
           discountValue.textContent = `-${formatMoney(summary.discount)}`;
         }
-        document.querySelector("[data-delivery-label]").innerHTML = "Delivery<small>Free on order above Rs 599</small>";
+        document.querySelector("[data-delivery-label]").innerHTML = `Delivery<small>Free on order above Rs 599</small><small class="online-discount-note">Pay online above Rs 599 and get Rs 50 off</small>`;
         document.querySelector("[data-delivery]").textContent = summary.delivery ? formatMoney(summary.delivery) : "Free";
         document.querySelector("[data-total]").textContent = formatMoney(summary.total);
         if (couponNote) couponNote.textContent = summary.couponMessage;
@@ -6081,6 +6051,112 @@
         }, { threshold: 0.16, rootMargin: "0px 0px -40px 0px" });
 
         revealNodes.forEach((node) => observer.observe(node));
+      }
+
+      function initDraggableWhatsApp() {
+        if (!whatsappFloat) return;
+
+        const storageKey = "pl_whatsapp_float_position";
+        const edgePadding = 10;
+        let holdTimer = null;
+        let isDragging = false;
+        let suppressNextClick = false;
+        let startX = 0;
+        let startY = 0;
+        let startLeft = 0;
+        let startTop = 0;
+
+        const clampPosition = (left, top) => {
+          const rect = whatsappFloat.getBoundingClientRect();
+          const maxLeft = Math.max(edgePadding, window.innerWidth - rect.width - edgePadding);
+          const maxTop = Math.max(edgePadding, window.innerHeight - rect.height - edgePadding);
+          return {
+            left: Math.min(Math.max(edgePadding, left), maxLeft),
+            top: Math.min(Math.max(edgePadding, top), maxTop),
+          };
+        };
+
+        const placeAt = (left, top) => {
+          const next = clampPosition(left, top);
+          whatsappFloat.style.left = `${next.left}px`;
+          whatsappFloat.style.top = `${next.top}px`;
+          whatsappFloat.style.right = "auto";
+          whatsappFloat.style.bottom = "auto";
+        };
+
+        try {
+          const saved = JSON.parse(localStorage.getItem(storageKey) || "null");
+          if (Number.isFinite(saved?.left) && Number.isFinite(saved?.top)) {
+            placeAt(saved.left, saved.top);
+          }
+        } catch (error) {
+          localStorage.removeItem(storageKey);
+        }
+
+        const clearHold = () => {
+          window.clearTimeout(holdTimer);
+          holdTimer = null;
+        };
+
+        whatsappFloat.addEventListener("pointerdown", (event) => {
+          if (event.button && event.button !== 0) return;
+          const rect = whatsappFloat.getBoundingClientRect();
+          startX = event.clientX;
+          startY = event.clientY;
+          startLeft = rect.left;
+          startTop = rect.top;
+          whatsappFloat.setPointerCapture?.(event.pointerId);
+          clearHold();
+          holdTimer = window.setTimeout(() => {
+            isDragging = true;
+            suppressNextClick = true;
+            whatsappFloat.classList.add("is-dragging");
+          }, 180);
+        });
+
+        whatsappFloat.addEventListener("pointermove", (event) => {
+          if (!holdTimer && !isDragging) return;
+          const deltaX = event.clientX - startX;
+          const deltaY = event.clientY - startY;
+          if (!isDragging && Math.hypot(deltaX, deltaY) > 10) {
+            clearHold();
+            return;
+          }
+          if (!isDragging) return;
+          event.preventDefault();
+          placeAt(startLeft + deltaX, startTop + deltaY);
+        });
+
+        const finishDrag = (event) => {
+          clearHold();
+          if (isDragging) {
+            const rect = whatsappFloat.getBoundingClientRect();
+            try {
+              localStorage.setItem(storageKey, JSON.stringify({ left: rect.left, top: rect.top }));
+            } catch (error) {
+              localStorage.removeItem(storageKey);
+            }
+            window.setTimeout(() => {
+              suppressNextClick = false;
+            }, 400);
+          }
+          isDragging = false;
+          whatsappFloat.classList.remove("is-dragging");
+          whatsappFloat.releasePointerCapture?.(event.pointerId);
+        };
+
+        whatsappFloat.addEventListener("pointerup", finishDrag);
+        whatsappFloat.addEventListener("pointercancel", finishDrag);
+        whatsappFloat.addEventListener("click", (event) => {
+          if (!suppressNextClick) return;
+          event.preventDefault();
+          event.stopPropagation();
+          suppressNextClick = false;
+        });
+        window.addEventListener("resize", () => {
+          const rect = whatsappFloat.getBoundingClientRect();
+          placeAt(rect.left, rect.top);
+        });
       }
 
       function setHeroSlide(index) {
@@ -6496,6 +6572,7 @@
       applyFilters();
       startHeroSlider();
       initRevealMotion();
+      initDraggableWhatsApp();
       applyCustomer(accountState.customer);
       restoreCheckoutDraft();
       refreshAccount();

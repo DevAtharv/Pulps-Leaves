@@ -21,6 +21,7 @@ WEB_CART_PRODUCTS = {
 DELIVERY_FREE_ABOVE = 599
 DELIVERY_CHARGE = 30
 COUPON_MINIMUM_SUBTOTAL = 599
+ONLINE_PAYMENT_DISCOUNT = 50
 
 
 class OrderManager:
@@ -42,8 +43,10 @@ class OrderManager:
         if clean_data.get("coupon_codes"):
             notes = (
                 f"{notes} Coupons applied: {', '.join(clean_data['coupon_codes'])}; "
-                f"discount Rs {clean_data['discount']}."
+                f"total savings Rs {clean_data['discount']}."
             ).strip()
+        if clean_data.get("online_payment_discount"):
+            notes = f"{notes} Online payment discount: Rs {clean_data['online_payment_discount']}.".strip()
         if clean_data.get("delivery_charge"):
             notes = f"{notes} Delivery charge: Rs {clean_data['delivery_charge']}.".strip()
         order = {
@@ -86,9 +89,11 @@ class OrderManager:
         qty_3kg = self._parse_quantity(payload.get("qty_3kg", "0"))
         cart_items = self._parse_cart_items(payload.get("cart_items"))
         coupon_codes = self._parse_coupon_codes(payload.get("coupon_codes"))
+        payment_mode = self._normalize_payment_mode(payload.get("payment_mode") or payload.get("payment_method") or "COD")
         uses_cart_quantities = bool(cart_items) or any(key in payload for key in ("qty_5kg", "qty_3kg"))
         discount = 0
         applied_coupons = []
+        online_payment_discount = 0
 
         if cart_items:
             product_lines = []
@@ -101,6 +106,8 @@ class OrderManager:
                 subtotal += quantity * catalog_item["price"]
                 product_lines.append(f"{catalog_item['name']} x {quantity}")
             discount, applied_coupons = self._cart_coupon_discount(subtotal, coupon_codes)
+            online_payment_discount = self._online_payment_discount(subtotal, payment_mode)
+            discount += online_payment_discount
             delivery_charge = 0 if subtotal == 0 or subtotal > DELIVERY_FREE_ABOVE else DELIVERY_CHARGE
             product_summary = ", ".join(product_lines)
         elif uses_cart_quantities:
@@ -117,6 +124,8 @@ class OrderManager:
                 product_lines.append(f"3Kg Box x {qty_3kg}")
                 subtotal += qty_3kg * int(product_3kg["price"])
 
+            online_payment_discount = self._online_payment_discount(subtotal, payment_mode)
+            discount += online_payment_discount
             delivery_charge = 0 if subtotal == 0 or subtotal > DELIVERY_FREE_ABOVE else DELIVERY_CHARGE
             product_summary = ", ".join(product_lines)
         else:
@@ -124,6 +133,8 @@ class OrderManager:
             quantity = self._parse_quantity(payload.get("quantity", "0"))
             selected_product = product_record(product) if product else None
             subtotal = int(selected_product["price"]) * quantity if selected_product else 0
+            online_payment_discount = self._online_payment_discount(subtotal, payment_mode)
+            discount += online_payment_discount
             delivery_charge = 0 if subtotal == 0 or subtotal > DELIVERY_FREE_ABOVE else DELIVERY_CHARGE
             total_quantity = quantity
             product_summary = product
@@ -155,15 +166,16 @@ class OrderManager:
                 "product_summary": product_summary,
                 "quantity": total_quantity,
                 "subtotal": subtotal,
-                "discount": discount,
+                "discount": min(discount, subtotal),
                 "coupon_codes": applied_coupons,
+                "online_payment_discount": online_payment_discount,
                 "delivery_charge": delivery_charge,
-                "total_amount": subtotal - discount + delivery_charge,
+                "total_amount": subtotal - min(discount, subtotal) + delivery_charge,
                 "notes": str(payload.get("notes", "")).strip(),
                 "customer_email": str(payload.get("customer_email", "")).strip(),
                 "google_subject": str(payload.get("google_subject", "")).strip(),
                 "checkout_token": self._parse_checkout_token(payload.get("checkout_token", "")),
-                "payment_mode": str(payload.get("payment_mode", "COD")).strip() or "COD",
+                "payment_mode": payment_mode,
                 "payment_status": str(payload.get("payment_status", "")).strip(),
                 "razorpay_order_id": str(payload.get("razorpay_order_id", "")).strip(),
                 "razorpay_payment_id": str(payload.get("razorpay_payment_id", "")).strip(),
@@ -210,7 +222,7 @@ class OrderManager:
         if not isinstance(raw_codes, list):
             return []
 
-        allowed_codes = {"GUTHLI10", "AAM50"}
+        allowed_codes = {"GUTHLI10"}
         coupon_codes = []
         for raw_code in raw_codes:
             code = str(raw_code).strip().upper()
@@ -226,6 +238,19 @@ class OrderManager:
         return token if CHECKOUT_TOKEN_PATTERN.match(token) else ""
 
     @staticmethod
+    def _normalize_payment_mode(value):
+        mode = str(value or "").strip().lower()
+        if mode in {"razorpay", "online", "paid", "prepaid"}:
+            return "Razorpay"
+        return "COD"
+
+    @staticmethod
+    def _online_payment_discount(subtotal, payment_mode):
+        if payment_mode == "Razorpay" and subtotal > COUPON_MINIMUM_SUBTOTAL:
+            return min(ONLINE_PAYMENT_DISCOUNT, subtotal)
+        return 0
+
+    @staticmethod
     def _cart_coupon_discount(subtotal, coupon_codes):
         discount = 0
         applied_coupons = []
@@ -233,10 +258,6 @@ class OrderManager:
             guthli_discount = round(subtotal * 0.1)
             discount += guthli_discount
             applied_coupons.append("GUTHLI10")
-
-        if "AAM50" in coupon_codes and subtotal > COUPON_MINIMUM_SUBTOTAL:
-            discount += 50
-            applied_coupons.append("AAM50")
 
         return min(discount, subtotal), applied_coupons
 

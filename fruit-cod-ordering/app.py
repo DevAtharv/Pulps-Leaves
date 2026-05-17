@@ -405,7 +405,8 @@ def create_order():
     if customer and source == "Website":
         payload["customer_email"] = customer_payload(customer)["email"]
         payload["google_subject"] = customer_payload(customer)["google_subject"]
-    if str(payload.get("payment_mode", "")).strip().lower() == "razorpay":
+    submitted_payment_mode = str(payload.get("payment_mode") or payload.get("payment_method") or "").strip().lower()
+    if submitted_payment_mode in {"razorpay", "online", "paid", "prepaid"}:
         log_checkout("order_request_invalid_mode", checkout_token=checkout_token)
         return jsonify({"ok": False, "error": "Please complete Razorpay payment verification before placing this order."}), 400
 
@@ -527,6 +528,7 @@ def create_razorpay_order():
     if customer:
         payload["customer_email"] = customer_payload(customer)["email"]
         payload["google_subject"] = customer_payload(customer)["google_subject"]
+    payload["payment_mode"] = "Razorpay"
 
     if checkout_token:
         existing_order = find_completed_order_by_checkout_token(checkout_token)
