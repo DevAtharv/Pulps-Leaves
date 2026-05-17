@@ -224,7 +224,7 @@
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .account-menu {
@@ -242,7 +242,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 0 14px;
+      padding: 0 16px;
       border-radius: var(--radius);
       border: 1px solid var(--line);
       background: var(--paper);
@@ -261,15 +261,17 @@
     .account-button,
     .primary-button,
     .checkout-button {
+      min-height: 52px;
       color: #fff;
       border-color: var(--leaf);
       background: linear-gradient(135deg, var(--leaf), var(--leaf-deep));
     }
 
     .account-button {
-      min-width: 140px;
+      min-width: 168px;
       position: relative;
-      padding-right: 12px;
+      padding-right: 16px;
+      font-size: 15px;
     }
 
     .nav-link {
@@ -279,9 +281,10 @@
     }
 
     .cart-button {
-      min-width: 108px;
+      min-width: 136px;
       position: relative;
-      padding-right: 16px;
+      padding-right: 18px;
+      font-size: 15px;
     }
 
     .cart-button.has-items {
@@ -290,8 +293,8 @@
 
     .cart-icon,
     .account-icon {
-      width: 30px;
-      height: 30px;
+      width: 34px;
+      height: 34px;
       display: inline-grid;
       flex: 0 0 auto;
       place-items: center;
@@ -303,8 +306,8 @@
 
     .cart-icon svg,
     .account-icon svg {
-      width: 17px;
-      height: 17px;
+      width: 20px;
+      height: 20px;
       fill: none;
       stroke: currentColor;
       stroke-linecap: round;
@@ -1920,7 +1923,7 @@
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 10px;
-      align-items: start;
+      align-items: center;
       min-height: 106px;
       padding: 14px 16px;
       border: 1px solid #e2dacd;
@@ -1933,19 +1936,14 @@
       transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
     }
 
-    .coupon-option input {
-      grid-column: 2;
-      grid-row: 1;
-      width: 18px;
-      height: 18px;
-      margin: 0;
-      accent-color: var(--leaf);
-    }
-
-    .coupon-option:has(input:checked) {
+    .coupon-option.is-applied {
       border-color: #071d15;
       background: #f7f8f6;
       box-shadow: inset 0 0 0 1px #071d15;
+    }
+
+    .coupon-option.is-disabled {
+      opacity: 0.64;
     }
 
     .coupon-option small {
@@ -1982,6 +1980,38 @@
       font-size: 11px;
       font-weight: 950;
       letter-spacing: 0.02em;
+    }
+
+    .coupon-apply-button {
+      min-width: 82px;
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--leaf);
+      border-radius: 7px;
+      color: var(--leaf-deep);
+      background: #eef8e8;
+      font-size: 12px;
+      font-weight: 950;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, color 160ms ease;
+    }
+
+    .coupon-apply-button:hover:not(:disabled) {
+      box-shadow: 0 10px 18px rgba(30, 94, 38, 0.14);
+      transform: translateY(-1px);
+    }
+
+    .coupon-apply-button[aria-pressed="true"] {
+      color: #fff;
+      background: var(--leaf);
+    }
+
+    .coupon-apply-button:disabled {
+      cursor: not-allowed;
+      color: #918b82;
+      border-color: #ded8cf;
+      background: #f5f1ea;
     }
 
     .checkout-form {
@@ -3222,12 +3252,14 @@
       }
 
       .cart-button {
-        min-width: 48px;
+        min-width: 58px;
+        min-height: 48px;
       }
 
       .account-button {
-        min-width: 110px;
-        padding: 0 12px;
+        min-width: 128px;
+        min-height: 48px;
+        padding: 0 14px;
       }
 
       .account-button [data-account-label] {
@@ -3614,10 +3646,10 @@
 
     .cart-button,
     .account-button {
-      width: 28px;
-      min-width: 28px;
-      height: 28px;
-      min-height: 28px;
+      width: 42px;
+      min-width: 42px;
+      height: 42px;
+      min-height: 42px;
       padding: 0;
       color: #182116;
       border: 0;
@@ -3627,8 +3659,8 @@
 
     .cart-icon,
     .account-icon {
-      width: 22px;
-      height: 22px;
+      width: 30px;
+      height: 30px;
       color: #182116;
       background: transparent;
       box-shadow: none;
@@ -3643,9 +3675,9 @@
     .cart-count {
       top: -6px;
       right: -6px;
-      min-width: 14px;
-      height: 14px;
-      font-size: 9px;
+      min-width: 18px;
+      height: 18px;
+      font-size: 10px;
       background: #d9f3d9;
     }
 
@@ -4307,7 +4339,7 @@
       box-shadow: 0 18px 42px rgba(48, 37, 20, 0.12);
     }
 
-    .coupon-option:has(input:checked),
+    .coupon-option.is-applied,
     .payment-choice:has(input:checked) {
       border-color: #47743f;
       background: #eef8e8;
@@ -4798,20 +4830,20 @@
           <strong>Order Summary</strong>
         </div>
         <div class="price-summary">
-          <label class="coupon-field">
-            <span>Apply coupons</span>
+          <div class="coupon-field" role="group" aria-labelledby="couponTitle">
+            <span id="couponTitle">Apply coupons</span>
             <div class="coupon-options">
-              <label class="coupon-option">
-                <input type="checkbox" value="GUTHLI10" data-coupon="GUTHLI10">
+              <article class="coupon-option" data-coupon-card="GUTHLI10">
                 <span><span class="coupon-code-line">GUTHLI10 <strong class="coupon-percent">10% OFF</strong></span><small class="coupon-copy-primary">Kyonki aam ke aam ghuthliyon k daam</small></span>
-              </label>
-              <label class="coupon-option">
-                <input type="checkbox" value="AAM50" data-coupon="AAM50">
+                <button class="coupon-apply-button" type="button" value="GUTHLI10" data-coupon="GUTHLI10" aria-pressed="false">Apply</button>
+              </article>
+              <article class="coupon-option" data-coupon-card="AAM50">
                 <span>AAM50<small class="coupon-copy-secondary">On product value above Rs 599*</small></span>
-              </label>
+                <button class="coupon-apply-button" type="button" value="AAM50" data-coupon="AAM50" aria-pressed="false">Apply</button>
+              </article>
             </div>
             <small class="coupon-note" data-coupon-note>Select a coupon to apply savings.</small>
-          </label>
+          </div>
           <div class="summary-line"><span>Items total</span><strong data-subtotal>Rs 0</strong></div>
           <div class="summary-line"><span data-delivery-label>Delivery<small>Free on order above Rs 599</small></span><strong data-delivery>Rs 0</strong></div>
           <div class="summary-line" data-discount-line hidden><span>Coupon savings</span><strong data-discount>-Rs 0</strong></div>
@@ -5684,7 +5716,7 @@
         });
         (draft.coupons || []).forEach((code) => {
           const input = couponInputs.find((candidate) => candidate.value === code);
-          if (input) input.checked = true;
+          if (input) setCouponApplied(input, true);
         });
         localStorage.removeItem(savedCheckoutKey);
         renderSummary();
@@ -5758,25 +5790,48 @@
         window.location.href = `/auth/google?next=${encodeURIComponent(nextUrl)}`;
       }
 
+      function isCouponApplied(control) {
+        return control?.dataset.applied === "true";
+      }
+
+      function setCouponApplied(control, isApplied) {
+        if (!control) return;
+        control.dataset.applied = String(Boolean(isApplied));
+        control.setAttribute("aria-pressed", String(Boolean(isApplied)));
+        control.textContent = isApplied ? "Applied" : "Apply";
+        control.closest(".coupon-option")?.classList.toggle("is-applied", Boolean(isApplied));
+      }
+
+      function setCouponDisabled(control, isDisabled) {
+        if (!control) return;
+        control.disabled = Boolean(isDisabled);
+        control.closest(".coupon-option")?.classList.toggle("is-disabled", Boolean(isDisabled));
+      }
+
       function totals() {
         const items = Array.from(cart.values());
         const count = items.reduce((sum, item) => sum + item.qty, 0);
         const subtotal = items.reduce((sum, item) => sum + item.qty * item.price, 0);
         const guthliInput = couponInputs.find((input) => input.value === "GUTHLI10");
         const aam50Input = couponInputs.find((input) => input.value === "AAM50");
-        const isGuthliApplied = Boolean(guthliInput?.checked);
-        const guthliDiscount = isGuthliApplied ? Math.round(subtotal * 0.1) : 0;
         const isAam50Eligible = subtotal > couponMinimum;
 
-        if (aam50Input) {
-          aam50Input.disabled = !isAam50Eligible;
-          if (!isAam50Eligible) aam50Input.checked = false;
+        if (guthliInput) {
+          if (subtotal === 0) setCouponApplied(guthliInput, false);
+          setCouponDisabled(guthliInput, subtotal === 0);
         }
 
-        const isAam50Applied = Boolean(aam50Input?.checked && isAam50Eligible);
+        if (aam50Input) {
+          if (!isAam50Eligible) setCouponApplied(aam50Input, false);
+          setCouponDisabled(aam50Input, !isAam50Eligible);
+        }
+
+        const isGuthliApplied = Boolean(isCouponApplied(guthliInput) && !guthliInput?.disabled);
+        const guthliDiscount = isGuthliApplied ? Math.round(subtotal * 0.1) : 0;
+        const isAam50Applied = Boolean(isCouponApplied(aam50Input) && !aam50Input?.disabled && isAam50Eligible);
         const appliedCoupons = [];
         let discount = 0;
-        let couponMessage = "Select a coupon to apply savings.";
+        let couponMessage = subtotal === 0 ? "Add products to use coupons." : "Select a coupon to apply savings.";
 
         if (isGuthliApplied) {
           discount += guthliDiscount;
@@ -5790,12 +5845,10 @@
 
         discount = Math.min(discount, subtotal);
 
-        if (aam50Input?.checked && !isAam50Eligible && subtotal > 0) {
-          couponMessage = "Add products above Rs 599 to unlock AAM50.";
-        } else if (discount > 0) {
+        if (discount > 0) {
           couponMessage = `${appliedCoupons.join(" + ")} applied.`;
-        } else if ((isGuthliApplied || aam50Input?.checked) && subtotal === 0) {
-          couponMessage = "Add products to use coupons.";
+        } else if (subtotal > 0 && !isAam50Eligible) {
+          couponMessage = "Add products above Rs 599 to unlock AAM50.";
         }
 
         const delivery = subtotal === 0 || subtotal > deliveryFreeAbove ? 0 : deliveryCharge;
@@ -5816,7 +5869,7 @@
 
       function couponPayload() {
         return couponInputs
-          .filter((input) => input.checked && !input.disabled)
+          .filter((input) => isCouponApplied(input) && !input.disabled)
           .map((input) => input.value);
       }
 
@@ -6429,9 +6482,12 @@
       });
 
       sortSelect.addEventListener("change", sortProducts);
-      couponInputs.forEach((input) => input.addEventListener("change", () => {
+      couponInputs.forEach((input) => input.addEventListener("click", () => {
+        if (input.disabled) return;
+        const willApply = !isCouponApplied(input);
+        setCouponApplied(input, willApply);
         markCheckoutDirty(`coupon_${input.value}`);
-        renderSummary({ celebrateCoupon: true });
+        renderSummary({ celebrateCoupon: willApply });
       }));
       paymentInputs.forEach((input) => input.addEventListener("change", () => {
         markCheckoutDirty(`payment_${input.value}`);
