@@ -68,7 +68,7 @@ def log_checkout(event, **details):
 
 @app.after_request
 def add_cache_headers(response):
-    if request.path.startswith("/static/") or request.path == "/favicon.ico":
+    if request.path.startswith("/static/") or request.path in {"/favicon.ico", "/apple-touch-icon.png"}:
         response.headers["Cache-Control"] = STATIC_CACHE_CONTROL
     elif response.content_type and response.content_type.startswith("text/html"):
         response.headers["Cache-Control"] = HTML_CACHE_CONTROL
@@ -379,6 +379,11 @@ def index():
 @app.get("/favicon.ico")
 def favicon():
     return send_from_directory(app.static_folder, "img/logo-favicon.png", mimetype="image/png")
+
+
+@app.get("/apple-touch-icon.png")
+def apple_touch_icon():
+    return send_from_directory(app.static_folder, "img/apple-touch-icon.png", mimetype="image/png")
 
 
 @app.get("/robots.txt")
