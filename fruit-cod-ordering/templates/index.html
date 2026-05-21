@@ -1903,6 +1903,46 @@
       gap: 8px;
     }
 
+    .coupon-manual {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border: 1px dashed #d9cdbc;
+      border-radius: 9px;
+      background: #fffaf2;
+    }
+
+    .coupon-manual label {
+      color: #62400f;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .coupon-entry-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+    }
+
+    .coupon-entry-row input {
+      width: 100%;
+      min-height: 40px;
+      padding: 0 12px;
+      border: 1px solid #ded8cf;
+      border-radius: 7px;
+      color: var(--ink);
+      background: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .coupon-entry-row input:focus {
+      outline: 2px solid rgba(45, 123, 51, 0.18);
+      border-color: var(--leaf);
+    }
+
     .coupon-option {
       position: relative;
       display: grid;
@@ -3382,6 +3422,7 @@
       }
 
       .coupon-options,
+      .coupon-entry-row,
       .checkout-form {
         grid-template-columns: 1fr;
       }
@@ -4883,6 +4924,13 @@
                 <button class="coupon-apply-button" type="button" value="GUTHLI10" data-coupon="GUTHLI10" aria-pressed="false">Apply</button>
               </article>
             </div>
+            <div class="coupon-manual">
+              <label for="manualCouponCode">Have a private coupon?</label>
+              <div class="coupon-entry-row">
+                <input id="manualCouponCode" type="text" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter code" data-manual-coupon-input>
+                <button class="coupon-apply-button" type="button" data-manual-coupon-apply>Apply</button>
+              </div>
+            </div>
             <small class="coupon-note" data-coupon-note>Select a coupon to apply savings.</small>
           </div>
           <div class="summary-line"><span>Items total</span><strong data-subtotal>Rs 0</strong></div>
@@ -5022,6 +5070,8 @@
       const revealNodes = Array.from(document.querySelectorAll("[data-reveal]"));
       const couponInputs = Array.from(document.querySelectorAll("[data-coupon]"));
       const couponNote = document.querySelector("[data-coupon-note]");
+      const manualCouponInput = document.querySelector("[data-manual-coupon-input]");
+      const manualCouponApply = document.querySelector("[data-manual-coupon-apply]");
       const paymentInputs = Array.from(document.querySelectorAll("input[name='payment_method']"));
       const orderForm = document.querySelector("[data-order-form]");
       const cartSection = document.querySelector(".cart-section");
@@ -5083,6 +5133,8 @@
       let accountMenuOpen = false;
       let lastCouponKey = "";
       let suppressCouponCelebration = false;
+      let manualCoupon = null;
+      let manualCouponFeedback = "";
       let detailProductId = "";
       let detailQty = 0;
       let razorpayCheckoutPromise = null;
@@ -5754,6 +5806,10 @@
         (draft.coupons || []).forEach((code) => {
           const input = couponInputs.find((candidate) => candidate.value === code);
           if (input) setCouponApplied(input, true);
+          if (!input && manualCouponInput) {
+            manualCouponInput.value = code;
+            manualCouponFeedback = "Press Apply to restore your private coupon.";
+          }
         });
         localStorage.removeItem(savedCheckoutKey);
         renderSummary();
@@ -5845,6 +5901,58 @@
         control.closest(".coupon-option")?.classList.toggle("is-disabled", Boolean(isDisabled));
       }
 
+      function normalizeCouponCode(value) {
+        return String(value || "").trim().toUpperCase().replace(/\s+/g, "");
+      }
+
+      function resetManualCoupon(message = "") {
+        manualCoupon = null;
+        manualCouponFeedback = message;
+        if (manualCouponApply) manualCouponApply.textContent = "Apply";
+      }
+
+      function manualCouponDiscount(subtotal) {
+        if (!manualCoupon || subtotal <= 0) return 0;
+        const minimumPayable = Number(manualCoupon.minimum_payable || 0);
+        if (minimumPayable > 0) return Math.max(0, subtotal - minimumPayable);
+        return Math.round((subtotal * Number(manualCoupon.rate_bps || 0)) / 10000);
+      }
+
+      async function applyManualCoupon() {
+        const code = normalizeCouponCode(manualCouponInput?.value);
+        if (!code) {
+          resetManualCoupon("Enter a coupon code.");
+          renderSummary();
+          return;
+        }
+        if (manualCouponApply) {
+          manualCouponApply.disabled = true;
+          manualCouponApply.textContent = "Checking";
+        }
+        try {
+          const { response, data } = await fetchJson("/api/coupons/preview", {
+            method: "POST",
+            body: { code },
+          }, "Coupon could not be checked.");
+          if (!response.ok || !data.ok || !data.coupon) {
+            throw new Error(data.error || "Coupon code is not valid.");
+          }
+          manualCoupon = data.coupon;
+          manualCouponFeedback = `${manualCoupon.code} applied.`;
+          if (manualCouponInput) manualCouponInput.value = manualCoupon.code;
+          markCheckoutDirty(`manual_coupon_${manualCoupon.code}`);
+          renderSummary({ celebrateCoupon: true });
+        } catch (error) {
+          resetManualCoupon(error.message || "Coupon code is not valid.");
+          renderSummary();
+        } finally {
+          if (manualCouponApply) {
+            manualCouponApply.disabled = false;
+            manualCouponApply.textContent = manualCoupon ? "Applied" : "Apply";
+          }
+        }
+      }
+
       function totals() {
         const items = Array.from(cart.values());
         const count = items.reduce((sum, item) => sum + item.qty, 0);
@@ -5852,20 +5960,28 @@
         const guthliInput = couponInputs.find((input) => input.value === "GUTHLI10");
         const paymentMethod = orderForm ? selectedPaymentMethod(orderForm) : "cod";
         const isOnlinePayment = paymentMethod === "razorpay" && paymentState.razorpayEnabled;
-        const isOnlineDiscountEligible = isOnlinePayment && subtotal > couponMinimum;
+        const manualDiscount = manualCouponDiscount(subtotal);
+        const manualBlocksOtherCoupons = Boolean(manualCoupon?.excludes_other_coupons);
+        const manualSkipsOnlineDiscount = Boolean(manualCoupon?.excludes_online_discount);
+        const isOnlineDiscountEligible = isOnlinePayment && subtotal > couponMinimum && !manualSkipsOnlineDiscount;
         const onlineDiscount = isOnlineDiscountEligible ? Math.min(onlinePaymentDiscount, subtotal) : 0;
 
         if (guthliInput) {
           if (subtotal === 0) setCouponApplied(guthliInput, false);
-          setCouponDisabled(guthliInput, subtotal === 0);
+          if (manualBlocksOtherCoupons) setCouponApplied(guthliInput, false);
+          setCouponDisabled(guthliInput, subtotal === 0 || manualBlocksOtherCoupons);
         }
 
-        const isGuthliApplied = Boolean(isCouponApplied(guthliInput) && !guthliInput?.disabled);
+        const isGuthliApplied = Boolean(isCouponApplied(guthliInput) && !guthliInput?.disabled && !manualBlocksOtherCoupons);
         const guthliDiscount = isGuthliApplied ? Math.round(subtotal * 0.1) : 0;
         const appliedCoupons = [];
-        let discount = onlineDiscount;
+        let discount = onlineDiscount + manualDiscount;
         let couponMessage = subtotal === 0 ? "Add products to use coupons." : "Select a coupon to apply savings.";
         let onlineOfferMessage = "";
+
+        if (manualCoupon && subtotal > 0) {
+          appliedCoupons.push(manualCoupon.code);
+        }
 
         if (isGuthliApplied) {
           discount += guthliDiscount;
@@ -5876,9 +5992,13 @@
 
         if (appliedCoupons.length) {
           couponMessage = `${appliedCoupons.join(" + ")} applied.`;
+        } else if (manualCouponFeedback) {
+          couponMessage = manualCouponFeedback;
         }
 
-        if (subtotal > couponMinimum && isOnlineDiscountEligible) {
+        if (manualSkipsOnlineDiscount && subtotal > 0) {
+          onlineOfferMessage = "Private coupon applied; online Rs 50 offer is skipped.";
+        } else if (subtotal > couponMinimum && isOnlineDiscountEligible) {
           onlineOfferMessage = "Online payment Rs 50 off applied.";
         } else if (subtotal > couponMinimum && !isOnlinePayment) {
           onlineOfferMessage = "Choose UPI / online payment to get Rs 50 off.";
@@ -5909,9 +6029,11 @@
       }
 
       function couponPayload() {
-        return couponInputs
+        const coupons = couponInputs
           .filter((input) => isCouponApplied(input) && !input.disabled)
           .map((input) => input.value);
+        if (manualCoupon?.code) coupons.unshift(manualCoupon.code);
+        return [...new Set(coupons)];
       }
 
       function formPayload(form) {
@@ -5975,6 +6097,7 @@
         document.querySelector("[data-delivery]").textContent = summary.delivery ? formatMoney(summary.delivery) : "Free";
         document.querySelector("[data-total]").textContent = formatMoney(summary.total);
         if (couponNote) couponNote.textContent = summary.couponMessage;
+        if (manualCouponApply) manualCouponApply.textContent = manualCoupon ? "Applied" : "Apply";
         document.querySelector("[data-free-note]").textContent = "";
         document.querySelector("[data-cart-items-input]").value = JSON.stringify(cartPayload());
         document.querySelector("[data-coupon-codes-input]").value = JSON.stringify(couponPayload());
@@ -6642,6 +6765,19 @@
         markCheckoutDirty(`coupon_${input.value}`);
         renderSummary({ celebrateCoupon: willApply });
       }));
+      manualCouponApply?.addEventListener("click", applyManualCoupon);
+      manualCouponInput?.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        applyManualCoupon();
+      });
+      manualCouponInput?.addEventListener("input", () => {
+        if (!manualCoupon) return;
+        if (normalizeCouponCode(manualCouponInput.value) === manualCoupon.code) return;
+        resetManualCoupon("Coupon removed.");
+        markCheckoutDirty("manual_coupon_removed");
+        renderSummary();
+      });
       paymentInputs.forEach((input) => input.addEventListener("change", () => {
         markCheckoutDirty(`payment_${input.value}`);
         window.requestAnimationFrame(() => renderSummary());

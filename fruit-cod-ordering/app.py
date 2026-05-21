@@ -391,6 +391,15 @@ def robots_txt():
     return app.response_class("User-agent: *\nAllow: /\n", mimetype="text/plain")
 
 
+@app.post("/api/coupons/preview")
+def coupon_preview():
+    payload = request.get_json(silent=True) or {}
+    preview = order_manager.coupon_preview(payload.get("code", ""))
+    if not preview:
+        return jsonify({"ok": False, "error": "Coupon code is not valid."}), 404
+    return jsonify({"ok": True, "coupon": preview})
+
+
 @app.post("/api/orders")
 def create_order():
     payload = request.get_json(silent=True) or request.form.to_dict()

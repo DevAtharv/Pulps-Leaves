@@ -22,6 +22,23 @@ DELIVERY_FREE_ABOVE = 599
 DELIVERY_CHARGE = 30
 COUPON_MINIMUM_SUBTOTAL = 599
 ONLINE_PAYMENT_DISCOUNT = 50
+PRIVATE_9999_COUPON_CODE = "PL99FS022E"
+COUPON_DEFINITIONS = {
+    "GUTHLI10": {
+        "label": "10% OFF",
+        "rate_bps": 1000,
+        "minimum_payable": 0,
+        "excludes_online_discount": False,
+        "excludes_other_coupons": False,
+    },
+    PRIVATE_9999_COUPON_CODE: {
+        "label": "99.99% OFF",
+        "rate_bps": 9999,
+        "minimum_payable": 1,
+        "excludes_online_discount": True,
+        "excludes_other_coupons": True,
+    },
+}
 
 
 class OrderManager:
@@ -106,7 +123,8 @@ class OrderManager:
                 subtotal += quantity * catalog_item["price"]
                 product_lines.append(f"{catalog_item['name']} x {quantity}")
             discount, applied_coupons = self._cart_coupon_discount(subtotal, coupon_codes)
-            online_payment_discount = self._online_payment_discount(subtotal, payment_mode)
+            if not self._has_exclusive_online_coupon(applied_coupons):
+                online_payment_discount = self._online_payment_discount(subtotal, payment_mode)
             discount += online_payment_discount
             delivery_charge = 0 if subtotal == 0 or subtotal > DELIVERY_FREE_ABOVE else DELIVERY_CHARGE
             product_summary = ", ".join(product_lines)
@@ -222,11 +240,10 @@ class OrderManager:
         if not isinstance(raw_codes, list):
             return []
 
-        allowed_codes = {"GUTHLI10"}
         coupon_codes = []
         for raw_code in raw_codes:
             code = str(raw_code).strip().upper()
-            if code in allowed_codes and code not in coupon_codes:
+            if code in COUPON_DEFINITIONS and code not in coupon_codes:
                 coupon_codes.append(code)
         return coupon_codes
 
@@ -252,14 +269,43 @@ class OrderManager:
 
     @staticmethod
     def _cart_coupon_discount(subtotal, coupon_codes):
+        if PRIVATE_9999_COUPON_CODE in coupon_codes:
+            coupon_codes = [PRIVATE_9999_COUPON_CODE]
+
         discount = 0
         applied_coupons = []
-        if "GUTHLI10" in coupon_codes:
-            guthli_discount = round(subtotal * 0.1)
-            discount += guthli_discount
-            applied_coupons.append("GUTHLI10")
+        for code in coupon_codes:
+            coupon = COUPON_DEFINITIONS.get(code)
+            if not coupon:
+                continue
+            minimum_payable = int(coupon.get("minimum_payable", 0) or 0)
+            if minimum_payable:
+                coupon_discount = max(0, subtotal - minimum_payable)
+            else:
+                coupon_discount = round(subtotal * int(coupon["rate_bps"]) / 10000)
+            discount += coupon_discount
+            applied_coupons.append(code)
 
         return min(discount, subtotal), applied_coupons
+
+    @staticmethod
+    def _has_exclusive_online_coupon(coupon_codes):
+        return any(COUPON_DEFINITIONS.get(code, {}).get("excludes_online_discount") for code in coupon_codes)
+
+    @staticmethod
+    def coupon_preview(code):
+        normalized = str(code or "").strip().upper()
+        coupon = COUPON_DEFINITIONS.get(normalized)
+        if not coupon:
+            return None
+        return {
+            "code": normalized,
+            "label": coupon["label"],
+            "rate_bps": coupon["rate_bps"],
+            "minimum_payable": coupon["minimum_payable"],
+            "excludes_online_discount": coupon["excludes_online_discount"],
+            "excludes_other_coupons": coupon["excludes_other_coupons"],
+        }
 
     def generate_order_id(self):
         while True:
