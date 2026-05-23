@@ -104,7 +104,7 @@ class SheetsHandler:
 
     def append_order(self, order):
         if self._worksheet:
-            worksheet = self._worksheet
+            worksheet = self._active_order_worksheet()
             self._worksheet = worksheet
             self._ensure_order_header_best_effort(worksheet)
             headers = self._headers or ORDER_HEADERS.copy()
@@ -388,6 +388,11 @@ class SheetsHandler:
             worksheet = self._spreadsheet.add_worksheet(title=worksheet_title, rows=1000, cols=len(ORDER_HEADERS))
             worksheet.append_row(ORDER_HEADERS, value_input_option="USER_ENTERED")
             return worksheet
+
+    def _active_order_worksheet(self):
+        if not self.daily_worksheets:
+            return self._worksheet
+        return self._today_worksheet()
 
     def _order_worksheets(self):
         if not self.daily_worksheets:
