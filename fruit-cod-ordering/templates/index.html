@@ -20,6 +20,14 @@
   <link rel="shortcut icon" href="{{ url_for('favicon') }}">
   <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='img/apple-touch-icon.png') }}">
   <meta name="theme-color" content="#16451d">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EP1V06TKSB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-EP1V06TKSB');
+  </script>
   <link rel="preload" as="image" href="{{ url_for('static', filename='img/home_image-1024.avif') }}" imagesrcset="{{ url_for('static', filename='img/home_image-480.avif') }} 480w, {{ url_for('static', filename='img/home_image-768.avif') }} 768w, {{ url_for('static', filename='img/home_image-1024.avif') }} 1024w" imagesizes="(max-width: 767px) calc(100vw - 32px), 590px" type="image/avif" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
