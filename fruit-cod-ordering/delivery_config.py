@@ -35,7 +35,7 @@ PRODUCTS = [
         "price": 999,
         "mrp": 1650,
         "unit": "5Kg Box",
-        "pieces_label": "Max 20 pieces",
+        "pieces_label": "Up to 15 pieces",
         "description": "5Kg Box Malda Mango",
         "available_months": [4, 5, 6, 7],
         "availability_label": "Seasonal: Apr-Jul",
@@ -48,7 +48,7 @@ PRODUCTS = [
         "price": 599,
         "mrp": 990,
         "unit": "3Kg Box",
-        "pieces_label": "Max 12 pieces",
+        "pieces_label": "Up to 10 pieces",
         "description": "3Kg Box Malda Mango",
         "available_months": [4, 5, 6, 7],
         "availability_label": "Seasonal: Apr-Jul",
@@ -71,10 +71,10 @@ COMING_SOON_PRODUCTS = [
 ]
 
 DELIVERY_SCHEDULES = {
-    "bangalore": {"start": "2026-06-02", "end": "2026-06-04", "label": "2nd-4th June"},
-    "hyderabad": {"start": "2026-06-02", "end": "2026-06-04", "label": "2nd-4th June"},
-    "pune": {"start": "2026-06-02", "end": "2026-06-04", "label": "2nd-4th June"},
-    "mumbai": {"start": "2026-06-02", "end": "2026-06-04", "label": "2nd-4th June"},
+    "bangalore": {"start": "2026-06-12", "end": "2026-06-14", "label": "12th-14th June"},
+    "hyderabad": {"start": "2026-06-12", "end": "2026-06-14", "label": "12th-14th June"},
+    "pune": {"start": "2026-06-12", "end": "2026-06-14", "label": "12th-14th June"},
+    "mumbai": {"start": "2026-06-12", "end": "2026-06-14", "label": "12th-14th June"},
     "chennai": {"start": "2026-06-09", "end": "2026-06-12", "label": "9th-12th June"},
     "bhubaneswar": {"start": "2026-06-11", "end": "2026-06-14", "label": "11th-14th June"},
 }
