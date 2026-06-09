@@ -115,6 +115,24 @@ def customer_login_required():
     return True
 
 
+def offline_order_admin_email():
+    return clean_env("OFFLINE_ORDER_ADMIN_EMAIL", "pulpsandleaves@gmail.com").lower()
+
+
+def is_offline_order_admin(customer):
+    identity = customer_payload(customer)
+    email = str((identity or {}).get("email", "")).strip().lower()
+    return bool(email and hmac.compare_digest(email, offline_order_admin_email()))
+
+
+def prepare_order_payload(payload, customer):
+    offline_order_admin = is_offline_order_admin(customer)
+    if offline_order_admin:
+        payload["city"] = "bangalore"
+        payload["address"] = ""
+    return offline_order_admin
+
+
 def razorpay_config():
     return {
         "key_id": clean_env("RAZORPAY_KEY_ID"),
@@ -361,6 +379,7 @@ def outbound_required(view):
 
 @app.get("/")
 def index():
+    customer = customer_payload(current_customer())
     return render_template(
         "index.html",
         cities=AVAILABLE_CITIES,
@@ -368,7 +387,8 @@ def index():
         coming_soon_products=COMING_SOON_PRODUCTS,
         schedules={key: get_delivery_schedule(key) for key in AVAILABLE_CITIES},
         storage_backend=order_manager.sheets.backend_name,
-        customer=customer_payload(current_customer()),
+        customer=customer,
+        offline_order_admin=is_offline_order_admin(customer),
         customer_login_required=customer_login_required(),
         google_login_enabled=google_oauth_enabled(),
         razorpay_enabled=razorpay_enabled(),
@@ -404,6 +424,7 @@ def coupon_preview():
 def create_order():
     payload = request.get_json(silent=True) or request.form.to_dict()
     customer = current_customer()
+    offline_order_admin = prepare_order_payload(payload, customer)
     source = payload.get("source", "Website")
     checkout_token = str(payload.get("checkout_token", "")).strip()
     log_checkout(
@@ -434,7 +455,7 @@ def create_order():
             )
             return jsonify({"ok": True, "duplicate": True, "order": existing_order}), 200
 
-    clean_data, errors = order_manager.validate_new_order(payload)
+    clean_data, errors = order_manager.validate_new_order(payload, address_required=not offline_order_admin)
     log_checkout(
         "order_request_validated",
         checkout_token=checkout_token,
@@ -444,7 +465,7 @@ def create_order():
     )
     if errors:
         return jsonify({"ok": False, "errors": errors}), 400
-    result = order_manager.create_order(payload, source=source)
+    result = order_manager.create_order(payload, source=source, address_required=not offline_order_admin)
     log_checkout(
         "order_request_saved",
         checkout_token=checkout_token,
@@ -454,7 +475,7 @@ def create_order():
     )
     if result["ok"]:
         remember_completed_order(result["order"])
-    if result["ok"] and customer and source == "Website":
+    if result["ok"] and customer and source == "Website" and not offline_order_admin:
         remember_customer_checkout_details(
             phone=payload.get("phone", ""),
             city=payload.get("city", ""),
@@ -530,6 +551,7 @@ def create_razorpay_order():
 
     payload = request.get_json(silent=True) or {}
     customer = current_customer()
+    offline_order_admin = prepare_order_payload(payload, customer)
     checkout_token = str(payload.get("checkout_token", "")).strip()
     log_checkout(
         "payment_initialize_received",
@@ -572,7 +594,7 @@ def create_razorpay_order():
                 }
             )
 
-    clean_data, errors = order_manager.validate_new_order(payload)
+    clean_data, errors = order_manager.validate_new_order(payload, address_required=not offline_order_admin)
     log_checkout(
         "payment_initialize_validated",
         checkout_token=checkout_token,
@@ -645,6 +667,7 @@ def create_razorpay_order():
 def verify_razorpay_payment():
     payload = request.get_json(silent=True) or {}
     customer = current_customer()
+    offline_order_admin = is_offline_order_admin(customer)
     razorpay_order_id = str(payload.get("razorpay_order_id", "")).strip()
     razorpay_payment_id = str(payload.get("razorpay_payment_id", "")).strip()
     razorpay_signature = str(payload.get("razorpay_signature", "")).strip()
@@ -689,6 +712,7 @@ def verify_razorpay_payment():
         return jsonify({"ok": False, "error": "Razorpay payment verification failed."}), 400
 
     order_payload = dict(pending["payload"])
+    prepare_order_payload(order_payload, customer)
     if customer:
         order_payload["customer_email"] = customer_payload(customer)["email"]
         order_payload["google_subject"] = customer_payload(customer)["google_subject"]
@@ -701,7 +725,7 @@ def verify_razorpay_payment():
         }
     )
 
-    clean_data, errors = order_manager.validate_new_order(order_payload)
+    clean_data, errors = order_manager.validate_new_order(order_payload, address_required=not offline_order_admin)
     log_checkout(
         "payment_verify_validated",
         checkout_token=str(order_payload.get("checkout_token", "")).strip(),
@@ -714,7 +738,11 @@ def verify_razorpay_payment():
         log_checkout("payment_verify_amount_mismatch", razorpay_order_id=razorpay_order_id)
         return jsonify({"ok": False, "error": "Order amount changed after payment. Please try again."}), 400
 
-    result = order_manager.create_order(order_payload, source=order_payload.get("source", "Website"))
+    result = order_manager.create_order(
+        order_payload,
+        source=order_payload.get("source", "Website"),
+        address_required=not offline_order_admin,
+    )
     log_checkout(
         "payment_verify_saved",
         checkout_token=str(order_payload.get("checkout_token", "")).strip(),
@@ -727,7 +755,7 @@ def verify_razorpay_payment():
         pending_orders.pop(razorpay_order_id, None)
         session["pending_razorpay_orders"] = pending_orders
         session.modified = True
-        if customer:
+        if customer and not offline_order_admin:
             remember_customer_checkout_details(
                 phone=order_payload.get("phone", ""),
                 city=order_payload.get("city", ""),

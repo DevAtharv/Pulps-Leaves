@@ -4896,9 +4896,9 @@
             </label>
             <label class="field">
               <span>City</span>
-              <select name="city" required>
+              <select name="city" {% if offline_order_admin %}disabled aria-disabled="true"{% else %}required{% endif %}>
                 <option value="">Select city</option>
-                <option value="bangalore">Bengaluru</option>
+                <option value="bangalore" {% if offline_order_admin %}selected{% endif %}>Bengaluru</option>
                 <option value="hyderabad">Hyderabad</option>
                 <option value="pune">Pune</option>
                 <option value="mumbai">Mumbai</option>
@@ -4906,7 +4906,7 @@
             </label>
             <label class="field field-wide">
               <span>Delivery address</span>
-              <textarea name="address" required minlength="8" placeholder="House/Flat No., Building Name, Street, Area" data-address-input></textarea>
+              <textarea name="address" {% if offline_order_admin %}disabled aria-disabled="true" placeholder="Not required for offline order"{% else %}required minlength="8" placeholder="House/Flat No., Building Name, Street, Area"{% endif %} data-address-input></textarea>
             </label>
             <label class="field field-wide">
               <span>Order notes (Optional)</span>
@@ -5046,6 +5046,7 @@
         required: {{ "true" if customer_login_required else "false" }},
         googleEnabled: {{ "true" if google_login_enabled else "false" }},
         authenticated: {{ "true" if customer else "false" }},
+        offlineOrderAdmin: {{ "true" if offline_order_admin else "false" }},
         customer: {{ (customer or {}) | tojson }},
       };
       const paymentState = {
@@ -5739,7 +5740,7 @@
       }
 
       function prefillCustomerDetails(customer) {
-        if (!orderForm || !customer) return;
+        if (!orderForm || !customer || accountState.offlineOrderAdmin) return;
         const fields = {
           name: customer.name,
           phone: customer.phone,
@@ -5753,7 +5754,7 @@
       }
 
       async function syncCustomerProfileFromForm(form) {
-        if (!accountState.authenticated || !form) return;
+        if (!accountState.authenticated || accountState.offlineOrderAdmin || !form) return;
         try {
           const response = await fetch("/api/me", {
             method: "POST",

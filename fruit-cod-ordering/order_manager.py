@@ -46,8 +46,8 @@ class OrderManager:
         self.sheets = sheets_handler or SheetsHandler()
         self._recent_order_ids = set()
 
-    def create_order(self, payload, source="Website"):
-        clean_data, errors = self.validate_new_order(payload)
+    def create_order(self, payload, source="Website", address_required=True):
+        clean_data, errors = self.validate_new_order(payload, address_required=address_required)
         if errors:
             return {"ok": False, "errors": errors}
 
@@ -96,7 +96,7 @@ class OrderManager:
         self.sheets.append_order(order)
         return {"ok": True, "duplicate": False, "order": order}
 
-    def validate_new_order(self, payload):
+    def validate_new_order(self, payload, address_required=True):
         errors = {}
         name = str(payload.get("name", "")).strip()
         address = str(payload.get("address", "")).strip()
@@ -161,7 +161,7 @@ class OrderManager:
             errors["name"] = "Please enter the customer's full name."
         if not phone:
             errors["phone"] = "Please enter a valid 10-digit Indian mobile number."
-        if len(address) < 8:
+        if address_required and len(address) < 8:
             errors["address"] = "Please enter a complete delivery address."
         if not city:
             errors["city"] = "Please select Bengaluru, Hyderabad, Pune, or Mumbai."
