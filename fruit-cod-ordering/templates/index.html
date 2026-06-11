@@ -4530,11 +4530,11 @@
   <div class="announcement">
     <div class="container">
       <div class="announcement-track">
-        <span>Free delivery above Rs 699 | Flat 10% off + Rs 40 online above Rs 599</span>
-        <span>Flat 10% off + Rs 40 online above Rs 599</span>
+        <span>Free delivery above Rs 699 | Flat 10% off + Rs 40 online on orders Rs 699+</span>
+        <span>Flat 10% off + Rs 40 online on orders Rs 699+</span>
         <span>Fresh seasonal Malda mangoes</span>
         <span>Free delivery above Rs 699</span>
-        <span>Flat 10% off + Rs 40 online above Rs 599</span>
+        <span>Flat 10% off + Rs 40 online on orders Rs 699+</span>
         <span>Fresh seasonal Malda mangoes</span>
       </div>
     </div>
@@ -5116,7 +5116,7 @@
       const onlinePaymentStatus = document.querySelector("[data-online-payment-status]");
       const whatsappFloat = document.querySelector("[data-whatsapp-float]");
       const deliveryFreeAbove = 699;
-      const couponMinimum = 599;
+      const onlinePaymentMinimum = 699;
       const onlinePaymentDiscount = 40;
       const deliveryCharge = 30;
       const savedCheckoutKey = "pl_checkout_draft_v1";
@@ -5990,7 +5990,7 @@
         const manualBlocksOtherCoupons = isManualCouponEligible && Boolean(manualCoupon?.excludes_other_coupons);
         const manualSkipsOnlineDiscount = isManualCouponEligible && Boolean(manualCoupon?.excludes_online_discount);
         const manualWaivesDelivery = isManualCouponEligible && Boolean(manualCoupon?.waives_delivery);
-        const isOnlineDiscountEligible = isOnlinePayment && subtotal > couponMinimum && !manualSkipsOnlineDiscount;
+        const isOnlineDiscountEligible = isOnlinePayment && subtotal >= onlinePaymentMinimum && !manualSkipsOnlineDiscount;
         const onlineDiscount = isOnlineDiscountEligible ? Math.min(onlinePaymentDiscount, subtotal) : 0;
 
         if (guthliInput) {
@@ -6027,14 +6027,14 @@
 
         if (manualSkipsOnlineDiscount && subtotal > 0) {
           onlineOfferMessage = "Private coupon applied; online Rs 40 offer is skipped.";
-        } else if (subtotal > couponMinimum && isOnlineDiscountEligible) {
+        } else if (subtotal >= onlinePaymentMinimum && isOnlineDiscountEligible) {
           onlineOfferMessage = "Online payment Rs 40 off applied.";
-        } else if (subtotal > couponMinimum && !isOnlinePayment) {
+        } else if (subtotal >= onlinePaymentMinimum && !isOnlinePayment) {
           onlineOfferMessage = "Choose UPI / online payment to get Rs 40 off.";
         } else if (subtotal > 0 && isOnlinePayment) {
-          onlineOfferMessage = "Add products above Rs 599 to unlock Rs 40 off.";
+          onlineOfferMessage = "Add products worth Rs 699 or more to unlock Rs 40 off.";
         } else if (subtotal > 0) {
-          onlineOfferMessage = "Pay online above Rs 599 and get Rs 40 off.";
+          onlineOfferMessage = "Pay online on orders Rs 699 or more and get Rs 40 off.";
         }
 
         const delivery = subtotal === 0 || subtotal > deliveryFreeAbove || manualWaivesDelivery ? 0 : deliveryCharge;

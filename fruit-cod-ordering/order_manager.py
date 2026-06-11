@@ -20,7 +20,7 @@ WEB_CART_PRODUCTS = {
 }
 DELIVERY_FREE_ABOVE = 699
 DELIVERY_CHARGE = 30
-COUPON_MINIMUM_SUBTOTAL = 599
+ONLINE_PAYMENT_MINIMUM_SUBTOTAL = 699
 ONLINE_PAYMENT_DISCOUNT = 40
 PRIVATE_9999_COUPON_CODE = "PL99FS022E"
 BELOW_699_FREE_DELIVERY_COUPON_CODE = "PLB699FD"
@@ -277,7 +277,7 @@ class OrderManager:
 
     @staticmethod
     def _online_payment_discount(subtotal, payment_mode):
-        if payment_mode == "Razorpay" and subtotal > COUPON_MINIMUM_SUBTOTAL:
+        if payment_mode == "Razorpay" and subtotal >= ONLINE_PAYMENT_MINIMUM_SUBTOTAL:
             return min(ONLINE_PAYMENT_DISCOUNT, subtotal)
         return 0
 
