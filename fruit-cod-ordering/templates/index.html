@@ -4530,11 +4530,11 @@
   <div class="announcement">
     <div class="container">
       <div class="announcement-track">
-        <span>Free delivery above Rs 599 | Flat 10% off + Rs 50 online above Rs 599</span>
-        <span>Flat 10% off + Rs 50 online above Rs 599</span>
+        <span>Free delivery above Rs 699 | Flat 10% off + Rs 40 online above Rs 599</span>
+        <span>Flat 10% off + Rs 40 online above Rs 599</span>
         <span>Fresh seasonal Malda mangoes</span>
-        <span>Free delivery above Rs 599</span>
-        <span>Flat 10% off + Rs 50 online above Rs 599</span>
+        <span>Free delivery above Rs 699</span>
+        <span>Flat 10% off + Rs 40 online above Rs 599</span>
         <span>Fresh seasonal Malda mangoes</span>
       </div>
     </div>
@@ -4942,7 +4942,7 @@
             <small class="coupon-note" data-coupon-note>Select a coupon to apply savings.</small>
           </div>
           <div class="summary-line"><span>Items total</span><strong data-subtotal>Rs 0</strong></div>
-          <div class="summary-line"><span data-delivery-label>Delivery<small>Free on order above Rs 599</small></span><strong data-delivery>Rs 0</strong></div>
+          <div class="summary-line"><span data-delivery-label>Delivery<small>Free on order above Rs 699</small></span><strong data-delivery>Rs 0</strong></div>
           <div class="summary-line" data-discount-line hidden><span data-discount-label>Savings</span><strong data-discount>-Rs 0</strong></div>
           <div class="summary-line total"><span>Total<small>Inclusive of all taxes</small></span><strong data-total>Rs 0</strong></div>
           <div class="free-note" data-free-note></div>
@@ -5115,9 +5115,9 @@
       const onlinePaymentCopy = document.querySelector("[data-online-payment-copy]");
       const onlinePaymentStatus = document.querySelector("[data-online-payment-status]");
       const whatsappFloat = document.querySelector("[data-whatsapp-float]");
-      const deliveryFreeAbove = 599;
+      const deliveryFreeAbove = 699;
       const couponMinimum = 599;
-      const onlinePaymentDiscount = 50;
+      const onlinePaymentDiscount = 40;
       const deliveryCharge = 30;
       const savedCheckoutKey = "pl_checkout_draft_v1";
       const checkoutState = {
@@ -5921,10 +5921,26 @@
       }
 
       function manualCouponDiscount(subtotal) {
-        if (!manualCoupon || subtotal <= 0) return 0;
+        if (!manualCouponApplies(subtotal)) return 0;
         const minimumPayable = Number(manualCoupon.minimum_payable || 0);
         if (minimumPayable > 0) return Math.max(0, subtotal - minimumPayable);
         return Math.round((subtotal * Number(manualCoupon.rate_bps || 0)) / 10000);
+      }
+
+      function manualCouponMaxSubtotal(coupon = manualCoupon) {
+        const maxSubtotal = Number(coupon?.max_subtotal || 0);
+        return Number.isFinite(maxSubtotal) && maxSubtotal > 0 ? maxSubtotal : 0;
+      }
+
+      function manualCouponApplies(subtotal) {
+        if (!manualCoupon || subtotal <= 0) return false;
+        const maxSubtotal = manualCouponMaxSubtotal();
+        return !maxSubtotal || subtotal <= maxSubtotal;
+      }
+
+      function manualCouponLimitMessage(coupon = manualCoupon) {
+        const maxSubtotal = manualCouponMaxSubtotal(coupon);
+        return maxSubtotal ? `${coupon.code} applies below ${formatMoney(maxSubtotal + 1)}.` : "";
       }
 
       async function applyManualCoupon() {
@@ -5969,9 +5985,11 @@
         const guthliInput = couponInputs.find((input) => input.value === "GUTHLI10");
         const paymentMethod = orderForm ? selectedPaymentMethod(orderForm) : "cod";
         const isOnlinePayment = paymentMethod === "razorpay" && paymentState.razorpayEnabled;
-        const manualDiscount = manualCouponDiscount(subtotal);
-        const manualBlocksOtherCoupons = Boolean(manualCoupon?.excludes_other_coupons);
-        const manualSkipsOnlineDiscount = Boolean(manualCoupon?.excludes_online_discount);
+        const isManualCouponEligible = manualCouponApplies(subtotal);
+        const manualDiscount = isManualCouponEligible ? manualCouponDiscount(subtotal) : 0;
+        const manualBlocksOtherCoupons = isManualCouponEligible && Boolean(manualCoupon?.excludes_other_coupons);
+        const manualSkipsOnlineDiscount = isManualCouponEligible && Boolean(manualCoupon?.excludes_online_discount);
+        const manualWaivesDelivery = isManualCouponEligible && Boolean(manualCoupon?.waives_delivery);
         const isOnlineDiscountEligible = isOnlinePayment && subtotal > couponMinimum && !manualSkipsOnlineDiscount;
         const onlineDiscount = isOnlineDiscountEligible ? Math.min(onlinePaymentDiscount, subtotal) : 0;
 
@@ -5988,7 +6006,7 @@
         let couponMessage = subtotal === 0 ? "Add products to use coupons." : "Select a coupon to apply savings.";
         let onlineOfferMessage = "";
 
-        if (manualCoupon && subtotal > 0) {
+        if (manualCoupon && isManualCouponEligible) {
           appliedCoupons.push(manualCoupon.code);
         }
 
@@ -6001,23 +6019,25 @@
 
         if (appliedCoupons.length) {
           couponMessage = `${appliedCoupons.join(" + ")} applied.`;
+        } else if (manualCoupon && !isManualCouponEligible) {
+          couponMessage = manualCouponLimitMessage();
         } else if (manualCouponFeedback) {
           couponMessage = manualCouponFeedback;
         }
 
         if (manualSkipsOnlineDiscount && subtotal > 0) {
-          onlineOfferMessage = "Private coupon applied; online Rs 50 offer is skipped.";
+          onlineOfferMessage = "Private coupon applied; online Rs 40 offer is skipped.";
         } else if (subtotal > couponMinimum && isOnlineDiscountEligible) {
-          onlineOfferMessage = "Online payment Rs 50 off applied.";
+          onlineOfferMessage = "Online payment Rs 40 off applied.";
         } else if (subtotal > couponMinimum && !isOnlinePayment) {
-          onlineOfferMessage = "Choose UPI / online payment to get Rs 50 off.";
+          onlineOfferMessage = "Choose UPI / online payment to get Rs 40 off.";
         } else if (subtotal > 0 && isOnlinePayment) {
-          onlineOfferMessage = "Add products above Rs 599 to unlock Rs 50 off.";
+          onlineOfferMessage = "Add products above Rs 599 to unlock Rs 40 off.";
         } else if (subtotal > 0) {
-          onlineOfferMessage = "Pay online above Rs 599 and get Rs 50 off.";
+          onlineOfferMessage = "Pay online above Rs 599 and get Rs 40 off.";
         }
 
-        const delivery = subtotal === 0 || subtotal > deliveryFreeAbove ? 0 : deliveryCharge;
+        const delivery = subtotal === 0 || subtotal > deliveryFreeAbove || manualWaivesDelivery ? 0 : deliveryCharge;
         return {
           count,
           subtotal,
@@ -6038,10 +6058,11 @@
       }
 
       function couponPayload() {
+        const subtotal = Array.from(cart.values()).reduce((sum, item) => sum + item.qty * item.price, 0);
         const coupons = couponInputs
           .filter((input) => isCouponApplied(input) && !input.disabled)
           .map((input) => input.value);
-        if (manualCoupon?.code) coupons.unshift(manualCoupon.code);
+        if (manualCoupon?.code && manualCouponApplies(subtotal)) coupons.unshift(manualCoupon.code);
         return [...new Set(coupons)];
       }
 
@@ -6102,7 +6123,7 @@
           }
           discountValue.textContent = `-${formatMoney(summary.discount)}`;
         }
-        document.querySelector("[data-delivery-label]").innerHTML = `Delivery<small>Free on order above Rs 599</small>${summary.onlineOfferMessage ? `<small class="online-discount-note">${summary.onlineOfferMessage}</small>` : ""}`;
+        document.querySelector("[data-delivery-label]").innerHTML = `Delivery<small>Free on order above Rs 699</small>${summary.onlineOfferMessage ? `<small class="online-discount-note">${summary.onlineOfferMessage}</small>` : ""}`;
         document.querySelector("[data-delivery]").textContent = summary.delivery ? formatMoney(summary.delivery) : "Free";
         document.querySelector("[data-total]").textContent = formatMoney(summary.total);
         if (couponNote) couponNote.textContent = summary.couponMessage;
