@@ -370,7 +370,12 @@ def outbound_required(view):
         token = clean_env("OUTBOUND_CONFIRMATION_SECRET")
         auth_header = request.headers.get("Authorization", "")
         expected = f"Bearer {token}" if token else ""
-        if not token or not hmac.compare_digest(auth_header, expected):
+        username = clean_env("ADMIN_USERNAME", "admin")
+        password = clean_env("ADMIN_PASSWORD", "change-me")
+        admin_expected = "Basic " + base64.b64encode(f"{username}:{password}".encode()).decode()
+        bearer_ok = bool(token and hmac.compare_digest(auth_header, expected))
+        admin_ok = hmac.compare_digest(auth_header, admin_expected)
+        if not (bearer_ok or admin_ok):
             return jsonify({"ok": False, "error": "Unauthorized"}), 401
         return view(*args, **kwargs)
 
