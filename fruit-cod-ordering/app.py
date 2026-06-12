@@ -420,6 +420,13 @@ def coupon_preview():
     return jsonify({"ok": True, "coupon": preview})
 
 
+@app.post("/api/admin/sync-atharv")
+@outbound_required
+def sync_atharv_sheet():
+    result = order_manager.sheets.sync_atharv_orders()
+    return jsonify(result), 200 if result.get("ok") else 400
+
+
 @app.post("/api/orders")
 def create_order():
     payload = request.get_json(silent=True) or request.form.to_dict()
