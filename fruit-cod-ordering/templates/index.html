@@ -10,9 +10,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Pulps & Leaves offers premium mangoes, tea, and makhana with smooth online ordering and Cash on Delivery.">
+  <meta name="description" content="Pulps & Leaves mangoes are currently out of stock.">
   <meta property="og:title" content="Pulps & Leaves | Fresh Natural Foods">
-  <meta property="og:description" content="Buy mangoes, tea, and makhana with a smooth cart and order summary.">
+  <meta property="og:description" content="Pulps & Leaves mangoes are currently out of stock.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="{{ url_for('static', filename='img/logo-320.webp') }}">
   <title>Pulps & Leaves | Fresh Natural Foods</title>
@@ -4594,7 +4594,7 @@
       <h1>Malda Mangoes<br>The Taste You Grew Up With</h1>
       <p>Authentic Bihar Malda mangoes with the sweetness, aroma, and nostalgia of Indian summers — naturally ripened and delivered fresh from farm to home.</p>
       <div class="hero-actions">
-        <a class="primary-button" href="#products">Order Now</a>
+        <a class="primary-button" href="#products">Out of Stock</a>
         <a class="ghost-button" href="#products">View Harvest -></a>
       </div>
     </div>
@@ -4644,8 +4644,8 @@
             <span data-detail-unit>Boxes</span>
           </div>
           <div class="detail-button-row">
-            <button class="detail-primary" type="button" data-detail-add>Add to Cart</button>
-            <button class="detail-secondary" type="button" data-detail-buy>Buy Now</button>
+            <button class="detail-primary" type="button" data-detail-add disabled>Out of Stock</button>
+            <button class="detail-secondary" type="button" data-detail-buy disabled>Out of Stock</button>
           </div>
         </div>
         <div class="detail-promise-grid">
@@ -4731,7 +4731,7 @@
           <div class="rating-line"><span class="rating">{{ rating }} star</span><span>Seasonal drop</span></div>
           <div class="price-row"><strong>Rs {{ product.price }}</strong><s>Rs {{ product.mrp }}</s></div>
           <div class="add-row" data-add-row="{{ product.slug }}">
-            <button class="add-button" type="button" data-add="{{ product.slug }}">Add to Cart</button>
+            <button class="add-button" type="button" disabled>Out of Stock</button>
           </div>
         </div>
       </article>
@@ -4801,7 +4801,7 @@
     <div class="container footer-grid">
       <div>
         <a class="footer-brand" href="#shop" data-home-link>Pulps &amp; Leaves</a>
-        <p>Premium mangoes, tea, and makhana for modern Indian homes with clear ordering, delivery details, and payment choices.</p>
+        <p>Premium mangoes, tea, and makhana for modern Indian homes. Mangoes are currently out of stock.</p>
         <div class="footer-social">
           <a href="https://www.facebook.com/share/1XsbRh4rcg/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.412c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971h-1.514c-1.491 0-1.955.931-1.955 1.886v2.265h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073Z"/></svg></a>
           <a href="https://www.instagram.com/pulpsandleaves?igsh=bW1vMndtM2k3cjZo" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.25-2.35a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3Z"/></svg></a>
@@ -4834,14 +4834,14 @@
           {{ responsive_image("logo", "", [60, 120, 180], 120, 120, 120, "64px", "optimized-picture", "", "lazy", "low") }}
         </span>
         <strong>Pulps &amp; Leaves</strong>
-        <span class="sr-only" data-drawer-subtitle>Add items, review summary, place order.</span>
+        <span class="sr-only" data-drawer-subtitle>Mangoes are currently out of stock.</span>
       </button>
       <div class="secure-checkout">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
           <path d="M7 10V7a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2"/>
         </svg>
-        Secure Checkout
+        Out of Stock
       </div>
     </div>
     <div class="checkout-steps" aria-label="Checkout progress">
@@ -4857,10 +4857,10 @@
               <strong>Review Your Cart</strong>
               <span data-summary-subtitle>Cart is empty</span>
             </div>
-            <button class="add-more-button" type="button" data-add-more>Add More Items</button>
+            <button class="add-more-button" type="button" data-add-more>View Products</button>
           </div>
           <div class="cart-items" data-cart-items>
-            <div class="empty-cart"><strong>Your cart is empty</strong><span>Add mangoes first, then your delivery details and payment options will appear here.</span><button class="add-more-button" type="button" data-add-more>Shop products</button></div>
+            <div class="empty-cart"><strong>Out of stock</strong><span>We are not taking new mango orders right now.</span><button class="add-more-button" type="button" data-add-more>View products</button></div>
           </div>
         </section>
 
@@ -4921,7 +4921,7 @@
 
       <section class="checkout-section">
         <div class="section-title">
-          <strong>Order Summary</strong>
+          <strong>Out of Stock</strong>
         </div>
         <div class="price-summary">
           <div class="coupon-field" role="group" aria-labelledby="couponTitle">
@@ -4972,7 +4972,7 @@
             </label>
           </div>
         </div>
-        <button class="checkout-button" type="submit" data-submit-order disabled>Place Order</button>
+        <button class="checkout-button" type="submit" data-submit-order disabled>Out of Stock</button>
         <div class="checkout-safe-note">
           <span aria-hidden="true">♢</span>
           Your data is safe and encrypted.
@@ -5053,6 +5053,7 @@
         razorpayEnabled: {{ "true" if razorpay_enabled else "false" }},
         razorpayKeyId: {{ razorpay_key_id | tojson }},
       };
+      const orderingDisabled = true;
       const cart = new Map();
       const productCards = Array.from(document.querySelectorAll("[data-product]"));
       const productGrid = document.querySelector("[data-product-grid]");
@@ -5198,6 +5199,7 @@
       }
 
       function checkoutButtonLabel() {
+        if (orderingDisabled) return "Out of Stock";
         const summary = totals();
         if (summary.count && accountState.required && !accountState.authenticated) {
           return "Sign in to Place Order";
@@ -5207,7 +5209,7 @@
 
       function setSubmitState(submit, isLoading, label) {
         if (!submit) return;
-        submit.disabled = Boolean(isLoading) || totals().count === 0;
+        submit.disabled = orderingDisabled || Boolean(isLoading) || totals().count === 0;
         submit.classList.toggle("is-loading", Boolean(isLoading));
         submit.textContent = isLoading ? label : checkoutButtonLabel();
       }
@@ -5337,6 +5339,7 @@
       }
 
       function productFromCard(card) {
+        const soldOut = orderingDisabled && card.dataset.unavailable !== "true";
         return {
           id: card.dataset.id,
           name: card.dataset.name,
@@ -5347,7 +5350,8 @@
           image: card.dataset.image,
           imageSrcset: card.dataset.imageSrcset || "",
           imageSizes: card.dataset.imageSizes || "",
-          unavailable: card.dataset.unavailable === "true",
+          soldOut,
+          unavailable: soldOut || card.dataset.unavailable === "true",
           card,
         };
       }
@@ -5420,13 +5424,13 @@
         document.querySelector("[data-detail-variant]").textContent = product.variant || "Seasonal box";
         document.querySelector("[data-detail-name]").textContent = productTitle(product);
         document.querySelector("[data-detail-description]").textContent = productDescriptions[id] || "Premium Pulps & Leaves produce, selected fresh and packed with care.";
-        document.querySelector("[data-detail-price]").textContent = product.unavailable ? "Coming soon" : formatMoney(product.price);
+        document.querySelector("[data-detail-price]").textContent = product.unavailable ? (product.soldOut ? "Out of stock" : "Coming soon") : formatMoney(product.price);
         document.querySelector("[data-detail-mrp]").textContent = product.unavailable ? "" : (product.mrp ? formatMoney(product.mrp) : "");
-        document.querySelector("[data-detail-save]").textContent = product.unavailable ? "Preview" : (discountPercent ? `Save ${discountPercent}%` : "Fresh price");
+        document.querySelector("[data-detail-save]").textContent = product.unavailable ? (product.soldOut ? "Unavailable" : "Preview") : (discountPercent ? `Save ${discountPercent}%` : "Fresh price");
         document.querySelector("[data-detail-add]").disabled = product.unavailable;
         document.querySelector("[data-detail-buy]").disabled = product.unavailable;
-        document.querySelector("[data-detail-add]").textContent = product.unavailable ? "Coming Soon" : "Add to Cart";
-        document.querySelector("[data-detail-buy]").textContent = product.unavailable ? "Notify Soon" : "Buy Now";
+        document.querySelector("[data-detail-add]").textContent = product.unavailable ? (product.soldOut ? "Out of Stock" : "Coming Soon") : "Add to Cart";
+        document.querySelector("[data-detail-buy]").textContent = product.unavailable ? (product.soldOut ? "Out of Stock" : "Notify Soon") : "Buy Now";
         updateDetailQty();
         setProductDetailVisible(true);
         window.history.replaceState({}, "", `${window.location.pathname}${window.location.search}#product-${id}`);
@@ -6082,7 +6086,7 @@
           const row = document.querySelector(`[data-add-row="${product.id}"]`);
           if (!row) return;
           if (product.unavailable) {
-            row.innerHTML = '<button class="add-button" type="button" disabled>Coming soon</button>';
+            row.innerHTML = `<button class="add-button" type="button" disabled>${product.soldOut ? "Out of Stock" : "Coming soon"}</button>`;
             return;
           }
           const item = cart.get(product.id);
@@ -6135,7 +6139,7 @@
         if (tokenInput) tokenInput.value = checkoutState.currentToken || "";
         const submitButton = document.querySelector("[data-submit-order]");
         if (submitButton) {
-          submitButton.disabled = checkoutState.pending || summary.count === 0;
+          submitButton.disabled = orderingDisabled || checkoutState.pending || summary.count === 0;
           if (!checkoutState.pending) submitButton.textContent = checkoutButtonLabel();
         }
 
@@ -6161,7 +6165,7 @@
 
         const itemMount = document.querySelector("[data-cart-items]");
         if (!items.length) {
-          itemMount.innerHTML = '<div class="empty-cart"><strong>Your cart is empty</strong><span>Add mangoes first, then your delivery details and payment options will appear here.</span><button class="add-more-button" type="button" data-add-more>Shop products</button></div>';
+          itemMount.innerHTML = '<div class="empty-cart"><strong>Out of stock</strong><span>We are not taking new mango orders right now.</span><button class="add-more-button" type="button" data-add-more>View products</button></div>';
           updateAddRows();
           return;
         }
@@ -6202,6 +6206,10 @@
       }
 
       function addToCart(id) {
+        if (orderingDisabled) {
+          showToast("Out of stock. We are not taking orders right now.");
+          return;
+        }
         const product = products.get(id);
         if (!product) return;
         if (product.unavailable) {
@@ -6470,6 +6478,14 @@
         clearCheckoutErrors();
         result.className = "order-result";
         result.textContent = "";
+
+        if (orderingDisabled) {
+          result.textContent = "Out of stock. We are not taking orders right now.";
+          result.className = "order-result error is-visible";
+          showToast(result.textContent, 2600);
+          setSubmitState(submit, false, "Out of Stock");
+          return;
+        }
 
         if (checkoutState.pending || Date.now() - checkoutState.lastSubmitAt < 700) {
           logCheckout("submit_ignored_duplicate_click", { pending: checkoutState.pending });

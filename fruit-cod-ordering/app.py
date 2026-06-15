@@ -382,6 +382,10 @@ def outbound_required(view):
     return wrapper
 
 
+def ordering_unavailable_response():
+    return jsonify({"ok": False, "error": "Out of stock. We are not taking orders right now."}), 503
+
+
 @app.get("/")
 def index():
     customer = customer_payload(current_customer())
@@ -434,6 +438,7 @@ def sync_atharv_sheet():
 
 @app.post("/api/orders")
 def create_order():
+    return ordering_unavailable_response()
     payload = request.get_json(silent=True) or request.form.to_dict()
     customer = current_customer()
     offline_order_admin = prepare_order_payload(payload, customer)
@@ -558,6 +563,7 @@ def send_order_confirmations():
 @app.post("/api/create-order")
 @app.post("/api/payments/razorpay/order")
 def create_razorpay_order():
+    return ordering_unavailable_response()
     if not razorpay_enabled():
         return jsonify({"ok": False, "error": "Razorpay test payments are not configured."}), 503
 
@@ -677,6 +683,7 @@ def create_razorpay_order():
 @app.post("/api/verify-payment")
 @app.post("/api/payments/razorpay/verify")
 def verify_razorpay_payment():
+    return ordering_unavailable_response()
     payload = request.get_json(silent=True) or {}
     customer = current_customer()
     offline_order_admin = is_offline_order_admin(customer)
