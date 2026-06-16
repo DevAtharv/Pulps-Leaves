@@ -10,9 +10,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Pulps & Leaves mangoes are currently out of stock.">
+  <meta name="description" content="Pulps & Leaves is taking pre-order inquiries for 5Kg Malda mango boxes.">
   <meta property="og:title" content="Pulps & Leaves | Fresh Natural Foods">
-  <meta property="og:description" content="Pulps & Leaves mangoes are currently out of stock.">
+  <meta property="og:description" content="Pulps & Leaves is taking pre-order inquiries for 5Kg Malda mango boxes.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="{{ url_for('static', filename='img/logo-320.webp') }}">
   <title>Pulps & Leaves | Fresh Natural Foods</title>
@@ -4530,11 +4530,11 @@
   <div class="announcement">
     <div class="container">
       <div class="announcement-track">
-        <span>Free delivery above Rs 699 | Flat 10% off + Rs 40 online on orders Rs 699+</span>
-        <span>Flat 10% off + Rs 40 online on orders Rs 699+</span>
-        <span>Fresh seasonal Malda mangoes</span>
-        <span>Free delivery above Rs 699</span>
-        <span>Flat 10% off + Rs 40 online on orders Rs 699+</span>
+        <span>5Kg Malda mango pre-order inquiries are open</span>
+        <span>Delivery planned for end of June</span>
+        <span>3Kg box is currently unavailable</span>
+        <span>5Kg Malda mango pre-order inquiries are open</span>
+        <span>Delivery planned for end of June</span>
         <span>Fresh seasonal Malda mangoes</span>
       </div>
     </div>
@@ -4594,7 +4594,7 @@
       <h1>Malda Mangoes<br>The Taste You Grew Up With</h1>
       <p>Authentic Bihar Malda mangoes with the sweetness, aroma, and nostalgia of Indian summers — naturally ripened and delivered fresh from farm to home.</p>
       <div class="hero-actions">
-        <a class="primary-button" href="#products">Out of Stock</a>
+        <a class="primary-button" href="#products">Pre-Order Inquiry</a>
         <a class="ghost-button" href="#products">View Harvest -></a>
       </div>
     </div>
@@ -4644,8 +4644,8 @@
             <span data-detail-unit>Boxes</span>
           </div>
           <div class="detail-button-row">
-            <button class="detail-primary" type="button" data-detail-add disabled>Out of Stock</button>
-            <button class="detail-secondary" type="button" data-detail-buy disabled>Out of Stock</button>
+            <button class="detail-primary" type="button" data-detail-add>Send Inquiry</button>
+            <button class="detail-secondary" type="button" data-detail-buy>Pre-Order</button>
           </div>
         </div>
         <div class="detail-promise-grid">
@@ -4719,7 +4719,8 @@
         data-rating="{{ rating }}"
         data-image="{{ image_url }}"
         data-image-srcset="{{ image_srcset }}"
-        data-image-sizes="(max-width: 767px) calc(50vw - 22px), 560px">
+        data-image-sizes="(max-width: 767px) calc(50vw - 22px), 560px"
+        {% if product.slug == 'malda-mango-3kg-box' %}data-preorder-disabled="true"{% endif %}>
         <div class="product-media">
           {{ responsive_image(image_stem, product.display_title ~ " " ~ product.unit, [240, 420, 700, 960], 420, image_width, image_height, "(max-width: 767px) calc(50vw - 22px), 560px", "optimized-picture", "", "lazy", "low") }}
           <span class="discount">{{ discount_percent }}% OFF</span>
@@ -4731,7 +4732,11 @@
           <div class="rating-line"><span class="rating">{{ rating }} star</span><span>Seasonal drop</span></div>
           <div class="price-row"><strong>Rs {{ product.price }}</strong><s>Rs {{ product.mrp }}</s></div>
           <div class="add-row" data-add-row="{{ product.slug }}">
-            <button class="add-button" type="button" disabled>Out of Stock</button>
+            {% if product.slug == 'malda-mango-3kg-box' %}
+            <button class="add-button" type="button" disabled>Unavailable</button>
+            {% else %}
+            <button class="add-button" type="button" data-add="{{ product.slug }}">Send Inquiry</button>
+            {% endif %}
           </div>
         </div>
       </article>
@@ -4801,7 +4806,7 @@
     <div class="container footer-grid">
       <div>
         <a class="footer-brand" href="#shop" data-home-link>Pulps &amp; Leaves</a>
-        <p>Premium mangoes, tea, and makhana for modern Indian homes. Mangoes are currently out of stock.</p>
+        <p>Premium mangoes, tea, and makhana for modern Indian homes. 5Kg Malda mango pre-order inquiries are open for end-of-June delivery.</p>
         <div class="footer-social">
           <a href="https://www.facebook.com/share/1XsbRh4rcg/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.412c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971h-1.514c-1.491 0-1.955.931-1.955 1.886v2.265h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073Z"/></svg></a>
           <a href="https://www.instagram.com/pulpsandleaves?igsh=bW1vMndtM2k3cjZo" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.25-2.35a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3Z"/></svg></a>
@@ -4834,20 +4839,20 @@
           {{ responsive_image("logo", "", [60, 120, 180], 120, 120, 120, "64px", "optimized-picture", "", "lazy", "low") }}
         </span>
         <strong>Pulps &amp; Leaves</strong>
-        <span class="sr-only" data-drawer-subtitle>Mangoes are currently out of stock.</span>
+        <span class="sr-only" data-drawer-subtitle>Send a 5Kg Malda mango pre-order inquiry.</span>
       </button>
       <div class="secure-checkout">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
           <path d="M7 10V7a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2"/>
         </svg>
-        Out of Stock
+        Send Inquiry
       </div>
     </div>
     <div class="checkout-steps" aria-label="Checkout progress">
       <span class="step is-active">Cart</span>
       <span class="step is-active">Details</span>
-      <span class="step is-active">Payment</span>
+      <span class="step is-active">Inquiry</span>
     </div>
     <form class="drawer-body checkout-layout" data-order-form>
       <div class="checkout-left">
@@ -4860,7 +4865,7 @@
             <button class="add-more-button" type="button" data-add-more>View Products</button>
           </div>
           <div class="cart-items" data-cart-items>
-            <div class="empty-cart"><strong>Out of stock</strong><span>We are not taking new mango orders right now.</span><button class="add-more-button" type="button" data-add-more>View products</button></div>
+            <div class="empty-cart"><strong>Pre-order inquiry</strong><span>Add the 5Kg box to send your details.</span><button class="add-more-button" type="button" data-add-more>View products</button></div>
           </div>
         </section>
 
@@ -4921,7 +4926,7 @@
 
       <section class="checkout-section">
         <div class="section-title">
-          <strong>Out of Stock</strong>
+          <strong>Inquiry Summary</strong>
         </div>
         <div class="price-summary">
           <div class="coupon-field" role="group" aria-labelledby="couponTitle">
@@ -4942,40 +4947,31 @@
             <small class="coupon-note" data-coupon-note>Select a coupon to apply savings.</small>
           </div>
           <div class="summary-line"><span>Items total</span><strong data-subtotal>Rs 0</strong></div>
-          <div class="summary-line"><span data-delivery-label>Delivery<small>Free on order above Rs 699</small></span><strong data-delivery>Rs 0</strong></div>
+          <div class="summary-line"><span data-delivery-label>Expected delivery<small>End of June</small></span><strong data-delivery>End of June</strong></div>
           <div class="summary-line" data-discount-line hidden><span data-discount-label>Savings</span><strong data-discount>-Rs 0</strong></div>
           <div class="summary-line total"><span>Total<small>Inclusive of all taxes</small></span><strong data-total>Rs 0</strong></div>
           <div class="free-note" data-free-note></div>
         </div>
         <div class="payment-box">
           <div class="payment-box-head">
-            <span class="payment-kicker">Payment Method</span>
+            <span class="payment-kicker">Inquiry</span>
           </div>
           <div class="payment-options">
             <label class="payment-choice">
-              <input type="radio" name="payment_method" value="razorpay" {% if razorpay_enabled %}checked{% else %}disabled{% endif %}>
-              <span class="payment-choice-icon" aria-hidden="true">Online</span>
+              <input type="radio" name="payment_method" value="inquiry" checked>
+              <span class="payment-choice-icon" aria-hidden="true">Ask</span>
               <span class="payment-choice-copy">
-                <strong data-online-payment-title>UPI / Cards / Netbanking</strong>
-                <small data-online-payment-copy>{% if razorpay_enabled %}Secure online payment via Razorpay.{% else %}Online payment will appear here once Razorpay keys are added in Vercel.{% endif %}</small>
+                <strong>Send inquiry</strong>
+                <small>Share your details now. We will confirm availability and payment personally.</small>
               </span>
-              <span class="payment-status {% if not razorpay_enabled %}is-muted{% endif %}" data-online-payment-status>{% if razorpay_enabled %}Secure{% else %}Soon{% endif %}</span>
-            </label>
-            <label class="payment-choice">
-              <input type="radio" name="payment_method" value="cod" {% if not razorpay_enabled %}checked{% endif %}>
-              <span class="payment-choice-icon" aria-hidden="true">COD</span>
-              <span class="payment-choice-copy">
-                <strong>Cash on Delivery (COD)</strong>
-                <small>Pay only after your order reaches your doorstep.</small>
-              </span>
-              <span class="payment-status">Available</span>
+              <span class="payment-status">Open</span>
             </label>
           </div>
         </div>
-        <button class="checkout-button" type="submit" data-submit-order disabled>Out of Stock</button>
+        <button class="checkout-button" type="submit" data-submit-order>Send Inquiry</button>
         <div class="checkout-safe-note">
           <span aria-hidden="true">♢</span>
-          Your data is safe and encrypted.
+          No payment is collected on this form.
         </div>
         <div class="order-result" data-order-result></div>
       </section>
@@ -5053,7 +5049,8 @@
         razorpayEnabled: {{ "true" if razorpay_enabled else "false" }},
         razorpayKeyId: {{ razorpay_key_id | tojson }},
       };
-      const orderingDisabled = true;
+      const orderingDisabled = false;
+      const inquiryMode = true;
       const cart = new Map();
       const productCards = Array.from(document.querySelectorAll("[data-product]"));
       const productGrid = document.querySelector("[data-product-grid]");
@@ -5202,8 +5199,9 @@
         if (orderingDisabled) return "Out of Stock";
         const summary = totals();
         if (summary.count && accountState.required && !accountState.authenticated) {
-          return "Sign in to Place Order";
+          return inquiryMode ? "Sign in to Send Inquiry" : "Sign in to Place Order";
         }
+        if (inquiryMode) return "Send Inquiry";
         return summary.count ? `Place Order • ${formatMoney(summary.total)}` : "Place Order";
       }
 
@@ -5340,6 +5338,7 @@
 
       function productFromCard(card) {
         const soldOut = orderingDisabled && card.dataset.unavailable !== "true";
+        const preorderDisabled = card.dataset.preorderDisabled === "true" || card.dataset.id === "malda-mango-3kg-box";
         return {
           id: card.dataset.id,
           name: card.dataset.name,
@@ -5351,7 +5350,8 @@
           imageSrcset: card.dataset.imageSrcset || "",
           imageSizes: card.dataset.imageSizes || "",
           soldOut,
-          unavailable: soldOut || card.dataset.unavailable === "true",
+          preorderDisabled,
+          unavailable: soldOut || preorderDisabled || card.dataset.unavailable === "true",
           card,
         };
       }
@@ -5424,13 +5424,13 @@
         document.querySelector("[data-detail-variant]").textContent = product.variant || "Seasonal box";
         document.querySelector("[data-detail-name]").textContent = productTitle(product);
         document.querySelector("[data-detail-description]").textContent = productDescriptions[id] || "Premium Pulps & Leaves produce, selected fresh and packed with care.";
-        document.querySelector("[data-detail-price]").textContent = product.unavailable ? (product.soldOut ? "Out of stock" : "Coming soon") : formatMoney(product.price);
+        document.querySelector("[data-detail-price]").textContent = product.unavailable ? (product.soldOut || product.preorderDisabled ? "Unavailable" : "Coming soon") : formatMoney(product.price);
         document.querySelector("[data-detail-mrp]").textContent = product.unavailable ? "" : (product.mrp ? formatMoney(product.mrp) : "");
-        document.querySelector("[data-detail-save]").textContent = product.unavailable ? (product.soldOut ? "Unavailable" : "Preview") : (discountPercent ? `Save ${discountPercent}%` : "Fresh price");
+        document.querySelector("[data-detail-save]").textContent = product.unavailable ? (product.soldOut || product.preorderDisabled ? "Unavailable" : "Preview") : (discountPercent ? `Save ${discountPercent}%` : "Fresh price");
         document.querySelector("[data-detail-add]").disabled = product.unavailable;
         document.querySelector("[data-detail-buy]").disabled = product.unavailable;
-        document.querySelector("[data-detail-add]").textContent = product.unavailable ? (product.soldOut ? "Out of Stock" : "Coming Soon") : "Add to Cart";
-        document.querySelector("[data-detail-buy]").textContent = product.unavailable ? (product.soldOut ? "Out of Stock" : "Notify Soon") : "Buy Now";
+        document.querySelector("[data-detail-add]").textContent = product.unavailable ? (product.soldOut ? "Out of Stock" : product.preorderDisabled ? "Unavailable" : "Coming Soon") : "Send Inquiry";
+        document.querySelector("[data-detail-buy]").textContent = product.unavailable ? (product.soldOut ? "Out of Stock" : product.preorderDisabled ? "Unavailable" : "Notify Soon") : "Pre-Order";
         updateDetailQty();
         setProductDetailVisible(true);
         window.history.replaceState({}, "", `${window.location.pathname}${window.location.search}#product-${id}`);
@@ -6072,12 +6072,14 @@
 
       function formPayload(form) {
         const payload = Object.fromEntries(new FormData(form).entries());
-        payload.payment_mode = selectedPaymentMethod(form) === "razorpay" ? "Razorpay" : "COD";
+        payload.payment_mode = inquiryMode ? "Inquiry" : selectedPaymentMethod(form) === "razorpay" ? "Razorpay" : "COD";
+        payload.source = inquiryMode ? "Website Inquiry" : "Website";
         payload.checkout_token = currentCheckoutToken();
         return payload;
       }
 
       function selectedPaymentMethod(form) {
+        if (inquiryMode) return "inquiry";
         return paymentInputs.find((input) => input.checked)?.value || (form ? new FormData(form).get("payment_method") : "") || "cod";
       }
 
@@ -6086,12 +6088,12 @@
           const row = document.querySelector(`[data-add-row="${product.id}"]`);
           if (!row) return;
           if (product.unavailable) {
-            row.innerHTML = `<button class="add-button" type="button" disabled>${product.soldOut ? "Out of Stock" : "Coming soon"}</button>`;
+            row.innerHTML = `<button class="add-button" type="button" disabled>${product.soldOut ? "Out of Stock" : product.preorderDisabled ? "Unavailable" : "Coming soon"}</button>`;
             return;
           }
           const item = cart.get(product.id);
           if (!item) {
-            row.innerHTML = `<button class="add-button" type="button" data-add="${product.id}">Add to Cart</button>`;
+            row.innerHTML = `<button class="add-button" type="button" data-add="${product.id}">Send Inquiry</button>`;
             return;
           }
           row.innerHTML = `
@@ -6116,7 +6118,7 @@
         mobileCount.textContent = `${summary.count} ${summary.count === 1 ? "item" : "items"}`;
         mobileCart.classList.toggle("has-items", summary.count > 0);
         document.querySelector("[data-summary-subtitle]").textContent = summary.count ? `${summary.count} item${summary.count === 1 ? "" : "s"} in cart` : "Cart is empty";
-        document.querySelector("[data-drawer-subtitle]").textContent = summary.count ? "Review items, enter details, place order." : "Add items first, then place your order.";
+        document.querySelector("[data-drawer-subtitle]").textContent = summary.count ? "Review items and send your inquiry." : "Add the 5Kg box first, then send your inquiry.";
         document.querySelector("[data-subtotal]").textContent = formatMoney(summary.subtotal);
         if (discountLine && discountValue) {
           discountLine.hidden = summary.discount <= 0;
@@ -6127,8 +6129,10 @@
           }
           discountValue.textContent = `-${formatMoney(summary.discount)}`;
         }
-        document.querySelector("[data-delivery-label]").innerHTML = `Delivery<small>Free on order above Rs 699</small>${summary.onlineOfferMessage ? `<small class="online-discount-note">${summary.onlineOfferMessage}</small>` : ""}`;
-        document.querySelector("[data-delivery]").textContent = summary.delivery ? formatMoney(summary.delivery) : "Free";
+        document.querySelector("[data-delivery-label]").innerHTML = inquiryMode
+          ? "Expected delivery<small>End of June</small>"
+          : `Delivery<small>Free on order above Rs 699</small>${summary.onlineOfferMessage ? `<small class="online-discount-note">${summary.onlineOfferMessage}</small>` : ""}`;
+        document.querySelector("[data-delivery]").textContent = inquiryMode ? "End of June" : (summary.delivery ? formatMoney(summary.delivery) : "Free");
         document.querySelector("[data-total]").textContent = formatMoney(summary.total);
         if (couponNote) couponNote.textContent = summary.couponMessage;
         if (manualCouponApply) manualCouponApply.textContent = manualCoupon ? "Applied" : "Apply";
@@ -6213,7 +6217,7 @@
         const product = products.get(id);
         if (!product) return;
         if (product.unavailable) {
-          showToast(`${product.name} is coming soon`);
+          showToast(product.preorderDisabled ? "3Kg box is not available for this pre-order." : `${product.name} is coming soon`);
           return;
         }
         const existing = cart.get(id);
@@ -6224,7 +6228,7 @@
         product.card.classList.add("is-added");
         renderSummary();
         setCartOpen(true);
-        showToast(`${product.name} added`);
+        showToast(`${product.name} added for inquiry`);
       }
 
       function changeQty(id, delta) {
@@ -6458,15 +6462,15 @@
           homeSection.scrollIntoView({ behavior: "smooth", block: "start" });
         }
         window.history.replaceState({}, "", `${window.location.pathname}${window.location.search}#shop`);
-        showToast(`Order placed. Order ID: ${orderId}`, 10000);
+        showToast(`Inquiry sent. Reference ID: ${orderId}`, 10000);
         showCelebration({
-          badge: "Order Confirmed",
+          badge: "Inquiry Sent",
           badgeType: "order",
           emoji: "🥭",
-          title: "Order placed successfully",
-          message: "Your Pulps & Leaves order is now in our system.",
+          title: "Inquiry sent successfully",
+          message: "Your Pulps & Leaves pre-order inquiry is now in our system.",
           orderId,
-          subcopy: "📦 Check All Your Orders Under Order History",
+          subcopy: "We will confirm availability and payment personally.",
           duration: 6200,
         });
       }
@@ -6505,18 +6509,22 @@
         checkoutState.currentRequestId = makeRequestId();
         const paymentMethod = selectedPaymentMethod(form);
         currentCheckoutToken();
-        setSubmitState(submit, true, paymentMethod === "razorpay" ? "Opening Razorpay..." : "Placing Order...");
+        setSubmitState(submit, true, inquiryMode ? "Sending Inquiry..." : paymentMethod === "razorpay" ? "Opening Razorpay..." : "Placing Order...");
         logCheckout("order_started", { paymentMethod });
 
         try {
-          showToast(paymentMethod === "razorpay" ? "Initializing secure payment..." : "Placing your order...");
-          const data = paymentMethod === "razorpay"
+          showToast(inquiryMode ? "Sending your inquiry..." : paymentMethod === "razorpay" ? "Initializing secure payment..." : "Placing your order...");
+          const data = inquiryMode
+            ? await submitCodOrder(form)
+            : paymentMethod === "razorpay"
             ? await submitRazorpayOrder(form)
             : await submitCodOrder(form);
           const orderId = data.order["Order ID"];
           logCheckout("order_completed", { orderId, duplicate: Boolean(data.duplicate) });
           rememberOrderForHistory(data.order);
-          result.textContent = `Order placed successfully. Order ID: ${orderId}. Total: Rs ${data.order["Total Amount"]}.`;
+          result.textContent = inquiryMode
+            ? `Inquiry sent successfully. Reference ID: ${orderId}.`
+            : `Order placed successfully. Order ID: ${orderId}. Total: Rs ${data.order["Total Amount"]}.`;
           result.className = "order-result is-visible";
           orderResultTimer = window.setTimeout(() => {
             result.className = "order-result";
@@ -6548,13 +6556,13 @@
           window.setTimeout(() => {
             suppressCouponCelebration = false;
           }, 300);
-          setSubmitState(submit, false, "Place Order");
+          setSubmitState(submit, false, inquiryMode ? "Send Inquiry" : "Place Order");
         }
       }
 
       async function submitCodOrder(form) {
         const payload = formPayload(form);
-        logCheckout("order_save_started", { paymentMethod: "cod" });
+        logCheckout("order_save_started", { paymentMethod: inquiryMode ? "inquiry" : "cod" });
         const { response, data } = await fetchJson("/api/orders", {
           method: "POST",
           body: payload,

@@ -131,6 +131,9 @@ class OrderManager:
             subtotal = 0
             total_quantity = 0
             for item in cart_items:
+                if item["id"] == "malda-mango-3kg-box":
+                    errors["product"] = "3Kg box is not available for this pre-order."
+                    continue
                 catalog_item = WEB_CART_PRODUCTS[item["id"]]
                 quantity = item["quantity"]
                 total_quantity += quantity
@@ -153,8 +156,7 @@ class OrderManager:
                 product_lines.append(f"5Kg Box x {qty_5kg}")
                 subtotal += qty_5kg * int(product_5kg["price"])
             if qty_3kg:
-                product_lines.append(f"3Kg Box x {qty_3kg}")
-                subtotal += qty_3kg * int(product_3kg["price"])
+                errors["product"] = "3Kg box is not available for this pre-order."
 
             online_payment_discount = self._online_payment_discount(subtotal, payment_mode)
             discount += online_payment_discount
@@ -273,6 +275,8 @@ class OrderManager:
         mode = str(value or "").strip().lower()
         if mode in {"razorpay", "online", "paid", "prepaid"}:
             return "Razorpay"
+        if mode in {"inquiry", "enquiry", "send inquiry", "preorder", "pre-order"}:
+            return "Inquiry"
         return "COD"
 
     @staticmethod

@@ -383,7 +383,7 @@ def outbound_required(view):
 
 
 def ordering_unavailable_response():
-    return jsonify({"ok": False, "error": "Out of stock. We are not taking orders right now."}), 503
+    return jsonify({"ok": False, "error": "Online payment is not available for pre-order inquiries right now."}), 503
 
 
 @app.get("/")
@@ -438,7 +438,6 @@ def sync_atharv_sheet():
 
 @app.post("/api/orders")
 def create_order():
-    return ordering_unavailable_response()
     payload = request.get_json(silent=True) or request.form.to_dict()
     customer = current_customer()
     offline_order_admin = prepare_order_payload(payload, customer)

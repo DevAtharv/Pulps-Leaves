@@ -71,10 +71,10 @@ COMING_SOON_PRODUCTS = [
 ]
 
 DELIVERY_SCHEDULES = {
-    "bangalore": {"start": "2026-06-12", "end": "2026-06-14", "label": "12th-14th June"},
-    "hyderabad": {"start": "2026-06-12", "end": "2026-06-14", "label": "12th-14th June"},
-    "pune": {"start": "2026-06-12", "end": "2026-06-14", "label": "12th-14th June"},
-    "mumbai": {"start": "2026-06-12", "end": "2026-06-14", "label": "12th-14th June"},
+    "bangalore": {"start": "2026-06-28", "end": "2026-06-30", "label": "end of June"},
+    "hyderabad": {"start": "2026-06-28", "end": "2026-06-30", "label": "end of June"},
+    "pune": {"start": "2026-06-28", "end": "2026-06-30", "label": "end of June"},
+    "mumbai": {"start": "2026-06-28", "end": "2026-06-30", "label": "end of June"},
     "chennai": {"start": "2026-06-09", "end": "2026-06-12", "label": "9th-12th June"},
     "bhubaneswar": {"start": "2026-06-11", "end": "2026-06-14", "label": "11th-14th June"},
 }
