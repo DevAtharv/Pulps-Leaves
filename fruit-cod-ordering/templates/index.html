@@ -4930,21 +4930,15 @@
         </div>
         <div class="price-summary">
           <div class="coupon-field" role="group" aria-labelledby="couponTitle">
-            <span id="couponTitle">Apply coupons</span>
-            <div class="coupon-options">
-              <article class="coupon-option" data-coupon-card="GUTHLI10">
-                <span><span class="coupon-code-line">GUTHLI10 <strong class="coupon-percent">10% OFF</strong></span><small class="coupon-copy-primary">Kyonki aam ke aam ghuthliyon k daam</small></span>
-                <button class="coupon-apply-button" type="button" value="GUTHLI10" data-coupon="GUTHLI10" aria-pressed="false">Apply</button>
-              </article>
-            </div>
+            <span id="couponTitle">Have a coupon?</span>
             <div class="coupon-manual">
-              <label for="manualCouponCode">Have a private coupon?</label>
+              <label for="manualCouponCode">Enter coupon code</label>
               <div class="coupon-entry-row">
                 <input id="manualCouponCode" type="text" inputmode="latin" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter code" data-manual-coupon-input>
                 <button class="coupon-apply-button" type="button" data-manual-coupon-apply>Apply</button>
               </div>
             </div>
-            <small class="coupon-note" data-coupon-note>Select a coupon to apply savings.</small>
+            <small class="coupon-note" data-coupon-note>Enter a coupon code to apply savings.</small>
           </div>
           <div class="summary-line"><span>Items total</span><strong data-subtotal>Rs 0</strong></div>
           <div class="summary-line"><span data-delivery-label>Expected delivery<small>End of June</small></span><strong data-delivery>End of June</strong></div>
@@ -5986,7 +5980,7 @@
         const items = Array.from(cart.values());
         const count = items.reduce((sum, item) => sum + item.qty, 0);
         const subtotal = items.reduce((sum, item) => sum + item.qty * item.price, 0);
-        const guthliInput = couponInputs.find((input) => input.value === "GUTHLI10");
+        const featuredCouponInput = null;
         const paymentMethod = orderForm ? selectedPaymentMethod(orderForm) : "cod";
         const isOnlinePayment = paymentMethod === "razorpay" && paymentState.razorpayEnabled;
         const isManualCouponEligible = manualCouponApplies(subtotal);
@@ -5997,14 +5991,14 @@
         const isOnlineDiscountEligible = isOnlinePayment && subtotal >= onlinePaymentMinimum && !manualSkipsOnlineDiscount;
         const onlineDiscount = isOnlineDiscountEligible ? Math.min(onlinePaymentDiscount, subtotal) : 0;
 
-        if (guthliInput) {
-          if (subtotal === 0) setCouponApplied(guthliInput, false);
-          if (manualBlocksOtherCoupons) setCouponApplied(guthliInput, false);
-          setCouponDisabled(guthliInput, subtotal === 0 || manualBlocksOtherCoupons);
+        if (featuredCouponInput) {
+          if (subtotal === 0) setCouponApplied(featuredCouponInput, false);
+          if (manualBlocksOtherCoupons) setCouponApplied(featuredCouponInput, false);
+          setCouponDisabled(featuredCouponInput, subtotal === 0 || manualBlocksOtherCoupons);
         }
 
-        const isGuthliApplied = Boolean(isCouponApplied(guthliInput) && !guthliInput?.disabled && !manualBlocksOtherCoupons);
-        const guthliDiscount = isGuthliApplied ? Math.round(subtotal * 0.1) : 0;
+        const isFeaturedCouponApplied = Boolean(isCouponApplied(featuredCouponInput) && !featuredCouponInput?.disabled && !manualBlocksOtherCoupons);
+        const featuredCouponDiscount = isFeaturedCouponApplied ? Math.round(subtotal * 0.1) : 0;
         const appliedCoupons = [];
         let discount = onlineDiscount + manualDiscount;
         let couponMessage = subtotal === 0 ? "Add products to use coupons." : "Select a coupon to apply savings.";
@@ -6014,9 +6008,8 @@
           appliedCoupons.push(manualCoupon.code);
         }
 
-        if (isGuthliApplied) {
-          discount += guthliDiscount;
-          appliedCoupons.push("GUTHLI10");
+        if (isFeaturedCouponApplied) {
+          discount += featuredCouponDiscount;
         }
 
         discount = Math.min(discount, subtotal);

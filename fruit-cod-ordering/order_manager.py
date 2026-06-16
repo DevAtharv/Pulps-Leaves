@@ -25,7 +25,7 @@ ONLINE_PAYMENT_DISCOUNT = 40
 PRIVATE_9999_COUPON_CODE = "PL99FS022E"
 BELOW_699_FREE_DELIVERY_COUPON_CODE = "PLB699FD"
 COUPON_DEFINITIONS = {
-    "GUTHLI10": {
+    "LOVEFORMALDA": {
         "label": "10% OFF",
         "rate_bps": 1000,
         "minimum_payable": 0,
