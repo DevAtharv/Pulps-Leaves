@@ -91,7 +91,7 @@ ATHARV_HEADERS = [
 ]
 
 ATHARV_TAB_DEFAULT_NAME = "Atharv"
-REPORT_DELIVERY_FREE_ABOVE = 699
+REPORT_DELIVERY_FREE_ABOVE = 698
 REPORT_DELIVERY_CHARGE = 30
 REPORT_FREE_DELIVERY_COUPONS = {"PLB699FD"}
 
@@ -594,7 +594,7 @@ class SheetsHandler:
         delivery_coupon_discount = Decimal("0")
         if (
             coupon_codes.intersection(REPORT_FREE_DELIVERY_COUPONS)
-            and Decimal("0") < subtotal < Decimal(str(REPORT_DELIVERY_FREE_ABOVE))
+            and Decimal("0") < subtotal <= Decimal(str(REPORT_DELIVERY_FREE_ABOVE))
             and delivery_charge == 0
         ):
             delivery_coupon_discount = Decimal(str(REPORT_DELIVERY_CHARGE))

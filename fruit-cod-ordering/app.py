@@ -46,7 +46,15 @@ app.config["SESSION_COOKIE_SECURE"] = bool(os.getenv("VERCEL"))
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 31536000
 
 STATIC_CACHE_CONTROL = "public, max-age=31536000, s-maxage=31536000, immutable"
-HTML_CACHE_CONTROL = "private, no-store"
+HTML_CACHE_CONTROL = "no-cache, no-store, must-revalidate"
+
+@app.after_request
+def add_cache_headers(response):
+    if "text/html" in response.content_type:
+        response.headers["Cache-Control"] = HTML_CACHE_CONTROL
+    else:
+        response.headers["Cache-Control"] = STATIC_CACHE_CONTROL
+    return response
 
 
 def wants_json_response():
@@ -562,7 +570,6 @@ def send_order_confirmations():
 @app.post("/api/create-order")
 @app.post("/api/payments/razorpay/order")
 def create_razorpay_order():
-    return ordering_unavailable_response()
     if not razorpay_enabled():
         return jsonify({"ok": False, "error": "Razorpay test payments are not configured."}), 503
 
@@ -682,7 +689,6 @@ def create_razorpay_order():
 @app.post("/api/verify-payment")
 @app.post("/api/payments/razorpay/verify")
 def verify_razorpay_payment():
-    return ordering_unavailable_response()
     payload = request.get_json(silent=True) or {}
     customer = current_customer()
     offline_order_admin = is_offline_order_admin(customer)
@@ -1065,6 +1071,6 @@ def extract_webhook_message(payload):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=os.getenv("FLASK_ENV") == "development")
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5001")), debug=True)
 
 # Force Vercel rebuild 2

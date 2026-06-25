@@ -18,6 +18,7 @@ WEB_CART_PRODUCTS = {
     "assam-breakfast-tea": {"name": "Husk and Dew", "price": 449},
     "roasted-himalayan-makhana": {"name": "Naivedyam Makhana", "price": 349},
 }
+ACTIVE_WEB_PRODUCT_IDS = {"roasted-himalayan-makhana"}
 DELIVERY_FREE_ABOVE = 699
 DELIVERY_CHARGE = 30
 ONLINE_PAYMENT_MINIMUM_SUBTOTAL = 699
@@ -131,12 +132,12 @@ class OrderManager:
             subtotal = 0
             total_quantity = 0
             for item in cart_items:
-                if item["id"] == "malda-mango-3kg-box":
-                    errors["product"] = "3Kg box is not available for this pre-order."
-                    continue
-                catalog_item = WEB_CART_PRODUCTS[item["id"]]
                 quantity = item["quantity"]
                 total_quantity += quantity
+                if item["id"] not in ACTIVE_WEB_PRODUCT_IDS:
+                    errors["product"] = "Only Naivedyam Makhana is available right now."
+                    continue
+                catalog_item = WEB_CART_PRODUCTS[item["id"]]
                 subtotal += quantity * catalog_item["price"]
                 product_lines.append(f"{catalog_item['name']} x {quantity}")
             discount, applied_coupons = self._cart_coupon_discount(subtotal, coupon_codes)
@@ -149,14 +150,11 @@ class OrderManager:
             product_lines = []
             subtotal = 0
             total_quantity = qty_5kg + qty_3kg
-            product_5kg = product_record("Malda Mango 5Kg Box")
-            product_3kg = product_record("Malda Mango 3Kg Box")
 
             if qty_5kg:
-                product_lines.append(f"5Kg Box x {qty_5kg}")
-                subtotal += qty_5kg * int(product_5kg["price"])
+                errors["product"] = "Only Naivedyam Makhana is available right now."
             if qty_3kg:
-                errors["product"] = "3Kg box is not available for this pre-order."
+                errors["product"] = "Only Naivedyam Makhana is available right now."
 
             online_payment_discount = self._online_payment_discount(subtotal, payment_mode)
             discount += online_payment_discount
@@ -181,7 +179,7 @@ class OrderManager:
             errors["address"] = "Please enter a complete delivery address."
         if not city:
             errors["city"] = "Please select Bengaluru, Hyderabad, Pune, or Mumbai."
-        if not product_summary:
+        if not product_summary and "product" not in errors:
             errors["product"] = "Please choose a product from the catalog."
         elif not uses_cart_quantities:
             product_availability_error = availability_message(product)
