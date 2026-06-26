@@ -693,6 +693,7 @@
     .product-copy {
       display: grid;
       gap: 18px;
+      min-width: 0;
     }
     .product-copy h2 { font-size: clamp(2.4rem, 4.5vw, 4.2rem); }
     .product-copy p { color: var(--muted); }
@@ -728,6 +729,7 @@
       letter-spacing: 0.12em;
     }
     .variant-card {
+      min-width: 0;
       display: grid;
       gap: 12px;
       padding: 18px;
@@ -1687,13 +1689,49 @@
       .heritage-quote h2 {
         font-size: clamp(2rem, 10vw, 3rem);
       }
-      .variant-card h2 { font-size: clamp(1.9rem, 9vw, 2.55rem); }
+      .variant-card h2 {
+        font-size: clamp(2rem, 10.5vw, 2.65rem);
+        line-height: 1.05;
+        overflow-wrap: break-word;
+      }
       .about-pattern { min-height: 280px; }
-      .product-grid { grid-template-columns: 140px 1fr; gap: 16px; align-items: start; }
+      .product-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 22px;
+        align-items: center;
+        justify-items: center;
+      }
       .product-visual {
-        max-width: 140px;
-        position: sticky;
-        top: 20px;
+        width: min(100%, 300px);
+        max-width: 300px;
+        position: relative;
+        top: auto;
+        margin: 0 auto;
+      }
+      .discount-badge {
+        top: 24px;
+        right: 18px;
+        width: 70px;
+        height: 70px;
+        font-size: 0.9rem;
+      }
+      .product-copy {
+        width: min(100%, 430px);
+        justify-self: center;
+      }
+      .badge-row {
+        justify-content: center;
+      }
+      .badge-row span {
+        flex: 1 1 132px;
+        text-align: center;
+      }
+      .variant-card {
+        width: 100%;
+        padding: 18px 16px;
+      }
+      .price-row {
+        gap: 8px 10px;
       }
       .story-stats { grid-template-columns: repeat(3, 1fr); }
       .nutrition-grid { grid-template-columns: repeat(2, 1fr); }
