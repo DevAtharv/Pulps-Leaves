@@ -28,45 +28,32 @@ CITY_ALIASES = {
 
 PRODUCTS = [
     {
-        "name": "Malda Mango 5Kg Box",
-        "display_title": "Malda Mango",
-        "slug": "malda-mango-5kg-box",
-        "category": "Mangoes",
-        "price": 1155,
-        "mrp": 1650,
-        "unit": "5Kg Box",
-        "pieces_label": "Up to 25 pieces",
-        "description": "5Kg Box Malda Mango",
-        "available_months": [4, 5, 6, 7],
-        "availability_label": "Seasonal: Apr-Jul",
-    },
-    {
-        "name": "Malda Mango 3Kg Box",
-        "display_title": "Malda Mango",
-        "slug": "malda-mango-3kg-box",
-        "category": "Mangoes",
-        "price": 693,
-        "mrp": 990,
-        "unit": "3Kg Box",
-        "pieces_label": "Up to 15 pieces",
-        "description": "3Kg Box Malda Mango",
-        "available_months": [4, 5, 6, 7],
-        "availability_label": "Seasonal: Apr-Jul",
+        "name": "Naivedyam Makhana 100g Pack",
+        "display_title": "Naivedyam Makhana",
+        "slug": "roasted-himalayan-makhana",
+        "category": "Makhana",
+        "price": 349,
+        "mrp": 449,
+        "unit": "100g Pack",
+        "pieces_label": "Light, crunchy, nutritious",
+        "description": "Premium roasted makhana 100g pouch",
+        "available_months": list(range(1, 13)),
+        "availability_label": "Available now",
     },
 ]
 
 COMING_SOON_PRODUCTS = [
     {
-        "name": "Assam Tea",
+        "name": "Pulps & Leaves Tea",
         "slug": "assam-breakfast-tea",
         "category": "Tea",
-        "description": "Whole-year tea catalogue coming soon.",
+        "description": "Tea is launching soon with Pulps & Leaves.",
     },
     {
-        "name": "Premium Makhana",
-        "slug": "premium-makhana",
-        "category": "Makhana",
-        "description": "Roasted makhana catalogue coming soon.",
+        "name": "Malda Mango",
+        "slug": "malda-mango",
+        "category": "Mangoes",
+        "description": "Mango season has ended. Mangoes will return next harvest.",
     },
 ]
 
@@ -178,8 +165,8 @@ def availability_message(product_value, on_date=None):
     if is_product_available(product_value, on_date):
         return None
     return (
-        f"{product['name']} is a seasonal mango product and is available only in "
-        f"{product['availability_label'].replace('Seasonal: ', '')}. Tea and makhana are available all year."
+        f"{product['name']} is not available right now. Naivedyam Makhana is available now; "
+        "tea is launching soon, and mangoes return next harvest."
     )
 
 
