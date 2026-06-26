@@ -1760,9 +1760,10 @@
         font-size: 0.58rem;
       }
       .drawer-body {
-        width: min(100% - 20px, 520px);
+        width: 100%;
+        margin: 0;
         gap: 14px;
-        padding: 14px 0 26px;
+        padding: 14px 16px 26px;
       }
       .cart-title,
       .delivery-title,
@@ -1774,22 +1775,63 @@
         display: grid;
       }
       .add-more-button { width: 100%; }
-      .cart-items { padding: 12px; }
+      .cart-items { padding: 10px 0 14px; }
       .cart-item {
-        grid-template-columns: 60px minmax(0, 1fr);
-        gap: 10px;
+        grid-template-columns: 76px minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+        padding: 14px 0;
       }
       .cart-item img {
-        width: 60px;
-        height: 60px;
+        width: 76px;
+        height: 76px;
+        margin-top: 2px;
       }
+      .cart-item-main { gap: 8px; }
       .cart-item-top,
       .cart-item-bottom {
-        display: grid;
-        justify-items: start;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        width: 100%;
       }
+      .cart-item-top {
+        align-items: start;
+      }
+      .cart-item-top > div:first-child {
+        min-width: 0;
+      }
+      .cart-item strong {
+        font-size: 1.02rem;
+        line-height: 1.16;
+        overflow-wrap: anywhere;
+      }
+      .cart-item-badges { gap: 6px; margin-top: 6px; }
+      .cart-item-badges small { font-size: 0.72rem; }
       .cart-item-price {
-        justify-items: start;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 2px;
+      }
+      .cart-item-price strong {
+        font-size: 1.05rem;
+      }
+      .cart-item-divider { margin: 2px 0; }
+      .cart-item .mini-stepper {
+        height: 34px;
+        grid-template-columns: 34px 38px 34px;
+        margin-top: 0;
+      }
+      .remove-button {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        background: rgba(62,39,35,0.06);
+        font-size: 1rem;
       }
       .checkout-form {
         grid-template-columns: 1fr;
@@ -1955,6 +1997,7 @@
   <main>
     <section class="hero" id="home">
       <picture class="hero-picture">
+        <source srcset="{{ url_for('static', filename='img/pl-makhana-market-hero-720.avif') }} 720w, {{ url_for('static', filename='img/pl-makhana-market-hero-1200.avif') }} 1200w" sizes="100vw" type="image/avif">
         <source srcset="{{ url_for('static', filename='img/pl-makhana-market-hero-720.webp') }} 720w, {{ url_for('static', filename='img/pl-makhana-market-hero-1200.webp') }} 1200w" sizes="100vw" type="image/webp">
         <img src="{{ url_for('static', filename='img/pl-makhana-market-hero-1200.webp') }}" alt="Pulps and Leaves makhana market hero" width="1200" height="675" fetchpriority="high" decoding="async">
       </picture>
@@ -2012,7 +2055,11 @@
     <section class="section section-light" id="about">
       <div class="container about-grid">
         <div class="about-media" data-reveal="left">
-          <img src="{{ url_for('static', filename='img/mithila-harvest.png') }}" alt="Mithila wetland makhana harvest in Bihar" width="800" height="600" loading="lazy" decoding="async">
+          <picture>
+            <source srcset="{{ url_for('static', filename='img/mithila-harvest-720.avif') }}" type="image/avif">
+            <source srcset="{{ url_for('static', filename='img/mithila-harvest-720.webp') }}" type="image/webp">
+            <img src="{{ url_for('static', filename='img/mithila-harvest-720.webp') }}" alt="Mithila wetland makhana harvest in Bihar" width="720" height="720" loading="lazy" decoding="async">
+          </picture>
         </div>
         <div class="story-copy" data-reveal="right">
           <span class="eyebrow">Our Story</span>

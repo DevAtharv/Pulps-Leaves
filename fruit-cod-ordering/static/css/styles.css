@@ -398,10 +398,10 @@ h2 {
   border: 10px solid var(--cream);
   border-radius: 14px;
   background-color: #fffaf0;
-  background-image: url("../img/pl-orchard-harvest-768.webp");
+  background-image: url("../img/pl-makhana-market-hero-720.webp");
   background-image: image-set(
-    url("../img/pl-orchard-harvest-768.avif") type("image/avif"),
-    url("../img/pl-orchard-harvest-768.webp") type("image/webp")
+    url("../img/pl-makhana-market-hero-720.avif") type("image/avif"),
+    url("../img/pl-makhana-market-hero-720.webp") type("image/webp")
   );
   background-position: center;
   background-repeat: no-repeat;
