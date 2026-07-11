@@ -1989,6 +1989,55 @@
       display: grid;
       gap: 10px;
     }
+    .history-phone-link {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid rgba(200, 134, 10, 0.18);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.68);
+    }
+    .history-phone-link label {
+      color: var(--brown);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+    .history-phone-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+    }
+    .history-phone-row input {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 10px;
+      color: var(--brown);
+      background: var(--white);
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .history-phone-row input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(47, 111, 62, 0.1);
+    }
+    .history-phone-row button {
+      min-height: 40px;
+      border: 0;
+      border-radius: 8px;
+      padding: 0 13px;
+      color: var(--cream);
+      background: var(--brown);
+      font-size: 0.82rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .history-phone-note {
+      color: var(--muted);
+      font-size: 0.74rem;
+      line-height: 1.45;
+    }
     .history-card {
       display: grid;
       gap: 10px;
@@ -2073,6 +2122,11 @@
     }
     @keyframes historyShimmer {
       to { transform: translateX(100%); }
+    }
+    @media (max-width: 640px) {
+      .history-phone-row {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -2610,6 +2664,14 @@
         <button class="account-history-button" type="button" data-order-history>Order History</button>
       </div>
       <div class="order-history-panel" data-order-history-panel>
+        <div class="history-phone-link">
+          <label for="historyPhone">Find older orders by phone</label>
+          <div class="history-phone-row">
+            <input id="historyPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="Mobile number on old order" data-order-history-phone>
+            <button type="button" data-order-history-phone-search>Find</button>
+          </div>
+          <small class="history-phone-note" data-order-history-phone-note>Use the same mobile number used while placing earlier orders.</small>
+        </div>
         <div class="order-history-status" data-order-history-status>Sign in to see your past orders.</div>
         <div class="order-history-list" data-order-history-list></div>
       </div>
@@ -2648,6 +2710,9 @@
       const orderHistoryPanel = document.querySelector("[data-order-history-panel]");
       const orderHistoryStatus = document.querySelector("[data-order-history-status]");
       const orderHistoryList = document.querySelector("[data-order-history-list]");
+      const orderHistoryPhone = document.querySelector("[data-order-history-phone]");
+      const orderHistoryPhoneSearch = document.querySelector("[data-order-history-phone-search]");
+      const orderHistoryPhoneNote = document.querySelector("[data-order-history-phone-note]");
       const paymentInputs = Array.from(document.querySelectorAll("input[name='payment_method']"));
       const cart = new Map();
       const accountState = {
@@ -2656,6 +2721,7 @@
         googleLoginEnabled: {{ "true" if google_login_enabled else "false" }},
         customerName: {{ (customer.get("name", "") if customer else "") | tojson }},
         customerEmail: {{ (customer.get("email", "") if customer else "") | tojson }},
+        customerPhone: {{ (customer.get("phone", "") if customer else "") | tojson }},
         loginIntent: "account",
       };
       const paymentState = {
@@ -2673,6 +2739,7 @@
       let manualCoupon = "";
       let checkoutToken = makeCheckoutToken();
       let razorpayCheckoutPromise = null;
+      let historyLookupPhone = "";
 
       const products = new Map(
         Array.from(document.querySelectorAll("[data-product]")).map((card) => [
@@ -2766,6 +2833,38 @@
         if (orderHistoryButton) orderHistoryButton.textContent = "Order History";
       }
 
+      function normalizeHistoryPhone(value) {
+        let digits = String(value || "").replace(/\D/g, "");
+        if (digits.length === 12 && digits.startsWith("91")) digits = digits.slice(2);
+        return digits;
+      }
+
+      function syncHistoryPhoneInput() {
+        if (!orderHistoryPhone) return;
+        if (!orderHistoryPhone.value && accountState.customerPhone) {
+          orderHistoryPhone.value = accountState.customerPhone;
+        }
+      }
+
+      function findOrdersByPhone() {
+        const digits = normalizeHistoryPhone(orderHistoryPhone?.value || "");
+        if (!digits) {
+          historyLookupPhone = "";
+          loadOrderHistory.cache = null;
+          loadOrderHistory();
+          return;
+        }
+        if (digits.length !== 10 || !"6789".includes(digits[0])) {
+          if (orderHistoryPhoneNote) orderHistoryPhoneNote.textContent = "Enter the 10-digit mobile number used on your older orders.";
+          orderHistoryPhone?.focus();
+          return;
+        }
+        historyLookupPhone = digits;
+        if (orderHistoryPhoneNote) orderHistoryPhoneNote.textContent = "Checking older orders with this phone number...";
+        loadOrderHistory.cache = null;
+        loadOrderHistory();
+      }
+
       function openAccountModal(message, view = "account") {
         if (message) showToast(message);
         renderAccountSummary();
@@ -2797,6 +2896,12 @@
       orderHistoryButton?.addEventListener("click", () => {
         accountState.loginIntent = "orders";
         showOrderHistory();
+      });
+      orderHistoryPhoneSearch?.addEventListener("click", findOrdersByPhone);
+      orderHistoryPhone?.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        findOrdersByPhone();
       });
       if (accountClose && accountModal) {
         accountClose.addEventListener("click", () => {
@@ -2836,6 +2941,7 @@
           return;
         }
         if (googleLoginButton) googleLoginButton.hidden = true;
+        syncHistoryPhoneInput();
         loadOrderHistory();
       }
 
@@ -2903,7 +3009,8 @@
       async function loadOrderHistory() {
         if (!accountState.authenticated || !orderHistoryPanel) return;
         const now = Date.now();
-        if (loadOrderHistory.cache && now - loadOrderHistory.cache.fetchedAt < 60000) {
+        const cacheKey = historyLookupPhone || accountState.customerPhone || "account";
+        if (loadOrderHistory.cache && loadOrderHistory.cache.key === cacheKey && now - loadOrderHistory.cache.fetchedAt < 60000) {
           renderOrderHistory(loadOrderHistory.cache.orders);
           return;
         }
@@ -2912,7 +3019,8 @@
         setOrderHistoryLoading();
 
         try {
-          const response = await fetch("/api/me/orders", { headers: { Accept: "application/json" } });
+          const historyUrl = historyLookupPhone ? `/api/me/orders?phone=${encodeURIComponent(historyLookupPhone)}` : "/api/me/orders";
+          const response = await fetch(historyUrl, { headers: { Accept: "application/json" } });
           const data = await parseResponse(response);
           if (response.status === 401 && data.auth_required) {
             accountState.authenticated = false;
@@ -2922,7 +3030,14 @@
           }
           if (!response.ok || !data.ok) throw new Error(data.error || "Order history could not be loaded.");
           const orders = Array.isArray(data.orders) ? data.orders : [];
-          loadOrderHistory.cache = { fetchedAt: now, orders };
+          if (data.lookup_phone) {
+            accountState.customerPhone = data.lookup_phone;
+            if (orderHistoryPhone && !orderHistoryPhone.value) orderHistoryPhone.value = data.lookup_phone;
+            if (orderHistoryPhoneNote) orderHistoryPhoneNote.textContent = "Older orders linked with this phone number.";
+          } else if (orderHistoryPhoneNote) {
+            orderHistoryPhoneNote.textContent = "Use the same mobile number used while placing earlier orders.";
+          }
+          loadOrderHistory.cache = { key: cacheKey, fetchedAt: now, orders };
           renderOrderHistory(orders);
         } catch (error) {
           orderHistoryPanel.classList.remove("is-loading");

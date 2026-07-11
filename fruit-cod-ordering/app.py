@@ -329,6 +329,10 @@ def customer_payload(customer):
     }
 
 
+def normalized_name(value):
+    return " ".join(str(value or "").strip().lower().split())
+
+
 def remember_customer_checkout_details(phone="", city="", address=""):
     customer = session.get("customer")
     if not isinstance(customer, dict):
@@ -345,12 +349,24 @@ def remember_customer_checkout_details(phone="", city="", address=""):
 
 def safe_next_url(raw_next):
     if not raw_next:
-        return url_for("index", _external=True)
+        return url_for("index")
     parsed = urlparse(raw_next)
-    if parsed.netloc and parsed.netloc != request.host:
-        return url_for("index", _external=True)
     if parsed.scheme and parsed.scheme not in {"http", "https"}:
-        return url_for("index", _external=True)
+        return url_for("index")
+    if parsed.netloc:
+        next_host = parsed.netloc.split("@")[-1].split(":")[0].lower()
+        request_host = request.host.split(":")[0].lower()
+        allowed_hosts = {request_host, request_host.removeprefix("www.")}
+        if not request_host.startswith("www."):
+            allowed_hosts.add(f"www.{request_host}")
+        if next_host not in allowed_hosts:
+            return url_for("index")
+        path = parsed.path or url_for("index")
+        query = f"?{parsed.query}" if parsed.query else ""
+        fragment = f"#{parsed.fragment}" if parsed.fragment else ""
+        return f"{path}{query}{fragment}"
+    if not str(raw_next).startswith("/"):
+        return url_for("index")
     return raw_next
 
 
@@ -849,15 +865,33 @@ def my_orders():
     if not customer:
         return jsonify({"ok": False, "auth_required": True, "error": "Please sign in to view your order history."}), 401
 
-    history_cache = session.get("order_history_cache")
-    if isinstance(history_cache, dict) and time.time() - float(history_cache.get("fetched_at", 0) or 0) < 60:
-        return jsonify({"ok": True, "orders": history_cache.get("orders", [])})
+    requested_phone_raw = str(request.args.get("phone", "")).strip()
+    requested_phone = normalize_phone(requested_phone_raw) if requested_phone_raw else None
+    if requested_phone_raw and not requested_phone:
+        return jsonify({"ok": False, "error": "Please enter the 10-digit mobile number used on your older orders."}), 400
 
     identity = customer_payload(customer)
     google_subject = str(identity.get("google_subject", "")).strip()
     email = str(identity.get("email", "")).strip().lower()
-    phone = normalize_phone(identity.get("phone", ""))
+    phone = requested_phone or normalize_phone(identity.get("phone", ""))
+    customer_name = normalized_name(identity.get("name", ""))
+    cache_key = f"phone:{phone or ''}:name:{customer_name}"
+    history_cache = session.get("order_history_cache")
+    if (
+        isinstance(history_cache, dict)
+        and history_cache.get("cache_key") == cache_key
+        and time.time() - float(history_cache.get("fetched_at", 0) or 0) < 60
+    ):
+        return jsonify({"ok": True, "orders": history_cache.get("orders", [])})
+
     matching_orders = []
+
+    if requested_phone:
+        remember_customer_checkout_details(phone=requested_phone)
+        try:
+            order_manager.sheets.update_customer_profile(google_subject, {"phone": requested_phone})
+        except Exception as error:
+            log_checkout("order_history_phone_save_deferred", error=str(error))
 
     try:
         orders = order_manager.sheets.get_all_orders()
@@ -877,29 +911,32 @@ def my_orders():
         order_subject = str(order.get("Google Subject", "")).strip()
         order_email = str(order.get("Customer Email", "")).strip().lower()
         order_phone = normalize_phone(order.get("Phone", ""))
+        order_name = normalized_name(order.get("Customer Name", ""))
         order_id = str(order.get("Order ID", "")).strip()
         if order_id and order_id in seen_order_ids:
             continue
+        has_order_login_identity = bool(order_subject or order_email)
         if (
             (google_subject and order_subject == google_subject)
             or (email and order_email == email)
             or (phone and order_phone == phone)
+            or (customer_name and order_name == customer_name and not has_order_login_identity)
         ):
             if order_id:
                 seen_order_ids.add(order_id)
             matching_orders.append(public_customer_order(order))
 
     response_orders = list(reversed(matching_orders))
-    session["order_history_cache"] = {"fetched_at": time.time(), "orders": response_orders}
+    session["order_history_cache"] = {"cache_key": cache_key, "fetched_at": time.time(), "orders": response_orders}
     session.modified = True
-    return jsonify({"ok": True, "orders": response_orders})
+    return jsonify({"ok": True, "orders": response_orders, "lookup_phone": phone or ""})
 
 
 @app.get("/auth/google")
 def google_login():
     if not google_oauth_enabled():
         return redirect(url_for("index", account_error="google_not_configured"))
-    session["auth_next"] = safe_next_url(request.args.get("next") or url_for("index", _external=True))
+    session["auth_next"] = safe_next_url(request.args.get("next") or url_for("index"))
     redirect_uri = clean_env("GOOGLE_OAUTH_REDIRECT_URI") or url_for("google_callback", _external=True)
     return oauth.google.authorize_redirect(redirect_uri)
 
@@ -929,7 +966,7 @@ def google_callback():
         session["customer"] = customer_payload(customer)
     else:
         session["customer"] = customer_profile
-    next_url = session.pop("auth_next", url_for("index", _external=True))
+    next_url = session.pop("auth_next", url_for("index"))
     return redirect(safe_next_url(next_url))
 
 
