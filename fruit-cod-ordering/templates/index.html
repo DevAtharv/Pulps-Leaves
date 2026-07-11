@@ -1891,7 +1891,9 @@
     .account-modal {
       background: #ffffff;
       width: 100%;
-      max-width: 400px;
+      max-width: 520px;
+      max-height: calc(100svh - 32px);
+      overflow-y: auto;
       padding: 24px;
       border-radius: 16px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.12);
@@ -1933,6 +1935,145 @@
     .google-letter.google-red { color: #EA4335; }
     .google-letter.google-yellow { color: #FBBC05; }
     .google-letter.google-green { color: #34A853; }
+    .account-actions {
+      display: grid;
+      gap: 10px;
+    }
+    .account-history-button {
+      width: 100%;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--green);
+      border-radius: 8px;
+      color: var(--cream);
+      background: var(--green);
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+    .account-history-button:hover { filter: brightness(0.96); }
+    .order-history-panel {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid rgba(47, 111, 62, 0.18);
+      border-radius: 8px;
+      background: var(--cream-2);
+    }
+    .order-history-panel.is-visible {
+      display: grid;
+      gap: 12px;
+    }
+    .order-history-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--green);
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+    .order-history-status::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 5px rgba(47, 111, 62, 0.12);
+    }
+    .order-history-panel.is-loading .order-history-status::before {
+      animation: historyPulse 900ms ease-in-out infinite;
+    }
+    .order-history-list {
+      display: grid;
+      gap: 10px;
+    }
+    .history-card {
+      display: grid;
+      gap: 10px;
+      padding: 13px;
+      border: 1px solid rgba(47, 111, 62, 0.16);
+      border-radius: 8px;
+      background: var(--white);
+      box-shadow: 0 10px 24px rgba(62, 39, 35, 0.08);
+    }
+    .history-card-head,
+    .history-card-meta {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .history-card-title {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+    .history-card strong {
+      font-size: 0.9rem;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+    .history-card small,
+    .history-card span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+    .history-card-main {
+      display: grid;
+      gap: 4px;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(47, 111, 62, 0.07);
+    }
+    .history-status-pill {
+      flex: 0 0 auto;
+      padding: 4px 8px;
+      border-radius: 999px;
+      color: var(--green);
+      background: rgba(47, 111, 62, 0.12);
+      font-size: 0.7rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .history-total {
+      color: var(--green);
+      font-size: 1rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .history-empty,
+    .history-loading-card {
+      padding: 14px;
+      border: 1px dashed rgba(47, 111, 62, 0.26);
+      border-radius: 8px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.68);
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+    .history-loading-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .history-loading-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72), transparent);
+      animation: historyShimmer 1.25s linear infinite;
+    }
+    @keyframes historyPulse {
+      0%, 100% { transform: scale(1); opacity: 0.65; }
+      50% { transform: scale(1.25); opacity: 1; }
+    }
+    @keyframes historyShimmer {
+      to { transform: translateX(100%); }
+    }
   </style>
 </head>
 <body>
@@ -2457,15 +2598,20 @@
         <h2 id="accountModalTitle" data-account-modal-title>Create your account</h2>
         <button class="close-button" type="button" data-account-close aria-label="Close account popup">x</button>
       </div>
-      <p>Join Pulps &amp; Leaves Family</p>
+      <p data-account-modal-copy>Join Pulps &amp; Leaves Family</p>
       <div class="account-actions">
-        <button class="google-login-button" type="button" onclick="window.location.href='{{ url_for('google_login') }}'" {% if not google_login_enabled %}disabled{% endif %}>
+        <button class="google-login-button" type="button" data-google-login {% if customer %}hidden{% endif %} {% if not google_login_enabled %}disabled{% endif %}>
           <span class="google-action-copy">Continue with
             <span class="google-mark google-wordmark" role="img" aria-label="Google">
               <span class="google-letter google-blue" aria-hidden="true">G</span><span class="google-letter google-red" aria-hidden="true">o</span><span class="google-letter google-yellow" aria-hidden="true">o</span><span class="google-letter google-blue" aria-hidden="true">g</span><span class="google-letter google-green" aria-hidden="true">l</span><span class="google-letter google-red" aria-hidden="true">e</span>
             </span>
           </span>
         </button>
+        <button class="account-history-button" type="button" data-order-history>Order History</button>
+      </div>
+      <div class="order-history-panel" data-order-history-panel>
+        <div class="order-history-status" data-order-history-status>Sign in to see your past orders.</div>
+        <div class="order-history-list" data-order-history-list></div>
       </div>
     </section>
   </div>
@@ -2495,12 +2641,22 @@
       const toast = document.querySelector("[data-toast]");
       const accountModal = document.querySelector("[data-account-modal]");
       const accountClose = document.querySelector("[data-account-close]");
+      const accountTitle = document.querySelector("[data-account-modal-title]");
+      const accountCopy = document.querySelector("[data-account-modal-copy]");
+      const googleLoginButton = document.querySelector("[data-google-login]");
+      const orderHistoryButton = document.querySelector("[data-order-history]");
+      const orderHistoryPanel = document.querySelector("[data-order-history-panel]");
+      const orderHistoryStatus = document.querySelector("[data-order-history-status]");
+      const orderHistoryList = document.querySelector("[data-order-history-list]");
       const paymentInputs = Array.from(document.querySelectorAll("input[name='payment_method']"));
       const cart = new Map();
       const accountState = {
         authenticated: {{ "true" if customer else "false" }},
         required: {{ "true" if customer_login_required else "false" }},
         googleLoginEnabled: {{ "true" if google_login_enabled else "false" }},
+        customerName: {{ (customer.get("name", "") if customer else "") | tojson }},
+        customerEmail: {{ (customer.get("email", "") if customer else "") | tojson }},
+        loginIntent: "account",
       };
       const paymentState = {
         razorpayEnabled: {{ "true" if razorpay_enabled else "false" }},
@@ -2512,6 +2668,7 @@
       const ONLINE_PAYMENT_DISCOUNT = 40;
       const LOVEFORMALDA = "LOVEFORMALDA";
       const FREE_DELIVERY_COUPON = "PLB699FD";
+      const GOOGLE_LOGIN_URL = {{ url_for('google_login') | tojson }};
       let appliedCoupon = "";
       let manualCoupon = "";
       let checkoutToken = makeCheckoutToken();
@@ -2571,24 +2728,64 @@
         return codes;
       }
 
-      function showToast(message) {
+      function showToast(message, duration = 3200) {
         if (!toast) return;
         toast.textContent = message;
         toast.classList.add("show");
         window.clearTimeout(showToast.timer);
-        toast.classList.add("is-visible");
-        setTimeout(() => toast.classList.remove("is-visible"), 4000);
+        showToast.timer = window.setTimeout(() => {
+          toast.classList.remove("show");
+          toast.textContent = "";
+        }, duration);
       }
 
-      function openAccountModal(message) {
+      function setAccountModalOpen(open) {
+        if (!accountModal) return;
+        accountModal.classList.toggle("is-open", open);
+        accountModal.setAttribute("aria-hidden", open ? "false" : "true");
+        if (!open) resetOrderHistoryPanel();
+      }
+
+      function resetOrderHistoryPanel() {
+        if (!orderHistoryPanel || !orderHistoryStatus || !orderHistoryList) return;
+        orderHistoryPanel.classList.remove("is-visible", "is-loading");
+        orderHistoryStatus.textContent = accountState.authenticated
+          ? "Tap Order History to refresh your orders."
+          : "Sign in to see your past orders.";
+        orderHistoryList.innerHTML = "";
+      }
+
+      function renderAccountSummary() {
+        if (accountTitle) accountTitle.textContent = accountState.authenticated ? "Your account" : "Create your account";
+        if (accountCopy) {
+          accountCopy.textContent = accountState.authenticated
+            ? accountState.customerEmail || accountState.customerName || "Signed in"
+            : "Sign in once to checkout faster and see your order history.";
+        }
+        if (googleLoginButton) googleLoginButton.hidden = accountState.authenticated;
+        if (orderHistoryButton) orderHistoryButton.textContent = "Order History";
+      }
+
+      function openAccountModal(message, view = "account") {
         if (message) showToast(message);
-        if (accountModal) accountModal.classList.add("is-open");
+        renderAccountSummary();
+        setAccountModalOpen(true);
+        if (view === "orders") showOrderHistory();
+        else resetOrderHistoryPanel();
+      }
+
+      function startGoogleLogin(intent = accountState.loginIntent || "account") {
+        if (!accountState.googleLoginEnabled || !googleLoginButton || googleLoginButton.disabled) return;
+        const nextHash = intent === "orders" ? "#orders" : "";
+        const nextPath = `${window.location.pathname}${window.location.search}${nextHash}`;
+        window.location.href = `${GOOGLE_LOGIN_URL}?next=${encodeURIComponent(nextPath)}`;
       }
 
       function requireLoginBeforeOrder() {
         if (!accountState.required || accountState.authenticated) return false;
         orderResult.textContent = "Please login with Google before placing your order.";
         orderResult.classList.add("error");
+        accountState.loginIntent = "checkout";
         openAccountModal("Please login with Google before placing your order.");
         return true;
       }
@@ -2596,15 +2793,166 @@
       document.querySelectorAll("[data-account-toggle]").forEach(btn => {
         btn.addEventListener("click", () => openAccountModal());
       });
+      googleLoginButton?.addEventListener("click", () => startGoogleLogin());
+      orderHistoryButton?.addEventListener("click", () => {
+        accountState.loginIntent = "orders";
+        showOrderHistory();
+      });
       if (accountClose && accountModal) {
         accountClose.addEventListener("click", () => {
-          accountModal.classList.remove("is-open");
+          setAccountModalOpen(false);
         });
       }
       if (accountModal) {
         accountModal.addEventListener("click", (e) => {
-          if (e.target === accountModal) accountModal.classList.remove("is-open");
+          if (e.target === accountModal) setAccountModalOpen(false);
         });
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;",
+        }[char]));
+      }
+
+      function showOrderHistory() {
+        if (accountTitle) accountTitle.textContent = "Order history";
+        if (accountCopy) {
+          accountCopy.textContent = accountState.authenticated
+            ? accountState.customerEmail || "Your Pulps & Leaves orders"
+            : "Sign in with Google to see your past orders.";
+        }
+        if (!orderHistoryPanel || !orderHistoryStatus || !orderHistoryList) return;
+        orderHistoryPanel.classList.add("is-visible");
+        if (!accountState.authenticated) {
+          if (googleLoginButton) googleLoginButton.hidden = false;
+          orderHistoryPanel.classList.remove("is-loading");
+          orderHistoryStatus.textContent = "Sign in to see your past orders.";
+          orderHistoryList.innerHTML = '<div class="history-empty">Your order history is connected to your Google account. Sign in and this panel will show your previous orders.</div>';
+          return;
+        }
+        if (googleLoginButton) googleLoginButton.hidden = true;
+        loadOrderHistory();
+      }
+
+      function setOrderHistoryLoading() {
+        if (!orderHistoryPanel || !orderHistoryStatus || !orderHistoryList) return;
+        orderHistoryPanel.classList.add("is-visible", "is-loading");
+        orderHistoryStatus.textContent = "Fetching your order details...";
+        orderHistoryList.innerHTML = '<div class="history-loading-card">Fetching your order details. This can take a few seconds while we check your saved orders.</div>';
+      }
+
+      function formatOrderDate(value) {
+        const raw = String(value || "").trim();
+        if (!raw) return "Recently placed";
+        const parsed = new Date(raw);
+        if (Number.isNaN(parsed.getTime())) return raw;
+        return parsed.toLocaleString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      function renderOrderHistory(orders) {
+        if (!orderHistoryPanel || !orderHistoryStatus || !orderHistoryList) return;
+        orderHistoryPanel.classList.add("is-visible");
+        orderHistoryPanel.classList.remove("is-loading");
+        if (!orders.length) {
+          orderHistoryStatus.textContent = "No orders yet. Your first order will appear here.";
+          orderHistoryList.innerHTML = '<div class="history-empty">Your order history is empty right now. Once you place an order, it will appear here.</div>';
+          return;
+        }
+
+        orderHistoryStatus.textContent = `${orders.length} order${orders.length === 1 ? "" : "s"} found`;
+        orderHistoryList.innerHTML = orders.map((order) => {
+          const amount = Number(order.total_amount || 0);
+          const total = Number.isFinite(amount) && amount > 0 ? money(amount) : `Rs ${escapeHtml(order.total_amount || "0")}`;
+          const payment = [order.payment_mode, order.payment_status].filter(Boolean).join(" - ") || "Payment pending";
+          const addressLine = [order.city, order.address].filter(Boolean).join(" - ");
+          const quantity = order.quantity ? `Quantity: ${escapeHtml(order.quantity)}` : "Pulps & Leaves order";
+          return `
+            <article class="history-card">
+              <div class="history-card-head">
+                <div class="history-card-title">
+                  <strong>Order ${escapeHtml(order.order_id || "received")}</strong>
+                  <small>${escapeHtml(formatOrderDate(order.timestamp))}</small>
+                </div>
+                <span class="history-status-pill">${escapeHtml(order.order_status || "Received")}</span>
+              </div>
+              <div class="history-card-main">
+                <span>${escapeHtml(order.product || "Order items")}</span>
+                <small>${quantity}</small>
+              </div>
+              <div class="history-card-meta">
+                <small>${escapeHtml(payment)}</small>
+                <span class="history-total">${total}</span>
+              </div>
+              ${addressLine ? `<small>${escapeHtml(addressLine)}</small>` : ""}
+            </article>
+          `;
+        }).join("");
+      }
+
+      async function loadOrderHistory() {
+        if (!accountState.authenticated || !orderHistoryPanel) return;
+        const now = Date.now();
+        if (loadOrderHistory.cache && now - loadOrderHistory.cache.fetchedAt < 60000) {
+          renderOrderHistory(loadOrderHistory.cache.orders);
+          return;
+        }
+        if (loadOrderHistory.pending) return;
+        loadOrderHistory.pending = true;
+        setOrderHistoryLoading();
+
+        try {
+          const response = await fetch("/api/me/orders", { headers: { Accept: "application/json" } });
+          const data = await parseResponse(response);
+          if (response.status === 401 && data.auth_required) {
+            accountState.authenticated = false;
+            renderAccountSummary();
+            showOrderHistory();
+            return;
+          }
+          if (!response.ok || !data.ok) throw new Error(data.error || "Order history could not be loaded.");
+          const orders = Array.isArray(data.orders) ? data.orders : [];
+          loadOrderHistory.cache = { fetchedAt: now, orders };
+          renderOrderHistory(orders);
+        } catch (error) {
+          orderHistoryPanel.classList.remove("is-loading");
+          orderHistoryStatus.textContent = error.message || "Order history could not be loaded.";
+          orderHistoryList.innerHTML = "";
+        } finally {
+          loadOrderHistory.pending = false;
+        }
+      }
+
+      function rememberOrderForHistory(order) {
+        if (!order || !order["Order ID"]) return;
+        const historyOrder = {
+          order_id: order["Order ID"],
+          timestamp: order.Timestamp || "",
+          product: order.Product || "",
+          quantity: order.Quantity || "",
+          total_amount: order["Total Amount"] || "",
+          payment_mode: order["Payment Mode"] || "",
+          payment_status: order["Payment Status"] || "",
+          order_status: order["Order Status"] || "Received",
+          city: order.City || "",
+          address: order.Address || "",
+          razorpay_payment_id: order["Razorpay Payment ID"] || "",
+        };
+        const cachedOrders = loadOrderHistory.cache?.orders || [];
+        loadOrderHistory.cache = {
+          fetchedAt: Date.now(),
+          orders: [historyOrder, ...cachedOrders.filter((item) => item.order_id !== historyOrder.order_id)],
+        };
       }
 
       function setDrawerOpen(open) {
@@ -2837,6 +3185,7 @@
       function handleOrderSuccess(order, message = "Order placed") {
         orderResult.textContent = `${message}. Order ID: ${order?.["Order ID"] || "received"}.`;
         orderResult.classList.remove("error");
+        rememberOrderForHistory(order);
         cart.clear();
         appliedCoupon = "";
         manualCoupon = "";
@@ -2953,6 +3302,12 @@
         }
       });
 
+      renderAccountSummary();
+      resetOrderHistoryPanel();
+      if (window.location.hash === "#orders") {
+        openAccountModal("", "orders");
+        window.history.replaceState({}, "", `${window.location.pathname}${window.location.search}`);
+      }
       renderCart();
     })();
   </script>
