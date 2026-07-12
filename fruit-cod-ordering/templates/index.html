@@ -1953,6 +1953,17 @@
       font-weight: 800;
     }
     .account-history-button:hover { filter: brightness(0.96); }
+    .account-signout-button {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid rgba(120, 44, 36, 0.42);
+      border-radius: 8px;
+      color: #782c24;
+      background: transparent;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+    .account-signout-button:hover { background: rgba(120, 44, 36, 0.08); }
     .order-history-panel {
       display: none;
       margin-top: 14px;
@@ -2172,7 +2183,7 @@
         {% if customer and customer.google_subject %}
         <button type="button" class="profile-button" aria-label="Profile" data-account-toggle>
           <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-4.43-.82-6.14-2.88C7.55 15.8 9.68 15 12 15s4.45.8 6.14 2.12C16.43 19.18 14.03 20 12 20z" fill="currentColor"/></svg>
-          <span class="profile-name">{{ customer.first_name }}</span>
+          <span class="profile-name">{{ customer.name.split(" ")[0] if customer.name else "Account" }}</span>
         </button>
         {% else %}
         <button type="button" class="profile-button" aria-label="Login with Google" data-account-toggle>
@@ -2625,12 +2636,12 @@
           <span>Payment Method</span>
           <div class="payment-options">
             <label class="payment-choice">
-              <input type="radio" name="payment_method" value="razorpay" {% if razorpay_enabled %}checked{% else %}disabled{% endif %}>
+              <input type="radio" name="payment_method" value="razorpay" {% if not razorpay_enabled %}disabled{% endif %}>
               <span><strong>Online</strong><small>UPI / Cards / Netbanking. Rs 40 off above Rs 699.</small></span>
               <em class="payment-status">{% if razorpay_enabled %}Available{% else %}Soon{% endif %}</em>
             </label>
             <label class="payment-choice">
-              <input type="radio" name="payment_method" value="cod" {% if not razorpay_enabled %}checked{% endif %}>
+              <input type="radio" name="payment_method" value="cod" checked>
               <span><strong>COD</strong><small>Pay only after your order reaches your doorstep.</small></span>
               <em class="payment-status">Available</em>
             </label>
@@ -2662,6 +2673,7 @@
           </span>
         </button>
         <button class="account-history-button" type="button" data-order-history>Order History</button>
+        <button class="account-signout-button" type="button" data-logout hidden>Sign out</button>
       </div>
       <div class="order-history-panel" data-order-history-panel>
         <div class="history-phone-link">
@@ -2707,6 +2719,7 @@
       const accountTitle = document.querySelector("[data-account-modal-title]");
       const accountCopy = document.querySelector("[data-account-modal-copy]");
       const googleLoginButton = document.querySelector("[data-google-login]");
+      const logoutButton = document.querySelector("[data-logout]");
       const orderHistoryButton = document.querySelector("[data-order-history]");
       const orderHistoryPanel = document.querySelector("[data-order-history-panel]");
       const orderHistoryStatus = document.querySelector("[data-order-history-status]");
@@ -2831,6 +2844,7 @@
             : "Sign in once to checkout faster and see your order history.";
         }
         if (googleLoginButton) googleLoginButton.hidden = accountState.authenticated;
+        if (logoutButton) logoutButton.hidden = !accountState.authenticated;
         if (orderHistoryButton) orderHistoryButton.textContent = "Order History";
       }
 
@@ -2897,6 +2911,22 @@
         window.location.href = `${GOOGLE_LOGIN_URL}?next=${encodeURIComponent(nextPath)}`;
       }
 
+      async function signOut() {
+        if (logoutButton) logoutButton.disabled = true;
+        try {
+          const response = await fetch("/auth/logout", {
+            method: "POST",
+            headers: { Accept: "application/json" },
+          });
+          const data = await parseResponse(response);
+          if (!response.ok || !data.ok) throw new Error(data.error || "Could not sign out.");
+          window.location.assign(`${window.location.pathname}${window.location.search}`);
+        } catch (error) {
+          if (logoutButton) logoutButton.disabled = false;
+          showToast(error.message || "Could not sign out.");
+        }
+      }
+
       function requireLoginBeforeOrder() {
         if (!accountState.required || accountState.authenticated) return false;
         orderResult.textContent = "Please login with Google before placing your order.";
@@ -2907,9 +2937,10 @@
       }
 
       document.querySelectorAll("[data-account-toggle]").forEach(btn => {
-        btn.addEventListener("click", () => openAccountModal());
+        btn.addEventListener("click", () => openAccountModal("", accountState.authenticated ? "orders" : "account"));
       });
       googleLoginButton?.addEventListener("click", () => startGoogleLogin());
+      logoutButton?.addEventListener("click", signOut);
       orderHistoryButton?.addEventListener("click", () => {
         accountState.loginIntent = "orders";
         showOrderHistory();

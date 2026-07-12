@@ -53,6 +53,12 @@ ORDER_HEADERS = [
 ]
 
 LEGACY_ORDER_HEADERS = [header for header in ORDER_HEADERS if header != "Checkout Token"]
+ORDER_HEADER_ALIASES = {
+    "Email": "Customer Email",
+    "Email Address": "Customer Email",
+    "Customer Email ID": "Customer Email",
+    "Google Email": "Customer Email",
+}
 
 
 CUSTOMER_HEADERS = [
@@ -841,7 +847,10 @@ class SheetsHandler:
 
     @staticmethod
     def _order_headers_from_row(row):
-        cleaned = [str(header).strip() for header in row]
+        cleaned = [
+            ORDER_HEADER_ALIASES.get(str(header).strip(), str(header).strip())
+            for header in row
+        ]
         if "Order ID" not in cleaned:
             return ORDER_HEADERS.copy()
         return cleaned

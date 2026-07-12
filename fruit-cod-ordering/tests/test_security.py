@@ -60,6 +60,7 @@ class FakeManager:
     def __init__(self, orders):
         self.sheets = FakeSheets(orders)
         self.updates = []
+        self.last_order_payload = None
 
     def validate_order_id(self, order_id):
         normalized = str(order_id).upper()
@@ -73,6 +74,13 @@ class FakeManager:
 
     def find_order_by_payment_id(self, payment_id):
         return next((item for item in self.sheets.orders if item.get("Razorpay Payment ID") == payment_id), None)
+
+    def validate_new_order(self, payload, address_required=True):
+        return {"quantity": 1, "total_amount": 379}, {}
+
+    def create_order(self, payload, source="Website", address_required=True):
+        self.last_order_payload = {**payload, "source": source}
+        return {"ok": True, "duplicate": False, "order": order("PLNEW001", payload.get("google_subject", ""), payload.get("customer_email", ""))}
 
     def update_address(self, order_id, address):
         self.updates.append((order_id, "Address", address))
@@ -97,6 +105,7 @@ class SecurityTests(unittest.TestCase):
         self.manager = FakeManager(
             [
                 order("PLOWN001", subject="google-own", email="owner@example.com"),
+                order("PLEMAIL1", email="owner@example.com"),
                 order("PLLEGACY", phone="9123456789"),
                 order("PLOTHER1", subject="google-other", email="other@example.com", phone="9123456789"),
             ]
@@ -123,8 +132,34 @@ class SecurityTests(unittest.TestCase):
         response = self.client.get("/api/me/orders?phone=9123456789")
         self.assertEqual(response.status_code, 200)
         payload = response.get_json()
-        self.assertEqual([item["order_id"] for item in payload["orders"]], ["PLOWN001"])
+        self.assertEqual([item["order_id"] for item in payload["orders"]], ["PLEMAIL1", "PLOWN001"])
         self.assertNotIn("razorpay_payment_id", payload["orders"][0])
+
+    def test_authenticated_customer_can_place_cod_order(self):
+        self.login()
+        response = self.client.post(
+            "/api/orders",
+            json={
+                "checkout_token": "checkout-new",
+                "payment_method": "cod",
+                "name": "Test Customer",
+                "phone": "9876543210",
+                "city": "bangalore",
+                "address": "12 Test Road",
+                "cart_items": [{"id": "roasted-himalayan-makhana", "quantity": 1}],
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.get_json()["ok"])
+        self.assertEqual(self.manager.last_order_payload["customer_email"], "owner@example.com")
+        self.assertEqual(self.manager.last_order_payload["google_subject"], "google-own")
+        self.assertEqual(self.manager.last_order_payload["source"], "Website")
+
+    def test_logout_clears_the_customer_session(self):
+        self.login()
+        response = self.client.post("/auth/logout")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.client.get("/api/me/orders").status_code, 401)
 
     def test_legacy_claim_requires_order_id_and_matching_phone(self):
         self.login()
@@ -182,6 +217,10 @@ class SecurityTests(unittest.TestCase):
     def test_local_spreadsheet_values_are_formula_safe(self):
         self.assertEqual(SheetsHandler._spreadsheet_safe_value("=IMPORTXML('x')"), "'=IMPORTXML('x')")
         self.assertEqual(SheetsHandler._spreadsheet_safe_value("Normal address"), "Normal address")
+
+    def test_legacy_email_header_maps_to_customer_email(self):
+        headers = SheetsHandler._order_headers_from_row(["Order ID", "Email", "Phone"])
+        self.assertEqual(headers[1], "Customer Email")
 
 
 if __name__ == "__main__":
