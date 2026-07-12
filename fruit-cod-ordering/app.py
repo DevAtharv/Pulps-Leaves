@@ -20,6 +20,7 @@ from authlib.integrations.flask_client import OAuth
 from flask import Flask, g, jsonify, redirect, render_template, request, send_from_directory, session, url_for
 from itsdangerous import BadSignature, URLSafeSerializer
 from werkzeug.exceptions import HTTPException
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from ai_parser import normalize_phone
 from chatbot_flow import ChatbotFlow
@@ -32,6 +33,7 @@ from usage_monitor import usage_health_report
 load_dotenv()
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
 
 def clean_env(name, default=""):
@@ -260,6 +262,7 @@ def send_order_confirmation_email(order):
         html=message["html"],
         text=message["text"],
         reply_to=reply_to or None,
+        timeout=max(1, clean_int_env("ORDER_CONFIRMATION_TIMEOUT_SECONDS", 3)),
     )
     return True
 
@@ -437,6 +440,21 @@ def safe_next_url(raw_next):
     return raw_next
 
 
+def google_callback_url():
+    current_url = url_for("google_callback", _external=True)
+    configured_url = clean_env("GOOGLE_OAUTH_REDIRECT_URI")
+    if not configured_url:
+        return current_url
+
+    current_host = urlparse(current_url).netloc.lower()
+    configured_host = urlparse(configured_url).netloc.lower()
+    if current_host == configured_host:
+        return configured_url
+    if current_host.split(":")[0] in {"pulpsandleaves.com", "www.pulpsandleaves.com"}:
+        return current_url
+    return configured_url
+
+
 def admin_required(view):
     @wraps(view)
     def wrapper(*args, **kwargs):
@@ -495,6 +513,7 @@ def ordering_unavailable_response():
 @app.get("/")
 def index():
     customer = customer_payload(current_customer())
+    customer_authenticated = bool(customer and (customer.get("google_subject") or customer.get("email")))
     return render_template(
         "index.html",
         cities=AVAILABLE_CITIES,
@@ -503,6 +522,7 @@ def index():
         schedules={key: get_delivery_schedule(key) for key in AVAILABLE_CITIES},
         storage_backend=order_manager.sheets.backend_name,
         customer=customer,
+        customer_authenticated=customer_authenticated,
         offline_order_admin=is_offline_order_admin(customer),
         customer_login_required=customer_login_required(),
         google_login_enabled=google_oauth_enabled(),
@@ -966,48 +986,12 @@ def my_orders():
     return jsonify({"ok": True, "orders": response_orders})
 
 
-@app.post("/api/me/orders/claim")
-def claim_legacy_order():
-    customer = current_customer()
-    if not customer:
-        return jsonify({"ok": False, "auth_required": True, "error": "Please sign in before claiming an older order."}), 401
-
-    payload = request.get_json(silent=True) or request.form.to_dict()
-    order_id = str(payload.get("order_id", "")).strip().upper()
-    phone = normalize_phone(payload.get("phone", ""))
-    if not order_id or not phone:
-        return jsonify({"ok": False, "error": "Enter the Order ID and 10-digit phone number from the older order."}), 400
-
-    order, error = order_manager.validate_order_id(order_id)
-    if error or not order:
-        return jsonify({"ok": False, "error": "The Order ID and phone number did not match an older order."}), 404
-    if order_belongs_to_customer(order, customer):
-        return jsonify({"ok": True, "already_claimed": True, "order": public_customer_order(order)})
-    if order.get("Google Subject") or order.get("Customer Email"):
-        return jsonify({"ok": False, "error": "The Order ID and phone number did not match an older order."}), 404
-    if not hmac.compare_digest(normalize_phone(order.get("Phone", "")) or "", phone):
-        return jsonify({"ok": False, "error": "The Order ID and phone number did not match an older order."}), 404
-
-    identity = customer_payload(customer)
-    updated = order_manager.sheets.update_order(
-        order_id,
-        {
-            "Google Subject": identity.get("google_subject", ""),
-            "Customer Email": identity.get("email", ""),
-        },
-    )
-    if not updated:
-        return jsonify({"ok": False, "error": "The older order could not be linked. Please try again."}), 503
-    claimed_order = customer_order_or_none(order_id, customer)
-    return jsonify({"ok": True, "order": public_customer_order(claimed_order or order)})
-
-
 @app.get("/auth/google")
 def google_login():
     if not google_oauth_enabled():
         return redirect(url_for("index", account_error="google_not_configured"))
     session["auth_next"] = safe_next_url(request.args.get("next") or url_for("index"))
-    redirect_uri = clean_env("GOOGLE_OAUTH_REDIRECT_URI") or url_for("google_callback", _external=True)
+    redirect_uri = google_callback_url()
     return oauth.google.authorize_redirect(redirect_uri)
 
 

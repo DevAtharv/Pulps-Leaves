@@ -44,6 +44,7 @@ def order(order_id, subject="", email="", phone="9876543210"):
 class FakeSheets:
     def __init__(self, orders):
         self.orders = orders
+        self.backend_name = "Test"
 
     def get_all_orders(self):
         return [dict(item) for item in self.orders]
@@ -161,22 +162,32 @@ class SecurityTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.client.get("/api/me/orders").status_code, 401)
 
-    def test_legacy_claim_requires_order_id_and_matching_phone(self):
+    def test_legacy_order_claim_endpoint_is_removed(self):
         self.login()
-        wrong = self.client.post(
-            "/api/me/orders/claim",
-            json={"order_id": "PLLEGACY", "phone": "9876543210"},
-        )
-        self.assertEqual(wrong.status_code, 404)
-
-        claimed = self.client.post(
+        response = self.client.post(
             "/api/me/orders/claim",
             json={"order_id": "PLLEGACY", "phone": "9123456789"},
         )
-        self.assertEqual(claimed.status_code, 200)
-        legacy = next(item for item in self.manager.sheets.orders if item["Order ID"] == "PLLEGACY")
-        self.assertEqual(legacy["Google Subject"], "google-own")
-        self.assertEqual(legacy["Customer Email"], "owner@example.com")
+        self.assertEqual(response.status_code, 404)
+
+    def test_email_only_customer_renders_as_signed_in(self):
+        with self.client.session_transaction() as session:
+            session["customer"] = {"email": "owner@example.com", "name": "Test Customer"}
+
+        response = self.client.get("/")
+        page = response.get_data(as_text=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('aria-label="Profile"', page)
+        self.assertNotIn('aria-label="Login with Google"', page)
+        self.assertNotIn("Link an older order", page)
+
+    def test_google_callback_stays_on_the_current_live_host(self):
+        with patch.dict(os.environ, {"GOOGLE_OAUTH_REDIRECT_URI": "https://pulpsandleaves.com/auth/google/callback"}, clear=False):
+            with app_module.app.test_request_context("/", base_url="https://www.pulpsandleaves.com"):
+                self.assertEqual(
+                    app_module.google_callback_url(),
+                    "https://www.pulpsandleaves.com/auth/google/callback",
+                )
 
     def test_order_read_and_edit_require_ownership(self):
         self.login()

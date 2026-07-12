@@ -118,6 +118,9 @@ class SheetsHandler:
         self._worksheet = None
         self._headers = ORDER_HEADERS.copy()
         self._prepared_worksheet_titles = set()
+        self.orders_cache_seconds = max(0, self._read_int_env("ORDERS_CACHE_SECONDS", 20))
+        self._orders_cache = None
+        self._orders_cache_expires_at = 0.0
 
         if self.storage_mode in {"auto", "sheets"} and self._can_use_sheets():
             try:
@@ -147,25 +150,23 @@ class SheetsHandler:
             self._worksheet = worksheet
             self._ensure_order_header_best_effort(worksheet)
             headers = self._headers or ORDER_HEADERS.copy()
-            self._compact_data_rows(worksheet, headers, key_column=0)
             row = [order.get(header, "") for header in headers]
-            next_row = self._next_available_row(worksheet, key_column=0)
             self._retry_sheet_write(
-                lambda: self._sheet_update(
-                    worksheet,
-                    f"A{next_row}:{rowcol_to_a1(next_row, len(headers))}",
-                    [row],
-                    value_input_option="RAW",
-                )
+                lambda: worksheet.append_row(row, value_input_option="RAW")
             )
-            self._sync_atharv_order_best_effort(order)
+            self._invalidate_orders_cache()
+            self._sync_atharv_order_best_effort(order, append_only=True)
             return
 
         records = self.get_all_orders()
         records.append({header: order.get(header, "") for header in ORDER_HEADERS})
         self._write_local_records(records)
+        self._invalidate_orders_cache()
 
     def get_all_orders(self):
+        if self._orders_cache is not None and time.monotonic() < self._orders_cache_expires_at:
+            return [dict(order) for order in self._orders_cache]
+
         if self._worksheet:
             orders = []
             for worksheet in self._order_worksheets():
@@ -175,14 +176,17 @@ class SheetsHandler:
                         cleaned = self._clean_record(record)
                         cleaned["_Worksheet"] = worksheet.title
                         orders.append(cleaned)
-            return orders
+            self._cache_orders(orders)
+            return [dict(order) for order in orders]
 
         self._ensure_local_file()
         frame = pd.read_excel(self.local_file, dtype=str).fillna("")
         for header in ORDER_HEADERS:
             if header not in frame.columns:
                 frame[header] = ""
-        return [self._clean_record(record) for record in frame.to_dict("records") if record.get("Order ID")]
+        orders = [self._clean_record(record) for record in frame.to_dict("records") if record.get("Order ID")]
+        self._cache_orders(orders)
+        return [dict(order) for order in orders]
 
     def find_order(self, order_id):
         order_id = str(order_id).strip().upper()
@@ -238,6 +242,7 @@ class SheetsHandler:
                             )
                         record.update(normalized_updates)
                         self._sync_atharv_order_best_effort(record)
+                        self._invalidate_orders_cache()
                         return True
             return False
 
@@ -250,6 +255,7 @@ class SheetsHandler:
                 break
         if updated:
             self._write_local_records(records)
+            self._invalidate_orders_cache()
         return updated
 
     def find_customer(self, google_subject=None, email=None):
@@ -501,11 +507,15 @@ class SheetsHandler:
             self._prepare_atharv_worksheet(worksheet)
         return worksheet
 
-    def _sync_atharv_order_best_effort(self, order):
+    def _sync_atharv_order_best_effort(self, order, append_only=False):
         if not self._worksheet or not self._spreadsheet:
             return
         try:
-            self._upsert_atharv_order(order)
+            if append_only:
+                worksheet = self._atharv_worksheet(prepare=False)
+                worksheet.append_row(self._atharv_row_from_order(order), value_input_option="RAW")
+            else:
+                self._upsert_atharv_order(order)
         except Exception:
             # Reporting should never block accepting or updating an order.
             return
@@ -698,6 +708,21 @@ class SheetsHandler:
         if cleaned.startswith('"') and cleaned.endswith('"') and len(cleaned) >= 2:
             cleaned = cleaned[1:-1]
         return cleaned.replace("\\r\\n", "").strip()
+
+    @staticmethod
+    def _read_int_env(name, default):
+        try:
+            return int(SheetsHandler._read_env(name, str(default)) or default)
+        except (TypeError, ValueError):
+            return default
+
+    def _cache_orders(self, orders):
+        self._orders_cache = [dict(order) for order in orders]
+        self._orders_cache_expires_at = time.monotonic() + self.orders_cache_seconds
+
+    def _invalidate_orders_cache(self):
+        self._orders_cache = None
+        self._orders_cache_expires_at = 0.0
 
     @staticmethod
     def _read_decimal_env(name, default):
