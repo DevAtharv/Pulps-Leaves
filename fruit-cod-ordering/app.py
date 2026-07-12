@@ -17,7 +17,7 @@ if str(CURRENT_DIR) not in sys.path:
 import razorpay
 from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth
-from flask import Flask, jsonify, redirect, render_template, request, send_from_directory, session, url_for
+from flask import Flask, g, jsonify, redirect, render_template, request, send_from_directory, session, url_for
 from itsdangerous import BadSignature, URLSafeSerializer
 from werkzeug.exceptions import HTTPException
 
@@ -26,6 +26,7 @@ from chatbot_flow import ChatbotFlow
 from delivery_config import AVAILABLE_CITIES, CITIES, COMING_SOON_PRODUCTS, ORDER_STATUSES, PRODUCTS, city_by_choice, get_delivery_schedule
 from email_service import build_order_confirmation, send_resend_email
 from order_manager import OrderManager
+from usage_monitor import usage_health_report
 
 
 load_dotenv()
@@ -40,21 +41,29 @@ def clean_env(name, default=""):
     return str(value).strip().lstrip("\ufeff").replace("\r", "").replace("\n", "").strip()
 
 
-app.config["SECRET_KEY"] = clean_env("SECRET_KEY", "dev-secret-change-me")
+def clean_int_env(name, default):
+    try:
+        return int(clean_env(name, str(default)) or default)
+    except (TypeError, ValueError):
+        return default
+
+
+configured_secret_key = clean_env("SECRET_KEY")
+SESSION_SECRET_CONFIGURED = bool(configured_secret_key)
+if not configured_secret_key:
+    configured_secret_key = secrets.token_urlsafe(48)
+    app.logger.warning("SECRET_KEY is not configured; using an ephemeral local key")
+app.config["SECRET_KEY"] = configured_secret_key
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = bool(os.getenv("VERCEL"))
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["MAX_CONTENT_LENGTH"] = clean_int_env("MAX_REQUEST_BYTES", 262144)
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 31536000
 
 STATIC_CACHE_CONTROL = "public, max-age=31536000, s-maxage=31536000, immutable"
-HTML_CACHE_CONTROL = "no-cache, no-store, must-revalidate"
-
-@app.after_request
-def add_cache_headers(response):
-    if "text/html" in response.content_type:
-        response.headers["Cache-Control"] = HTML_CACHE_CONTROL
-    else:
-        response.headers["Cache-Control"] = STATIC_CACHE_CONTROL
-    return response
+NO_CACHE_CONTROL = "no-cache, no-store, must-revalidate"
+SLOW_REQUEST_MS = clean_int_env("SLOW_REQUEST_MS", 1200)
+DYNAMIC_LOG_PREFIXES = ("/api/", "/admin", "/auth/", "/webhook", "/send-order")
 
 
 def wants_json_response():
@@ -74,14 +83,72 @@ def log_checkout(event, **details):
         app.logger.info(f"{event} {details}")
 
 
+def log_json(level, **payload):
+    try:
+        message = json.dumps(payload, default=str, ensure_ascii=True)
+    except Exception:
+        message = str(payload)
+    getattr(app.logger, level)(message)
+
+
+@app.before_request
+def mark_request_start():
+    g.request_started_at = time.perf_counter()
+
+
 @app.after_request
-def add_cache_headers(response):
+def finalize_response(response):
     if request.path.startswith("/static/") or request.path in {"/favicon.ico", "/apple-touch-icon.png"}:
         response.headers["Cache-Control"] = STATIC_CACHE_CONTROL
-    elif response.content_type and response.content_type.startswith("text/html"):
-        response.headers["Cache-Control"] = HTML_CACHE_CONTROL
+    elif should_disable_cache(response):
+        response.headers["Cache-Control"] = NO_CACHE_CONTROL
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
         response.headers["Vary"] = "Cookie"
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+    if request.is_secure:
+        response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+    log_request_summary(response)
     return response
+
+
+def should_disable_cache(response):
+    if any(request.path.startswith(prefix) for prefix in DYNAMIC_LOG_PREFIXES):
+        return True
+    return bool(response.content_type and response.content_type.startswith("text/html"))
+
+
+def should_log_request():
+    if request.path.startswith("/static/") or request.path in {"/favicon.ico", "/apple-touch-icon.png"}:
+        return False
+    return any(request.path.startswith(prefix) for prefix in DYNAMIC_LOG_PREFIXES) or request.path == "/"
+
+
+def log_request_summary(response):
+    if not should_log_request():
+        return
+    started_at = getattr(g, "request_started_at", None)
+    duration_ms = int(round((time.perf_counter() - started_at) * 1000)) if started_at else None
+    payload = {
+        "event": "request_complete",
+        "method": request.method,
+        "path": request.path,
+        "status": response.status_code,
+        "duration_ms": duration_ms,
+        "request_id": request.headers.get("x-vercel-id") or request.headers.get("x-request-id", ""),
+        "content_length": response.calculate_content_length(),
+    }
+    if response.status_code >= 500:
+        level = "error"
+    elif duration_ms is not None and duration_ms >= SLOW_REQUEST_MS:
+        level = "warning"
+        payload["slow_request_ms"] = SLOW_REQUEST_MS
+    else:
+        level = "info"
+    log_json(level, **payload)
 
 
 @app.errorhandler(HTTPException)
@@ -116,7 +183,7 @@ if clean_env("GOOGLE_OAUTH_CLIENT_ID") and clean_env("GOOGLE_OAUTH_CLIENT_SECRET
 
 
 def google_oauth_enabled():
-    return "google" in oauth._clients
+    return SESSION_SECRET_CONFIGURED and "google" in oauth._clients
 
 
 def customer_login_required():
@@ -151,7 +218,7 @@ def razorpay_config():
 
 def razorpay_enabled():
     config = razorpay_config()
-    return bool(config["enabled"] and config["key_id"] and config["key_secret"])
+    return bool(SESSION_SECRET_CONFIGURED and config["enabled"] and config["key_id"] and config["key_secret"])
 
 
 def razorpay_client():
@@ -209,8 +276,43 @@ def public_customer_order(order):
         "order_status": order.get("Order Status", ""),
         "city": order.get("City", ""),
         "address": order.get("Address", ""),
-        "razorpay_payment_id": order.get("Razorpay Payment ID", ""),
     }
+
+
+def public_order_receipt(order):
+    return {
+        "Order ID": order.get("Order ID", ""),
+        "Timestamp": order.get("Timestamp", ""),
+        "Product": order.get("Product", ""),
+        "Quantity": order.get("Quantity", ""),
+        "Total Amount": order.get("Total Amount", ""),
+        "Payment Mode": order.get("Payment Mode", ""),
+        "Payment Status": order.get("Payment Status", ""),
+        "Order Status": order.get("Order Status", ""),
+        "City": order.get("City", ""),
+        "Address": order.get("Address", ""),
+    }
+
+
+def order_belongs_to_customer(order, customer):
+    identity = customer_payload(customer)
+    if not order or not identity:
+        return False
+    google_subject = str(identity.get("google_subject", "")).strip()
+    email = str(identity.get("email", "")).strip().lower()
+    order_subject = str(order.get("Google Subject", "")).strip()
+    order_email = str(order.get("Customer Email", "")).strip().lower()
+    return bool(
+        (google_subject and order_subject and hmac.compare_digest(order_subject, google_subject))
+        or (email and order_email and hmac.compare_digest(order_email, email))
+    )
+
+
+def customer_order_or_none(order_id, customer):
+    order, error = order_manager.validate_order_id(order_id)
+    if error or not order_belongs_to_customer(order, customer):
+        return None
+    return order
 
 
 def verify_razorpay_signature(order_id, payment_id, signature):
@@ -265,54 +367,23 @@ def current_customer():
         return None
 
 
-def pending_razorpay_orders():
-    pending = session.get("pending_razorpay_orders", {})
-    return pending if isinstance(pending, dict) else {}
-
-
-def find_pending_razorpay_order_by_token(checkout_token):
-    token = str(checkout_token or "").strip()
-    if not token:
-        return None, None
-    for order_id, pending in pending_razorpay_orders().items():
-        payload = pending.get("payload", {}) if isinstance(pending, dict) else {}
-        if str(payload.get("checkout_token", "")).strip() == token:
-            return order_id, pending
-    return None, None
-
-
-def completed_checkout_orders():
-    completed = session.get("completed_checkout_orders", {})
-    return completed if isinstance(completed, dict) else {}
-
-
 def remember_completed_order(order):
-    if not isinstance(order, dict):
-        return
-    completed = completed_checkout_orders()
-    checkout_token = str(order.get("Checkout Token", "")).strip()
-    razorpay_payment_id = str(order.get("Razorpay Payment ID", "")).strip()
-    if checkout_token:
-        completed[f"token:{checkout_token}"] = order
-    if razorpay_payment_id:
-        completed[f"payment:{razorpay_payment_id}"] = order
-    if len(completed) > 20:
-        recent_items = list(completed.items())[-20:]
-        completed = dict(recent_items)
-    session["completed_checkout_orders"] = completed
+    # Remove legacy cookie payloads. Orders now live only in persistent storage.
+    session.pop("completed_checkout_orders", None)
+    session.pop("pending_razorpay_orders", None)
     session.pop("order_history_cache", None)
 
 
 def find_completed_order_by_checkout_token(checkout_token):
     if not checkout_token:
         return None
-    return completed_checkout_orders().get(f"token:{checkout_token}")
+    return order_manager.find_order_by_checkout_token(checkout_token)
 
 
 def find_completed_order_by_payment_id(payment_id):
     if not payment_id:
         return None
-    return completed_checkout_orders().get(f"payment:{payment_id}")
+    return order_manager.find_order_by_payment_id(payment_id)
 
 
 def customer_payload(customer):
@@ -327,10 +398,6 @@ def customer_payload(customer):
         "city": customer.get("Default City") or customer.get("city", ""),
         "address": customer.get("Default Address") or customer.get("address", ""),
     }
-
-
-def normalized_name(value):
-    return " ".join(str(value or "").strip().lower().split())
 
 
 def remember_customer_checkout_details(phone="", city="", address=""):
@@ -373,11 +440,13 @@ def safe_next_url(raw_next):
 def admin_required(view):
     @wraps(view)
     def wrapper(*args, **kwargs):
-        username = os.getenv("ADMIN_USERNAME", "admin")
-        password = os.getenv("ADMIN_PASSWORD", "change-me")
+        username = clean_env("ADMIN_USERNAME")
+        password = clean_env("ADMIN_PASSWORD")
+        if not username or not password:
+            return "Admin access is not configured", 503
         auth_header = request.headers.get("Authorization", "")
         expected = "Basic " + base64.b64encode(f"{username}:{password}".encode()).decode()
-        if auth_header != expected:
+        if not hmac.compare_digest(auth_header, expected):
             return (
                 "Admin login required",
                 401,
@@ -393,17 +462,30 @@ def outbound_required(view):
     def wrapper(*args, **kwargs):
         token = clean_env("OUTBOUND_CONFIRMATION_SECRET")
         auth_header = request.headers.get("Authorization", "")
+        webhook_header = request.headers.get("X-Webhook-Secret", "")
         expected = f"Bearer {token}" if token else ""
-        username = clean_env("ADMIN_USERNAME", "admin")
-        password = clean_env("ADMIN_PASSWORD", "change-me")
-        admin_expected = "Basic " + base64.b64encode(f"{username}:{password}".encode()).decode()
+        username = clean_env("ADMIN_USERNAME")
+        password = clean_env("ADMIN_PASSWORD")
+        admin_expected = "Basic " + base64.b64encode(f"{username}:{password}".encode()).decode() if username and password else ""
         bearer_ok = bool(token and hmac.compare_digest(auth_header, expected))
-        admin_ok = hmac.compare_digest(auth_header, admin_expected)
-        if not (bearer_ok or admin_ok):
+        webhook_ok = bool(token and hmac.compare_digest(webhook_header, token))
+        admin_ok = bool(admin_expected and hmac.compare_digest(auth_header, admin_expected))
+        if not token and not admin_expected:
+            return jsonify({"ok": False, "error": "Service authentication is not configured."}), 503
+        if not (bearer_ok or webhook_ok or admin_ok):
             return jsonify({"ok": False, "error": "Unauthorized"}), 401
         return view(*args, **kwargs)
 
     return wrapper
+
+
+def meta_webhook_signature_valid():
+    app_secret = clean_env("META_APP_SECRET")
+    supplied = request.headers.get("X-Hub-Signature-256", "")
+    if not app_secret or not supplied.startswith("sha256="):
+        return False
+    expected = "sha256=" + hmac.new(app_secret.encode(), request.get_data(cache=True), hashlib.sha256).hexdigest()
+    return hmac.compare_digest(supplied, expected)
 
 
 def ordering_unavailable_response():
@@ -465,7 +547,8 @@ def create_order():
     payload = request.get_json(silent=True) or request.form.to_dict()
     customer = current_customer()
     offline_order_admin = prepare_order_payload(payload, customer)
-    source = payload.get("source", "Website")
+    source = "Website"
+    payload["source"] = source
     checkout_token = str(payload.get("checkout_token", "")).strip()
     log_checkout(
         "order_request_received",
@@ -488,12 +571,14 @@ def create_order():
     if checkout_token:
         existing_order = find_completed_order_by_checkout_token(checkout_token)
         if existing_order:
+            if not order_belongs_to_customer(existing_order, customer):
+                return jsonify({"ok": False, "error": "This checkout reference is already in use."}), 409
             log_checkout(
                 "order_request_idempotent_hit",
                 checkout_token=checkout_token,
                 order_id=existing_order.get("Order ID", ""),
             )
-            return jsonify({"ok": True, "duplicate": True, "order": existing_order}), 200
+            return jsonify({"ok": True, "duplicate": True, "order": public_order_receipt(existing_order)}), 200
 
     clean_data, errors = order_manager.validate_new_order(payload, address_required=not offline_order_admin)
     log_checkout(
@@ -529,7 +614,10 @@ def create_order():
             app.logger.exception("Order confirmation email failed after COD order placement")
     status = 200 if result["ok"] else 400
     log_checkout("order_request_response", checkout_token=checkout_token, status=status)
-    return jsonify(result), status
+    response_result = dict(result)
+    if response_result.get("order"):
+        response_result["order"] = public_order_receipt(response_result["order"])
+    return jsonify(response_result), status
 
 
 @app.post("/send-order-status-updates")
@@ -605,34 +693,19 @@ def create_razorpay_order():
         payload["customer_email"] = customer_payload(customer)["email"]
         payload["google_subject"] = customer_payload(customer)["google_subject"]
     payload["payment_mode"] = "Razorpay"
+    payload["source"] = "Website"
 
     if checkout_token:
         existing_order = find_completed_order_by_checkout_token(checkout_token)
         if existing_order:
+            if not order_belongs_to_customer(existing_order, customer):
+                return jsonify({"ok": False, "error": "This checkout reference is already in use."}), 409
             log_checkout(
                 "payment_initialize_existing_order",
                 checkout_token=checkout_token,
                 order_id=existing_order.get("Order ID", ""),
             )
-            return jsonify({"ok": True, "duplicate": True, "order": existing_order}), 200
-        existing_pending_order_id, existing_pending = find_pending_razorpay_order_by_token(checkout_token)
-        if existing_pending_order_id and existing_pending:
-            log_checkout(
-                "payment_initialize_reused_pending_order",
-                checkout_token=checkout_token,
-                razorpay_order_id=existing_pending_order_id,
-            )
-            return jsonify(
-                {
-                    "ok": True,
-                    "key_id": razorpay_config()["key_id"],
-                    "order_id": existing_pending_order_id,
-                    "amount": existing_pending.get("amount", 0),
-                    "currency": "INR",
-                    "verification_token": build_razorpay_verification_token(existing_pending_order_id, existing_pending.get("payload", {}), existing_pending.get("amount", 0)),
-                    "customer": existing_pending.get("customer", {}),
-                }
-            )
+            return jsonify({"ok": True, "duplicate": True, "order": public_order_receipt(existing_order)}), 200
 
     clean_data, errors = order_manager.validate_new_order(payload, address_required=not offline_order_admin)
     log_checkout(
@@ -670,18 +743,11 @@ def create_razorpay_order():
             return jsonify({"ok": False, "error": "Razorpay authentication failed. Please check the API keys."}), 401
         return jsonify({"ok": False, "error": f"Razorpay order could not be created: {error}"}), 500
 
-    pending_orders = pending_razorpay_orders()
-    pending_orders[razorpay_order["id"]] = {
-        "payload": payload,
-        "amount": amount_paise,
-        "customer": {
-            "name": clean_data["name"],
-            "email": clean_data.get("customer_email", ""),
-            "contact": clean_data["phone"],
-        },
+    checkout_customer = {
+        "name": clean_data["name"],
+        "email": clean_data.get("customer_email", ""),
+        "contact": clean_data["phone"],
     }
-    session["pending_razorpay_orders"] = pending_orders
-    session.modified = True
     log_checkout(
         "payment_initialized",
         checkout_token=checkout_token,
@@ -697,7 +763,7 @@ def create_razorpay_order():
             "amount": amount_paise,
             "currency": "INR",
             "verification_token": build_razorpay_verification_token(razorpay_order["id"], payload, amount_paise),
-            "customer": pending_orders[razorpay_order["id"]]["customer"],
+            "customer": checkout_customer,
         }
     )
 
@@ -726,27 +792,39 @@ def verify_razorpay_payment():
         return jsonify({"ok": False, "error": "Missing payment verification fields."}), 400
     duplicate_order = find_completed_order_by_payment_id(razorpay_payment_id)
     if duplicate_order:
+        if not order_belongs_to_customer(duplicate_order, customer):
+            return jsonify({"ok": False, "error": "This payment is already linked to another order."}), 409
         log_checkout(
             "payment_verify_duplicate_hit",
             razorpay_order_id=razorpay_order_id,
             razorpay_payment_id=razorpay_payment_id,
             order_id=duplicate_order.get("Order ID", ""),
         )
-        return jsonify({"ok": True, "duplicate": True, "order": duplicate_order}), 200
+        return jsonify({"ok": True, "duplicate": True, "order": public_order_receipt(duplicate_order)}), 200
 
-    pending_orders = pending_razorpay_orders()
-    pending = pending_orders.get(razorpay_order_id)
-    if not pending:
-        token_state = parse_razorpay_verification_token(verification_token, razorpay_order_id)
-        if token_state:
-            pending = {
-                "payload": token_state.get("payload", {}),
-                "amount": token_state.get("amount", 0),
-            }
+    token_state = parse_razorpay_verification_token(verification_token, razorpay_order_id)
+    pending = None
+    if token_state:
+        pending = {
+            "payload": token_state.get("payload", {}),
+            "amount": token_state.get("amount", 0),
+        }
 
     if not pending:
         log_checkout("payment_verify_missing_pending", razorpay_order_id=razorpay_order_id)
         return jsonify({"ok": False, "error": "Payment session expired. Please try again."}), 400
+    token_customer = customer_payload(customer)
+    token_payload = pending.get("payload", {})
+    token_subject = str(token_payload.get("google_subject", "")).strip()
+    token_email = str(token_payload.get("customer_email", "")).strip().lower()
+    if not (
+        token_customer
+        and token_subject
+        and hmac.compare_digest(token_subject, str(token_customer.get("google_subject", "")).strip())
+        and token_email
+        and hmac.compare_digest(token_email, str(token_customer.get("email", "")).strip().lower())
+    ):
+        return jsonify({"ok": False, "error": "Payment session does not belong to this account."}), 403
     if not verify_razorpay_signature(razorpay_order_id, razorpay_payment_id, razorpay_signature):
         log_checkout("payment_verify_signature_failed", razorpay_order_id=razorpay_order_id, razorpay_payment_id=razorpay_payment_id)
         return jsonify({"ok": False, "error": "Razorpay payment verification failed."}), 400
@@ -792,9 +870,6 @@ def verify_razorpay_payment():
     )
     if result["ok"]:
         remember_completed_order(result["order"])
-        pending_orders.pop(razorpay_order_id, None)
-        session["pending_razorpay_orders"] = pending_orders
-        session.modified = True
         if customer and not offline_order_admin:
             remember_customer_checkout_details(
                 phone=order_payload.get("phone", ""),
@@ -811,7 +886,10 @@ def verify_razorpay_payment():
         razorpay_order_id=razorpay_order_id,
         status=200 if result["ok"] else 400,
     )
-    return jsonify(result), 200 if result["ok"] else 400
+    response_result = dict(result)
+    if response_result.get("order"):
+        response_result["order"] = public_order_receipt(response_result["order"])
+    return jsonify(response_result), 200 if result["ok"] else 400
 
 
 @app.get("/api/me")
@@ -865,33 +943,8 @@ def my_orders():
     if not customer:
         return jsonify({"ok": False, "auth_required": True, "error": "Please sign in to view your order history."}), 401
 
-    requested_phone_raw = str(request.args.get("phone", "")).strip()
-    requested_phone = normalize_phone(requested_phone_raw) if requested_phone_raw else None
-    if requested_phone_raw and not requested_phone:
-        return jsonify({"ok": False, "error": "Please enter the 10-digit mobile number used on your older orders."}), 400
-
     identity = customer_payload(customer)
-    google_subject = str(identity.get("google_subject", "")).strip()
-    email = str(identity.get("email", "")).strip().lower()
-    phone = requested_phone or normalize_phone(identity.get("phone", ""))
-    customer_name = normalized_name(identity.get("name", ""))
-    cache_key = f"phone:{phone or ''}:name:{customer_name}"
-    history_cache = session.get("order_history_cache")
-    if (
-        isinstance(history_cache, dict)
-        and history_cache.get("cache_key") == cache_key
-        and time.time() - float(history_cache.get("fetched_at", 0) or 0) < 60
-    ):
-        return jsonify({"ok": True, "orders": history_cache.get("orders", [])})
-
     matching_orders = []
-
-    if requested_phone:
-        remember_customer_checkout_details(phone=requested_phone)
-        try:
-            order_manager.sheets.update_customer_profile(google_subject, {"phone": requested_phone})
-        except Exception as error:
-            log_checkout("order_history_phone_save_deferred", error=str(error))
 
     try:
         orders = order_manager.sheets.get_all_orders()
@@ -899,37 +952,54 @@ def my_orders():
         log_checkout("order_history_fallback_empty", error=str(error))
         orders = []
 
-    session_orders = [
-        order
-        for order in completed_checkout_orders().values()
-        if isinstance(order, dict)
-    ]
-    orders.extend(session_orders)
-
     seen_order_ids = set()
     for order in orders:
-        order_subject = str(order.get("Google Subject", "")).strip()
-        order_email = str(order.get("Customer Email", "")).strip().lower()
-        order_phone = normalize_phone(order.get("Phone", ""))
-        order_name = normalized_name(order.get("Customer Name", ""))
         order_id = str(order.get("Order ID", "")).strip()
         if order_id and order_id in seen_order_ids:
             continue
-        has_order_login_identity = bool(order_subject or order_email)
-        if (
-            (google_subject and order_subject == google_subject)
-            or (email and order_email == email)
-            or (phone and order_phone == phone)
-            or (customer_name and order_name == customer_name and not has_order_login_identity)
-        ):
+        if order_belongs_to_customer(order, identity):
             if order_id:
                 seen_order_ids.add(order_id)
             matching_orders.append(public_customer_order(order))
 
     response_orders = list(reversed(matching_orders))
-    session["order_history_cache"] = {"cache_key": cache_key, "fetched_at": time.time(), "orders": response_orders}
-    session.modified = True
-    return jsonify({"ok": True, "orders": response_orders, "lookup_phone": phone or ""})
+    return jsonify({"ok": True, "orders": response_orders})
+
+
+@app.post("/api/me/orders/claim")
+def claim_legacy_order():
+    customer = current_customer()
+    if not customer:
+        return jsonify({"ok": False, "auth_required": True, "error": "Please sign in before claiming an older order."}), 401
+
+    payload = request.get_json(silent=True) or request.form.to_dict()
+    order_id = str(payload.get("order_id", "")).strip().upper()
+    phone = normalize_phone(payload.get("phone", ""))
+    if not order_id or not phone:
+        return jsonify({"ok": False, "error": "Enter the Order ID and 10-digit phone number from the older order."}), 400
+
+    order, error = order_manager.validate_order_id(order_id)
+    if error or not order:
+        return jsonify({"ok": False, "error": "The Order ID and phone number did not match an older order."}), 404
+    if order_belongs_to_customer(order, customer):
+        return jsonify({"ok": True, "already_claimed": True, "order": public_customer_order(order)})
+    if order.get("Google Subject") or order.get("Customer Email"):
+        return jsonify({"ok": False, "error": "The Order ID and phone number did not match an older order."}), 404
+    if not hmac.compare_digest(normalize_phone(order.get("Phone", "")) or "", phone):
+        return jsonify({"ok": False, "error": "The Order ID and phone number did not match an older order."}), 404
+
+    identity = customer_payload(customer)
+    updated = order_manager.sheets.update_order(
+        order_id,
+        {
+            "Google Subject": identity.get("google_subject", ""),
+            "Customer Email": identity.get("email", ""),
+        },
+    )
+    if not updated:
+        return jsonify({"ok": False, "error": "The older order could not be linked. Please try again."}), 503
+    claimed_order = customer_order_or_none(order_id, customer)
+    return jsonify({"ok": True, "order": public_customer_order(claimed_order or order)})
 
 
 @app.get("/auth/google")
@@ -972,24 +1042,30 @@ def google_callback():
 
 @app.post("/auth/logout")
 def logout():
-    session.pop("customer", None)
+    session.clear()
     return jsonify({"ok": True})
 
 
 @app.get("/api/orders/<order_id>")
 def get_order(order_id):
-    order, error = order_manager.validate_order_id(order_id)
-    if error:
-        return jsonify({"ok": False, "error": error}), 404
-    return jsonify({"ok": True, "order": order})
+    customer = current_customer()
+    if not customer:
+        return jsonify({"ok": False, "auth_required": True, "error": "Please sign in to view this order."}), 401
+    order = customer_order_or_none(order_id, customer)
+    if not order:
+        return jsonify({"ok": False, "error": "Order not found."}), 404
+    return jsonify({"ok": True, "order": public_customer_order(order)})
 
 
 @app.post("/api/orders/<order_id>/edit")
 def edit_order(order_id):
+    customer = current_customer()
+    if not customer:
+        return jsonify({"ok": False, "auth_required": True, "error": "Please sign in to edit this order."}), 401
     payload = request.get_json(silent=True) or request.form.to_dict()
-    order, error = order_manager.validate_order_id(order_id)
-    if error:
-        return jsonify({"ok": False, "error": error}), 404
+    order = customer_order_or_none(order_id, customer)
+    if not order:
+        return jsonify({"ok": False, "error": "Order not found."}), 404
     if payload.get("phone") and not normalize_phone(payload.get("phone")):
         return jsonify({"ok": False, "error": "Please enter a valid 10-digit Indian mobile number."}), 400
     responses = []
@@ -1016,6 +1092,7 @@ def delivery(city):
 
 
 @app.post("/api/chatbot/message")
+@outbound_required
 def chatbot_message():
     payload = request.get_json(force=True)
     user_id = payload.get("user_id") or payload.get("from") or "website-user"
@@ -1029,19 +1106,26 @@ def meta_webhook():
         mode = request.args.get("hub.mode")
         token = request.args.get("hub.verify_token")
         challenge = request.args.get("hub.challenge")
-        verify_token = os.getenv("META_VERIFY_TOKEN") or os.getenv("WHATSAPP_VERIFY_TOKEN")
+        verify_token = clean_env("META_VERIFY_TOKEN") or clean_env("WHATSAPP_VERIFY_TOKEN")
 
         if mode == "subscribe" and challenge:
-            if verify_token and token != verify_token:
+            if not verify_token:
+                return "Webhook verification is not configured", 503
+            if not hmac.compare_digest(str(token or ""), verify_token):
                 return "Invalid verify token", 403
             return app.response_class(challenge, mimetype="text/plain")
 
         return "Webhook endpoint is ready", 200
 
+    if not clean_env("META_APP_SECRET"):
+        return jsonify({"ok": False, "error": "Meta webhook signing is not configured."}), 503
+    if not meta_webhook_signature_valid():
+        return jsonify({"ok": False, "error": "Invalid webhook signature."}), 401
     return handle_whatsapp_payload()
 
 
 @app.post("/webhook/whatsapp")
+@outbound_required
 def whatsapp_webhook():
     """Webhook-ready endpoint for Meta, Twilio, WATI, or Interakt adapters.
 
@@ -1074,7 +1158,14 @@ def admin_dashboard():
         statuses=ORDER_STATUSES,
         filters={"city": city, "status": status, "q": query},
         storage_backend=order_manager.sheets.backend_name,
+        usage_report=usage_health_report(),
     )
+
+
+@app.get("/api/admin/usage-health")
+@admin_required
+def admin_usage_health():
+    return jsonify(usage_health_report())
 
 
 @app.post("/admin/orders/<order_id>/status")

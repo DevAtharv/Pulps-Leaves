@@ -134,6 +134,40 @@ Product availability lives in `delivery_config.py`.
 
 Both website and chatbot orders call the same backend validation, so out-of-season or coming-soon products are blocked before they reach Google Sheets.
 
+## Vercel usage guardrail
+
+The protected admin dashboard includes a Vercel guardrail panel. It reads the latest usage snapshot from:
+
+```text
+VERCEL_USAGE_SNAPSHOT_JSON
+```
+
+The value can use the same human-readable units shown by Vercel:
+
+```json
+{
+  "source": "Vercel dashboard 2026-06-29",
+  "metrics": {
+    "Fluid Active CPU": "1h 15m",
+    "Edge Requests": "29K",
+    "Fast Origin Transfer": "178.87 MB",
+    "Function Invocations": "14K",
+    "Fluid Provisioned Memory": "4.6 GB-Hrs",
+    "Fast Data Transfer": "470.24 MB",
+    "Edge Request CPU Duration": "3s",
+    "ISR Reads": "74"
+  }
+}
+```
+
+View the machine-readable report at:
+
+```http
+GET /api/admin/usage-health
+```
+
+The app also writes structured JSON request logs for dynamic routes. Requests slower than `SLOW_REQUEST_MS` are logged as warnings so Vercel Runtime Logs can quickly show which route is pushing Fluid CPU.
+
 ## API endpoints
 
 Create website order:

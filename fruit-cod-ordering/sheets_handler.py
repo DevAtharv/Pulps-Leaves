@@ -149,7 +149,7 @@ class SheetsHandler:
                     worksheet,
                     f"A{next_row}:{rowcol_to_a1(next_row, len(headers))}",
                     [row],
-                    value_input_option="USER_ENTERED",
+                    value_input_option="RAW",
                 )
             )
             self._sync_atharv_order_best_effort(order)
@@ -224,7 +224,12 @@ class SheetsHandler:
                     if str(record.get("Order ID", "")).strip().upper() == order_id:
                         for header, value in normalized_updates.items():
                             column = headers.index(header) + 1
-                            worksheet.update_cell(index, column, value)
+                            self._sheet_update(
+                                worksheet,
+                                rowcol_to_a1(index, column),
+                                [[value]],
+                                value_input_option="RAW",
+                            )
                         record.update(normalized_updates)
                         self._sync_atharv_order_best_effort(record)
                         return True
@@ -284,7 +289,7 @@ class SheetsHandler:
             worksheet = self._customers_worksheet()
             rows = worksheet.get_all_values()
             if not rows:
-                self._retry_sheet_write(lambda: self._sheet_update(worksheet, "A1", [CUSTOMER_HEADERS], value_input_option="USER_ENTERED"))
+                self._retry_sheet_write(lambda: self._sheet_update(worksheet, "A1", [CUSTOMER_HEADERS], value_input_option="RAW"))
                 rows = [CUSTOMER_HEADERS]
             headers = self._customer_headers_from_row(rows[0])
             for index, row in enumerate(rows[1:], start=2):
@@ -299,7 +304,7 @@ class SheetsHandler:
                             worksheet,
                             f"A{index}:{rowcol_to_a1(index, len(CUSTOMER_HEADERS))}",
                             [[customer.get(header, "") for header in CUSTOMER_HEADERS]],
-                            value_input_option="USER_ENTERED",
+                            value_input_option="RAW",
                         )
                     )
                     return customer
@@ -310,7 +315,7 @@ class SheetsHandler:
                     worksheet,
                     f"A{next_row}:{rowcol_to_a1(next_row, len(CUSTOMER_HEADERS))}",
                     [[customer.get(header, "") for header in CUSTOMER_HEADERS]],
-                    value_input_option="USER_ENTERED",
+                    value_input_option="RAW",
                 )
             )
             return customer
@@ -343,7 +348,7 @@ class SheetsHandler:
             worksheet = self._customers_worksheet()
             rows = worksheet.get_all_values()
             if not rows:
-                self._retry_sheet_write(lambda: self._sheet_update(worksheet, "A1", [CUSTOMER_HEADERS], value_input_option="USER_ENTERED"))
+                self._retry_sheet_write(lambda: self._sheet_update(worksheet, "A1", [CUSTOMER_HEADERS], value_input_option="RAW"))
                 rows = [CUSTOMER_HEADERS]
             headers = self._customer_headers_from_row(rows[0])
             for index, row in enumerate(rows[1:], start=2):
@@ -356,7 +361,7 @@ class SheetsHandler:
                             worksheet,
                             f"A{index}:{rowcol_to_a1(index, len(CUSTOMER_HEADERS))}",
                             [[merged.get(header, "") for header in CUSTOMER_HEADERS]],
-                            value_input_option="USER_ENTERED",
+                            value_input_option="RAW",
                         )
                     )
                     updated = {header: str(record.get(header, "")) for header in CUSTOMER_HEADERS}
@@ -422,7 +427,7 @@ class SheetsHandler:
             return self._spreadsheet.worksheet(worksheet_title)
         except gspread.WorksheetNotFound:
             worksheet = self._spreadsheet.add_worksheet(title=worksheet_title, rows=1000, cols=len(ORDER_HEADERS))
-            worksheet.append_row(ORDER_HEADERS, value_input_option="USER_ENTERED")
+            worksheet.append_row(ORDER_HEADERS, value_input_option="RAW")
             return worksheet
 
     def _active_order_worksheet(self):
@@ -448,7 +453,7 @@ class SheetsHandler:
             worksheet = self._spreadsheet.worksheet("Customers")
         except gspread.WorksheetNotFound:
             worksheet = self._spreadsheet.add_worksheet(title="Customers", rows=1000, cols=len(CUSTOMER_HEADERS))
-            worksheet.append_row(CUSTOMER_HEADERS, value_input_option="USER_ENTERED")
+            worksheet.append_row(CUSTOMER_HEADERS, value_input_option="RAW")
             self._style_customer_worksheet(worksheet)
             return worksheet
         if prepare:
@@ -468,7 +473,7 @@ class SheetsHandler:
                 worksheet,
                 f"A1:{rowcol_to_a1(max(len(rows), 1), len(ATHARV_HEADERS))}",
                 rows,
-                value_input_option="USER_ENTERED",
+                value_input_option="RAW",
             )
         )
         self._style_atharv_worksheet(worksheet)
@@ -483,7 +488,7 @@ class SheetsHandler:
                 rows=1000,
                 cols=len(ATHARV_HEADERS),
             )
-            worksheet.append_row(ATHARV_HEADERS, value_input_option="USER_ENTERED")
+            worksheet.append_row(ATHARV_HEADERS, value_input_option="RAW")
             self._style_atharv_worksheet(worksheet)
             return worksheet
         if prepare:
@@ -515,7 +520,7 @@ class SheetsHandler:
                         worksheet,
                         f"A{row_number}:{rowcol_to_a1(row_number, len(ATHARV_HEADERS))}",
                         [row],
-                        value_input_option="USER_ENTERED",
+                        value_input_option="RAW",
                     )
                 )
                 return
@@ -526,7 +531,7 @@ class SheetsHandler:
                 worksheet,
                 f"A{next_row}:{rowcol_to_a1(next_row, len(ATHARV_HEADERS))}",
                 [row],
-                value_input_option="USER_ENTERED",
+                value_input_option="RAW",
             )
         )
 
@@ -727,7 +732,7 @@ class SheetsHandler:
 
         worksheet.clear()
         rows = [canonical_headers] + normalized_rows
-        self._sheet_update(worksheet, "A1", rows, value_input_option="USER_ENTERED")
+        self._sheet_update(worksheet, "A1", rows, value_input_option="RAW")
         return canonical_headers
 
     @staticmethod
@@ -748,13 +753,13 @@ class SheetsHandler:
             if record.get("Google Subject") or record.get("Email")
         ]
         worksheet.clear()
-        self._sheet_update(worksheet, "A1", [canonical_headers] + normalized_rows, value_input_option="USER_ENTERED")
+        self._sheet_update(worksheet, "A1", [canonical_headers] + normalized_rows, value_input_option="RAW")
         return canonical_headers
 
     def _ensure_atharv_headers(self, worksheet):
         first_row = worksheet.row_values(1)
         if not first_row:
-            worksheet.append_row(ATHARV_HEADERS, value_input_option="USER_ENTERED")
+            worksheet.append_row(ATHARV_HEADERS, value_input_option="RAW")
             return ATHARV_HEADERS.copy()
 
         canonical_headers = ATHARV_HEADERS.copy()
@@ -775,7 +780,7 @@ class SheetsHandler:
                 normalized_rows.append([record.get(header, "") for header in canonical_headers])
 
         worksheet.clear()
-        self._sheet_update(worksheet, "A1", [canonical_headers] + normalized_rows, value_input_option="USER_ENTERED")
+        self._sheet_update(worksheet, "A1", [canonical_headers] + normalized_rows, value_input_option="RAW")
         return canonical_headers
 
     def _prepare_customer_worksheet(self, worksheet):
@@ -806,7 +811,7 @@ class SheetsHandler:
                     worksheet,
                     f"A1:{rowcol_to_a1(1, len(ORDER_HEADERS))}",
                     [ORDER_HEADERS],
-                    value_input_option="USER_ENTERED",
+                    value_input_option="RAW",
                 )
             )
             self._prepared_worksheet_titles.add(worksheet.title)
@@ -909,7 +914,7 @@ class SheetsHandler:
                     worksheet,
                     f"A2:{rowcol_to_a1(len(compacted_rows) + 1, last_column)}",
                     compacted_rows,
-                    value_input_option="USER_ENTERED",
+                    value_input_option="RAW",
                 )
             )
 
@@ -984,7 +989,7 @@ class SheetsHandler:
                     {"range": rowcol_to_a1(row, column), "values": [[value]]}
                     for row, column, value in updates
                 ],
-                value_input_option="USER_ENTERED",
+                value_input_option="RAW",
             )
 
     def _style_worksheet(self, worksheet, headers):
@@ -1489,7 +1494,11 @@ class SheetsHandler:
 
     def _write_local_records(self, records):
         self.local_file.parent.mkdir(parents=True, exist_ok=True)
-        frame = pd.DataFrame(records, columns=ORDER_HEADERS)
+        safe_records = [
+            {header: self._spreadsheet_safe_value(record.get(header, "")) for header in ORDER_HEADERS}
+            for record in records
+        ]
+        frame = pd.DataFrame(safe_records, columns=ORDER_HEADERS)
         frame.to_excel(self.local_file, index=False)
 
     def _ensure_local_customers_file(self):
@@ -1499,8 +1508,21 @@ class SheetsHandler:
 
     def _write_local_customers(self, records):
         self.local_customers_file.parent.mkdir(parents=True, exist_ok=True)
-        frame = pd.DataFrame(records, columns=CUSTOMER_HEADERS)
+        safe_records = [
+            {header: self._spreadsheet_safe_value(record.get(header, "")) for header in CUSTOMER_HEADERS}
+            for record in records
+        ]
+        frame = pd.DataFrame(safe_records, columns=CUSTOMER_HEADERS)
         frame.to_excel(self.local_customers_file, index=False)
+
+    @staticmethod
+    def _spreadsheet_safe_value(value):
+        if not isinstance(value, str):
+            return value
+        stripped = value.lstrip()
+        if stripped and stripped[0] in {"=", "+", "-", "@"} and not stripped.startswith("'"):
+            return "'" + value
+        return value
 
     @staticmethod
     def _clean_record(record):

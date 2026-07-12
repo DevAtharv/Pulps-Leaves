@@ -13,6 +13,40 @@
       <a class="btn btn-outline-ink" href="/"><i class="bi bi-shop"></i> Website</a>
     </div>
 
+    <section class="usage-panel usage-{{ usage_report.overall.level }}">
+      <div class="usage-panel-header">
+        <div>
+          <p class="eyebrow text-leaf">Vercel guardrail</p>
+          <h2>{{ usage_report.overall.title }}</h2>
+          <p class="muted">{{ usage_report.overall.message }}</p>
+        </div>
+        <a class="btn btn-outline-ink" href="{{ url_for('admin_usage_health') }}">
+          <i class="bi bi-braces"></i> JSON
+        </a>
+      </div>
+      <div class="usage-meta">
+        <span><i class="bi bi-clock-history"></i> {{ usage_report.source }}</span>
+        {% if usage_report.using_default_snapshot %}
+        <span><i class="bi bi-pin-angle"></i> Seeded snapshot</span>
+        {% endif %}
+      </div>
+      <div class="usage-grid">
+        {% for metric in usage_report.metrics %}
+        <article class="usage-card usage-card-{{ metric.level }}">
+          <div class="usage-card-top">
+            <span>{{ metric.label }}</span>
+            <strong>{{ metric.percent_label }}</strong>
+          </div>
+          <div class="usage-meter" aria-hidden="true">
+            <span style="width: {{ metric.percent_clamped }}%"></span>
+          </div>
+          <p>{{ metric.used_display }} / {{ metric.limit_display }}</p>
+          <small>{{ metric.message }}</small>
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+
     <form class="filter-bar" method="get">
       <input class="form-control" type="search" name="q" value="{{ filters.q }}" placeholder="Search order, name, phone">
       <select class="form-select" name="city">

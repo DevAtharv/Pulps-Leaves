@@ -166,6 +166,12 @@ class ChatbotFlow:
         order, error = self.order_manager.validate_order_id(order_id)
         if error:
             return error + "\n\nPlease share the Order ID again, or type MENU."
+        requester_phone = extract_phone(user_id)
+        order_phone = extract_phone(order.get("Phone", ""))
+        if not requester_phone or not order_phone or requester_phone != order_phone:
+            session["state"] = "MAIN"
+            session["data"] = {}
+            return "I could not verify that order for this WhatsApp number. Please contact support.\n\n" + MAIN_MENU
 
         session["data"] = {"edit_order_id": order["Order ID"], "edit_phone": order.get("Phone", "")}
         session["state"] = "EDIT_FIELD"

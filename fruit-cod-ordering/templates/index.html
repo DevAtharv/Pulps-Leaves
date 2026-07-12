@@ -2004,7 +2004,7 @@
     }
     .history-phone-row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-columns: minmax(110px, 0.7fr) minmax(0, 1fr) auto;
       gap: 8px;
     }
     .history-phone-row input {
@@ -2665,12 +2665,13 @@
       </div>
       <div class="order-history-panel" data-order-history-panel>
         <div class="history-phone-link">
-          <label for="historyPhone">Find older orders by phone</label>
+          <label for="historyOrderId">Link an older order</label>
           <div class="history-phone-row">
+            <input id="historyOrderId" type="text" inputmode="text" autocomplete="off" maxlength="8" placeholder="Order ID" data-order-history-order-id>
             <input id="historyPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="Mobile number on old order" data-order-history-phone>
-            <button type="button" data-order-history-phone-search>Find</button>
+            <button type="button" data-order-history-claim>Link</button>
           </div>
-          <small class="history-phone-note" data-order-history-phone-note>Use the same mobile number used while placing earlier orders.</small>
+          <small class="history-phone-note" data-order-history-phone-note>Enter the Order ID and phone number from that order.</small>
         </div>
         <div class="order-history-status" data-order-history-status>Sign in to see your past orders.</div>
         <div class="order-history-list" data-order-history-list></div>
@@ -2710,8 +2711,9 @@
       const orderHistoryPanel = document.querySelector("[data-order-history-panel]");
       const orderHistoryStatus = document.querySelector("[data-order-history-status]");
       const orderHistoryList = document.querySelector("[data-order-history-list]");
+      const orderHistoryOrderId = document.querySelector("[data-order-history-order-id]");
       const orderHistoryPhone = document.querySelector("[data-order-history-phone]");
-      const orderHistoryPhoneSearch = document.querySelector("[data-order-history-phone-search]");
+      const orderHistoryClaim = document.querySelector("[data-order-history-claim]");
       const orderHistoryPhoneNote = document.querySelector("[data-order-history-phone-note]");
       const paymentInputs = Array.from(document.querySelectorAll("input[name='payment_method']"));
       const cart = new Map();
@@ -2739,7 +2741,6 @@
       let manualCoupon = "";
       let checkoutToken = makeCheckoutToken();
       let razorpayCheckoutPromise = null;
-      let historyLookupPhone = "";
 
       const products = new Map(
         Array.from(document.querySelectorAll("[data-product]")).map((card) => [
@@ -2846,23 +2847,39 @@
         }
       }
 
-      function findOrdersByPhone() {
+      async function claimLegacyOrder() {
+        const orderId = String(orderHistoryOrderId?.value || "").trim().toUpperCase();
         const digits = normalizeHistoryPhone(orderHistoryPhone?.value || "");
-        if (!digits) {
-          historyLookupPhone = "";
-          loadOrderHistory.cache = null;
-          loadOrderHistory();
+        if (!/^PL[A-Z0-9]{6}$/.test(orderId)) {
+          if (orderHistoryPhoneNote) orderHistoryPhoneNote.textContent = "Enter an Order ID such as PL7K9Q2M.";
+          orderHistoryOrderId?.focus();
           return;
         }
         if (digits.length !== 10 || !"6789".includes(digits[0])) {
-          if (orderHistoryPhoneNote) orderHistoryPhoneNote.textContent = "Enter the 10-digit mobile number used on your older orders.";
+          if (orderHistoryPhoneNote) orderHistoryPhoneNote.textContent = "Enter the 10-digit mobile number used on that order.";
           orderHistoryPhone?.focus();
           return;
         }
-        historyLookupPhone = digits;
-        if (orderHistoryPhoneNote) orderHistoryPhoneNote.textContent = "Checking older orders with this phone number...";
-        loadOrderHistory.cache = null;
-        loadOrderHistory();
+        if (orderHistoryClaim) orderHistoryClaim.disabled = true;
+        if (orderHistoryPhoneNote) orderHistoryPhoneNote.textContent = "Securely linking this order to your Google account...";
+        try {
+          const response = await fetch("/api/me/orders/claim", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({ order_id: orderId, phone: digits }),
+          });
+          const data = await parseResponse(response);
+          if (!response.ok || !data.ok) throw new Error(data.error || "This older order could not be linked.");
+          if (orderHistoryOrderId) orderHistoryOrderId.value = "";
+          if (orderHistoryPhone) orderHistoryPhone.value = "";
+          if (orderHistoryPhoneNote) orderHistoryPhoneNote.textContent = "Order linked to your account.";
+          loadOrderHistory.cache = null;
+          await loadOrderHistory();
+        } catch (error) {
+          if (orderHistoryPhoneNote) orderHistoryPhoneNote.textContent = error.message || "This older order could not be linked.";
+        } finally {
+          if (orderHistoryClaim) orderHistoryClaim.disabled = false;
+        }
       }
 
       function openAccountModal(message, view = "account") {
@@ -2897,12 +2914,12 @@
         accountState.loginIntent = "orders";
         showOrderHistory();
       });
-      orderHistoryPhoneSearch?.addEventListener("click", findOrdersByPhone);
-      orderHistoryPhone?.addEventListener("keydown", (event) => {
+      orderHistoryClaim?.addEventListener("click", claimLegacyOrder);
+      [orderHistoryOrderId, orderHistoryPhone].forEach((input) => input?.addEventListener("keydown", (event) => {
         if (event.key !== "Enter") return;
         event.preventDefault();
-        findOrdersByPhone();
-      });
+        claimLegacyOrder();
+      }));
       if (accountClose && accountModal) {
         accountClose.addEventListener("click", () => {
           setAccountModalOpen(false);
@@ -3009,7 +3026,7 @@
       async function loadOrderHistory() {
         if (!accountState.authenticated || !orderHistoryPanel) return;
         const now = Date.now();
-        const cacheKey = historyLookupPhone || accountState.customerPhone || "account";
+        const cacheKey = "account";
         if (loadOrderHistory.cache && loadOrderHistory.cache.key === cacheKey && now - loadOrderHistory.cache.fetchedAt < 60000) {
           renderOrderHistory(loadOrderHistory.cache.orders);
           return;
@@ -3019,8 +3036,7 @@
         setOrderHistoryLoading();
 
         try {
-          const historyUrl = historyLookupPhone ? `/api/me/orders?phone=${encodeURIComponent(historyLookupPhone)}` : "/api/me/orders";
-          const response = await fetch(historyUrl, { headers: { Accept: "application/json" } });
+          const response = await fetch("/api/me/orders", { headers: { Accept: "application/json" } });
           const data = await parseResponse(response);
           if (response.status === 401 && data.auth_required) {
             accountState.authenticated = false;
@@ -3030,13 +3046,6 @@
           }
           if (!response.ok || !data.ok) throw new Error(data.error || "Order history could not be loaded.");
           const orders = Array.isArray(data.orders) ? data.orders : [];
-          if (data.lookup_phone) {
-            accountState.customerPhone = data.lookup_phone;
-            if (orderHistoryPhone && !orderHistoryPhone.value) orderHistoryPhone.value = data.lookup_phone;
-            if (orderHistoryPhoneNote) orderHistoryPhoneNote.textContent = "Older orders linked with this phone number.";
-          } else if (orderHistoryPhoneNote) {
-            orderHistoryPhoneNote.textContent = "Use the same mobile number used while placing earlier orders.";
-          }
           loadOrderHistory.cache = { key: cacheKey, fetchedAt: now, orders };
           renderOrderHistory(orders);
         } catch (error) {
@@ -3061,10 +3070,10 @@
           order_status: order["Order Status"] || "Received",
           city: order.City || "",
           address: order.Address || "",
-          razorpay_payment_id: order["Razorpay Payment ID"] || "",
         };
         const cachedOrders = loadOrderHistory.cache?.orders || [];
         loadOrderHistory.cache = {
+          key: "account",
           fetchedAt: Date.now(),
           orders: [historyOrder, ...cachedOrders.filter((item) => item.order_id !== historyOrder.order_id)],
         };

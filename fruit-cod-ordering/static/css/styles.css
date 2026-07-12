@@ -1081,6 +1081,7 @@ label span {
 }
 
 .admin-header,
+.usage-panel,
 .filter-bar,
 .admin-table-wrap {
   max-width: 1440px;
@@ -1100,6 +1101,129 @@ label span {
   margin: 0;
   font-family: "Playfair Display", Georgia, serif;
   font-size: clamp(2.4rem, 6vw, 4.4rem);
+}
+
+.usage-panel {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--leaf);
+  border-radius: 8px;
+  background: #fffdf7;
+  box-shadow: 0 14px 34px rgba(24, 39, 27, 0.08);
+}
+
+.usage-panel.usage-watch {
+  border-left-color: var(--sun);
+}
+
+.usage-panel.usage-warning,
+.usage-panel.usage-danger {
+  border-left-color: #a83b29;
+}
+
+.usage-panel-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
+}
+
+.usage-panel h2 {
+  margin: 0 0 4px;
+  font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(1.25rem, 2vw, 1.8rem);
+  font-weight: 1000;
+}
+
+.usage-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.usage-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid rgba(33, 79, 50, 0.14);
+  border-radius: 999px;
+  color: #5f584d;
+  background: #fff7e8;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.usage-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.usage-card {
+  display: grid;
+  gap: 8px;
+  min-height: 154px;
+  padding: 14px;
+  border: 1px solid #eadbc2;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.usage-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: start;
+}
+
+.usage-card-top span {
+  color: #5f584d;
+  font-size: 0.78rem;
+  font-weight: 1000;
+  text-transform: uppercase;
+}
+
+.usage-card-top strong {
+  color: var(--leaf-dark);
+  font-size: 1rem;
+}
+
+.usage-meter {
+  overflow: hidden;
+  height: 8px;
+  border-radius: 999px;
+  background: #efe4d1;
+}
+
+.usage-meter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--leaf);
+}
+
+.usage-card-watch .usage-meter span {
+  background: var(--sun);
+}
+
+.usage-card-warning .usage-meter span,
+.usage-card-danger .usage-meter span {
+  background: #a83b29;
+}
+
+.usage-card p {
+  margin: 0;
+  font-weight: 1000;
+}
+
+.usage-card small {
+  color: #6d6458;
+  line-height: 1.45;
 }
 
 .filter-bar {
@@ -1157,7 +1281,8 @@ label span {
   }
 
   .category-grid,
-  .testimonial-grid {
+  .testimonial-grid,
+  .usage-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -1322,6 +1447,10 @@ label span {
     grid-template-columns: 1fr;
   }
 
+  .usage-panel-header {
+    flex-direction: column;
+  }
+
   .admin-shell {
     padding: 20px;
   }
@@ -1352,6 +1481,10 @@ label span {
 
   .brand-wordmark small {
     font-size: 0.52rem;
+  }
+
+  .usage-grid {
+    grid-template-columns: 1fr;
   }
 
   .nav-actions a span {
