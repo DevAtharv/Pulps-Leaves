@@ -16,46 +16,13 @@ WEB_CART_PRODUCTS = {
     "malda-mango-5kg-box": {"name": "Malda Mango 5Kg Box", "price": 1155},
     "malda-mango-3kg-box": {"name": "Malda Mango 3Kg Box", "price": 693},
     "assam-breakfast-tea": {"name": "Husk and Dew", "price": 449},
-    "roasted-himalayan-makhana": {"name": "Naivedyam Makhana", "price": 349},
+    "roasted-himalayan-makhana": {"name": "Naivedyam Makhana", "price": 350},
 }
 ACTIVE_WEB_PRODUCT_IDS = {"roasted-himalayan-makhana"}
 DELIVERY_FREE_ABOVE = 699
 DELIVERY_CHARGE = 30
 ONLINE_PAYMENT_MINIMUM_SUBTOTAL = 699
 ONLINE_PAYMENT_DISCOUNT = 40
-PRIVATE_9999_COUPON_CODE = "PL99FS022E"
-BELOW_699_FREE_DELIVERY_COUPON_CODE = "PLB699FD"
-COUPON_DEFINITIONS = {
-    "LOVEFORMALDA": {
-        "label": "10% OFF",
-        "rate_bps": 1000,
-        "minimum_payable": 0,
-        "max_subtotal": None,
-        "waives_delivery": False,
-        "excludes_online_discount": False,
-        "excludes_other_coupons": False,
-    },
-    PRIVATE_9999_COUPON_CODE: {
-        "label": "99.99% OFF",
-        "rate_bps": 9999,
-        "minimum_payable": 1,
-        "max_subtotal": None,
-        "waives_delivery": False,
-        "excludes_online_discount": True,
-        "excludes_other_coupons": True,
-    },
-    BELOW_699_FREE_DELIVERY_COUPON_CODE: {
-        "label": "Free delivery below Rs 699",
-        "rate_bps": 0,
-        "minimum_payable": 0,
-        "max_subtotal": 698,
-        "waives_delivery": True,
-        "excludes_online_discount": False,
-        "excludes_other_coupons": False,
-    },
-}
-
-
 class OrderManager:
     def __init__(self, sheets_handler=None):
         self.sheets = sheets_handler or SheetsHandler()
@@ -72,11 +39,6 @@ class OrderManager:
         total_amount = int(clean_data["total_amount"])
         now = timestamp_local()
         notes = clean_data.get("notes", "")
-        if clean_data.get("coupon_codes"):
-            notes = (
-                f"{notes} Coupons applied: {', '.join(clean_data['coupon_codes'])}; "
-                f"total savings Rs {clean_data['discount']}."
-            ).strip()
         if clean_data.get("online_payment_discount"):
             notes = f"{notes} Online payment discount: Rs {clean_data['online_payment_discount']}.".strip()
         if clean_data.get("delivery_charge"):
@@ -120,11 +82,9 @@ class OrderManager:
         qty_5kg = self._parse_quantity(payload.get("qty_5kg", "0"))
         qty_3kg = self._parse_quantity(payload.get("qty_3kg", "0"))
         cart_items = self._parse_cart_items(payload.get("cart_items"))
-        coupon_codes = self._parse_coupon_codes(payload.get("coupon_codes"))
         payment_mode = self._normalize_payment_mode(payload.get("payment_mode") or payload.get("payment_method") or "COD")
         uses_cart_quantities = bool(cart_items) or any(key in payload for key in ("qty_5kg", "qty_3kg"))
         discount = 0
-        applied_coupons = []
         online_payment_discount = 0
 
         if cart_items:
@@ -140,11 +100,9 @@ class OrderManager:
                 catalog_item = WEB_CART_PRODUCTS[item["id"]]
                 subtotal += quantity * catalog_item["price"]
                 product_lines.append(f"{catalog_item['name']} x {quantity}")
-            discount, applied_coupons = self._cart_coupon_discount(subtotal, coupon_codes)
-            if not self._has_exclusive_online_coupon(applied_coupons):
-                online_payment_discount = self._online_payment_discount(subtotal, payment_mode)
+            online_payment_discount = self._online_payment_discount(subtotal, payment_mode)
             discount += online_payment_discount
-            delivery_charge = self._delivery_charge(subtotal, applied_coupons)
+            delivery_charge = self._delivery_charge(subtotal)
             product_summary = ", ".join(product_lines)
         elif uses_cart_quantities:
             product_lines = []
@@ -158,7 +116,7 @@ class OrderManager:
 
             online_payment_discount = self._online_payment_discount(subtotal, payment_mode)
             discount += online_payment_discount
-            delivery_charge = self._delivery_charge(subtotal, applied_coupons)
+            delivery_charge = self._delivery_charge(subtotal)
             product_summary = ", ".join(product_lines)
         else:
             product = product_by_choice(payload.get("product", "")) or str(payload.get("product", "")).strip()
@@ -167,7 +125,7 @@ class OrderManager:
             subtotal = int(selected_product["price"]) * quantity if selected_product else 0
             online_payment_discount = self._online_payment_discount(subtotal, payment_mode)
             discount += online_payment_discount
-            delivery_charge = self._delivery_charge(subtotal, applied_coupons)
+            delivery_charge = self._delivery_charge(subtotal)
             total_quantity = quantity
             product_summary = product
 
@@ -199,7 +157,6 @@ class OrderManager:
                 "quantity": total_quantity,
                 "subtotal": subtotal,
                 "discount": min(discount, subtotal),
-                "coupon_codes": applied_coupons,
                 "online_payment_discount": online_payment_discount,
                 "delivery_charge": delivery_charge,
                 "total_amount": subtotal - min(discount, subtotal) + delivery_charge,
@@ -242,25 +199,6 @@ class OrderManager:
                 cart_items.append({"id": product_id, "quantity": quantity})
         return cart_items
 
-    def _parse_coupon_codes(self, value):
-        if not value:
-            return []
-        try:
-            raw_codes = json.loads(value) if isinstance(value, str) else value
-        except (TypeError, json.JSONDecodeError):
-            raw_codes = str(value).split(",")
-        if isinstance(raw_codes, str):
-            raw_codes = [raw_codes]
-        if not isinstance(raw_codes, list):
-            return []
-
-        coupon_codes = []
-        for raw_code in raw_codes:
-            code = str(raw_code).strip().upper()
-            if code in COUPON_DEFINITIONS and code not in coupon_codes:
-                coupon_codes.append(code)
-        return coupon_codes
-
     @staticmethod
     def _parse_checkout_token(value):
         token = str(value or "").strip()
@@ -284,78 +222,10 @@ class OrderManager:
         return 0
 
     @staticmethod
-    def _cart_coupon_discount(subtotal, coupon_codes):
-        if PRIVATE_9999_COUPON_CODE in coupon_codes:
-            coupon_codes = [PRIVATE_9999_COUPON_CODE]
-
-        if subtotal <= 0:
-            return 0, []
-
-        discount = 0
-        applied_coupons = []
-        for code in coupon_codes:
-            coupon = COUPON_DEFINITIONS.get(code)
-            if not coupon:
-                continue
-            if not OrderManager._coupon_applies_to_subtotal(coupon, subtotal):
-                continue
-            minimum_payable = int(coupon.get("minimum_payable", 0) or 0)
-            if minimum_payable:
-                coupon_discount = max(0, subtotal - minimum_payable)
-            else:
-                coupon_discount = round(subtotal * int(coupon["rate_bps"]) / 10000)
-            discount += coupon_discount
-            applied_coupons.append(code)
-
-        return min(discount, subtotal), applied_coupons
-
-    @staticmethod
-    def _has_exclusive_online_coupon(coupon_codes):
-        return any(COUPON_DEFINITIONS.get(code, {}).get("excludes_online_discount") for code in coupon_codes)
-
-    @staticmethod
-    def _coupon_applies_to_subtotal(coupon, subtotal):
-        max_subtotal = coupon.get("max_subtotal")
-        if max_subtotal is not None and subtotal > int(max_subtotal):
-            return False
-        return True
-
-    @staticmethod
-    def _has_delivery_coupon(coupon_codes, subtotal):
-        for code in coupon_codes:
-            coupon = COUPON_DEFINITIONS.get(code)
-            if (
-                coupon
-                and coupon.get("waives_delivery")
-                and OrderManager._coupon_applies_to_subtotal(coupon, subtotal)
-            ):
-                return True
-        return False
-
-    @staticmethod
-    def _delivery_charge(subtotal, coupon_codes):
+    def _delivery_charge(subtotal):
         if subtotal == 0 or subtotal > DELIVERY_FREE_ABOVE:
             return 0
-        if OrderManager._has_delivery_coupon(coupon_codes, subtotal):
-            return 0
         return DELIVERY_CHARGE
-
-    @staticmethod
-    def coupon_preview(code):
-        normalized = str(code or "").strip().upper()
-        coupon = COUPON_DEFINITIONS.get(normalized)
-        if not coupon:
-            return None
-        return {
-            "code": normalized,
-            "label": coupon["label"],
-            "rate_bps": coupon["rate_bps"],
-            "minimum_payable": coupon["minimum_payable"],
-            "max_subtotal": coupon.get("max_subtotal"),
-            "waives_delivery": coupon.get("waives_delivery", False),
-            "excludes_online_discount": coupon["excludes_online_discount"],
-            "excludes_other_coupons": coupon["excludes_other_coupons"],
-        }
 
     def generate_order_id(self):
         while True:

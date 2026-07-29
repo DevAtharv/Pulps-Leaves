@@ -6,4 +6,19 @@ __pycache__/
 .pytest_cache/
 *.log
 
-.vercel
+.vercel/
+.playwright-cli/
+output/
+tmp/
+alias-ls.txt
+runtime-logs*.txt
+start-codex-local.ps1
+templates/*.bak
+templates/_old_js_block.txt
+static/img/account-makhana-wetland-20260729.png
+static/img/naivedyam-front-200g-20260729.png
+static/img/naivedyam-front-20260728.png
+static/img/naivedyam-product-hero-desktop-20260729.png
+static/img/naivedyam-product-hero-desktop-v2-20260729.png
+static/img/naivedyam-wetland-hero-v2.png
+static/img/naivedyam-wetland-hero-v3-20260729.png

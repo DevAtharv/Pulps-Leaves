@@ -1463,75 +1463,28 @@
       font-size: 1.22rem;
       font-weight: 800;
     }
-    .coupon-field,
     .payment-box {
       display: grid;
       gap: 12px;
       padding: 18px 0;
       border-bottom: 1px solid rgba(200,134,10,0.14);
     }
-    .coupon-field > span,
     .payment-box > span {
       color: var(--brown);
       font-size: 0.86rem;
       font-weight: 900;
     }
-    .coupon-option {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 10px;
-      align-items: center;
-      padding: 12px;
-      border: 1px solid rgba(200,134,10,0.22);
-      border-radius: 10px;
-      background: #fffaf2;
-    }
-    .coupon-option.is-applied {
-      border-color: var(--green);
-      box-shadow: inset 0 0 0 1px var(--green);
-    }
-    .coupon-option strong,
     .payment-choice strong {
       display: block;
       color: var(--brown);
       font-size: 0.92rem;
     }
-    .coupon-option small,
-    .payment-choice small,
-    .coupon-note {
+    .payment-choice small {
       display: block;
       margin-top: 3px;
       color: var(--muted);
       font-size: 0.72rem;
       line-height: 1.4;
-    }
-    .coupon-apply-button,
-    .coupon-entry-row button {
-      min-height: 38px;
-      padding: 0 14px;
-      border: 1px solid rgba(47,111,62,0.25);
-      border-radius: 8px;
-      color: var(--green);
-      background: #fff;
-      font-size: 0.76rem;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-    .coupon-apply-button[aria-pressed="true"] {
-      color: #fff;
-      background: var(--green);
-    }
-    .coupon-entry-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 8px;
-    }
-    .coupon-entry-row input {
-      min-height: 40px;
-      padding: 0 12px;
-      border: 1px solid rgba(200,134,10,0.22);
-      border-radius: 8px;
-      outline: none;
     }
     .payment-options {
       display: grid;
@@ -1838,9 +1791,6 @@
         padding: 10px 0 14px;
       }
       .checkout-section { padding: 14px 0; }
-      .coupon-entry-row {
-        grid-template-columns: 1fr;
-      }
       .payment-choice {
         grid-template-columns: auto minmax(0, 1fr);
       }
@@ -2085,32 +2035,2049 @@
     @keyframes historyShimmer {
       to { transform: translateX(100%); }
     }
+
+    /* Immersive storefront direction */
+    main {
+      display: flex;
+      flex-direction: column;
+    }
+    .hero { order: 1; }
+    .heritage-marquee { order: 2; }
+    #product { order: 3; }
+    #about { order: 4; }
+    #why { order: 5; }
+    #culture { order: 6; }
+    #testimonials { order: 7; }
+
+    .site-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 60;
+      border: 0;
+      background: transparent;
+      backdrop-filter: none;
+    }
+    .site-header .nav {
+      width: calc(100% - 48px);
+      min-height: 88px;
+    }
+    .site-header .brand img {
+      width: 54px;
+      height: 54px;
+    }
+    .site-header .brand strong,
+    .site-header .brand small,
+    .site-header .nav-links {
+      color: #123f29;
+    }
+    .site-header .brand strong {
+      font-size: 1.22rem;
+    }
+    .site-header .brand small {
+      opacity: 0.72;
+    }
+    .site-header .nav-links {
+      gap: 30px;
+      font-size: 0.72rem;
+    }
+    .site-header .nav-links a::after {
+      background: #123f29;
+    }
+    .site-header .profile-button,
+    .site-header .cart-button,
+    .site-header .mobile-menu-button {
+      width: 46px;
+      height: 46px;
+      min-height: 46px;
+      padding: 0;
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      border-radius: 50%;
+      color: #fff;
+      background: #17472f;
+      box-shadow: 0 8px 20px rgba(18, 63, 41, 0.18);
+    }
+    .site-header .profile-button span,
+    .site-header .cart-button > span {
+      display: none;
+    }
+    .site-header .cart-count {
+      top: -3px;
+      right: -3px;
+      background: #d49a2f;
+    }
+
+    .hero {
+      min-height: 650px;
+      height: calc(100svh - 42px);
+      max-height: 860px;
+      display: block;
+      color: #fff;
+      background: #d7953b;
+    }
+    .hero::before {
+      display: none;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.09;
+      background-image: url("{{ url_for('static', filename='img/mithila-harvest-720.webp') }}");
+      background-size: cover;
+      background-position: center;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+    .hero-noise {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      opacity: 0.2;
+      background-image:
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 5px),
+        repeating-linear-gradient(0deg, rgba(64,39,9,0.03) 0 1px, transparent 1px 6px);
+      pointer-events: none;
+    }
+    .hero-inner {
+      width: min(1360px, calc(100% - 72px));
+      height: 100%;
+      min-height: 0;
+      max-width: none;
+      display: grid;
+      grid-template-columns: minmax(0, 0.88fr) minmax(420px, 1.12fr);
+      align-items: center;
+      justify-items: stretch;
+      gap: 34px;
+      padding: 98px 0 34px;
+      text-align: left;
+    }
+    .hero-copy-block {
+      position: relative;
+      z-index: 5;
+      align-self: center;
+      min-width: 0;
+    }
+    .hero-brand-line {
+      display: block;
+      color: #123f29;
+      font-family: var(--sans);
+      font-size: 70px;
+      font-weight: 900;
+      line-height: 0.92;
+      text-transform: uppercase;
+    }
+    .hero h1.hero-title {
+      margin-top: 18px;
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 58px;
+      font-weight: 500;
+      line-height: 0.98;
+      text-transform: uppercase;
+      text-shadow: none;
+    }
+    .hero-title span {
+      display: block;
+    }
+    .hero-origin {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      margin-top: 24px;
+      padding: 8px 14px;
+      color: #fff;
+      background: rgba(153, 83, 12, 0.42);
+      font-size: 0.88rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .hero-product-stage {
+      position: relative;
+      z-index: 4;
+      align-self: end;
+      height: 100%;
+      min-height: 0;
+      min-width: 0;
+      display: grid;
+      place-items: end center;
+    }
+    .hero-product-stage::before {
+      content: "";
+      position: absolute;
+      left: -16%;
+      bottom: -18%;
+      width: 72%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      opacity: 0.96;
+      background:
+        repeating-conic-gradient(from 0deg, rgba(229,236,205,0.26) 0 1deg, transparent 1deg 9deg),
+        radial-gradient(circle, #64834e 0 4%, #2d603c 5% 42%, #16442d 70%);
+      box-shadow: inset 0 0 44px rgba(6, 45, 24, 0.28);
+      transform: rotate(-14deg);
+    }
+    .hero-product-stage::after {
+      content: "";
+      position: absolute;
+      left: 10%;
+      right: -10%;
+      bottom: 0;
+      height: 7%;
+      border-radius: 50%;
+      background: rgba(60, 34, 8, 0.2);
+      filter: blur(18px);
+    }
+    .hero-product {
+      position: relative;
+      z-index: 3;
+      width: auto;
+      height: calc(100% - 12px);
+      max-width: 74%;
+      max-height: 730px;
+      object-fit: contain;
+      object-position: bottom center;
+      clip-path: inset(1.2% 3.2% 1.4% 3.2% round 3%);
+      filter: drop-shadow(0 28px 30px rgba(68, 34, 8, 0.26));
+    }
+    .hero-scroll {
+      position: absolute;
+      left: 36px;
+      bottom: 24px;
+      z-index: 8;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: rgba(255,255,255,0.86);
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .hero-scroll svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .heritage-marquee {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      color: #fff;
+      background: #17472f;
+    }
+    .heritage-marquee-track {
+      min-width: max-content;
+      display: flex;
+      align-items: center;
+      animation: heritageTicker 26s linear infinite;
+    }
+    .heritage-marquee span {
+      display: inline-flex;
+      align-items: center;
+      gap: 26px;
+      padding-right: 26px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .heritage-marquee span::after {
+      content: "✦";
+      color: #e8bd5d;
+    }
+    @keyframes heritageTicker {
+      to { transform: translateX(-50%); }
+    }
+
+    #product {
+      padding-top: 62px;
+      background: #fdf8f5;
+    }
+    #product .section-head {
+      margin-bottom: 32px;
+    }
+    #product .section-head h2 {
+      color: #17472f;
+      font-size: 2.8rem;
+    }
+    #product .product-grid {
+      grid-template-columns: minmax(320px, 0.92fr) minmax(0, 1.08fr);
+      gap: 58px;
+    }
+    #product .product-visual {
+      width: min(100%, 430px);
+      max-width: 430px;
+      aspect-ratio: 0.75;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+    #product .product-visual picture {
+      width: 100%;
+      height: 100%;
+    }
+    #product .product-visual img {
+      width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      clip-path: inset(1.2% 3.2% 1.4% 3.2% round 3%);
+      filter: drop-shadow(0 24px 24px rgba(62,39,35,0.16));
+    }
+    #product .discount-badge {
+      top: 48px;
+      right: 2px;
+      border-radius: 50%;
+      background: #17472f;
+      animation: none;
+    }
+    #product .variant-card {
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+    #product .variant-card h2 {
+      color: #17472f;
+      font-size: 3.6rem;
+    }
+    #product .qty-row .add-button {
+      border-radius: 4px;
+      color: #fff;
+      background: #17472f;
+    }
+    #product .qty-row .add-button:hover {
+      background: #d7953b;
+    }
+
+    @media (max-width: 980px) {
+      .site-header .nav-links {
+        color: var(--brown);
+        background: #fff8ef;
+      }
+      .hero {
+        min-height: 720px;
+        height: calc(100svh - 42px);
+      }
+      .hero-inner {
+        width: calc(100% - 38px);
+        grid-template-columns: minmax(0, 0.9fr) minmax(330px, 1.1fr);
+      }
+      .hero-brand-line { font-size: 52px; }
+      .hero h1.hero-title { font-size: 42px; }
+    }
+
+    @media (max-width: 640px) {
+      .site-header .nav {
+        width: calc(100% - 24px);
+        min-height: 70px;
+      }
+      .site-header .brand img {
+        width: 44px;
+        height: 44px;
+      }
+      .site-header .brand strong {
+        font-size: 0.96rem;
+      }
+      .site-header .profile-button,
+      .site-header .cart-button,
+      .site-header .mobile-menu-button {
+        width: 40px;
+        height: 40px;
+        min-height: 40px;
+      }
+      .hero {
+        min-height: 690px;
+        height: calc(100svh - 42px);
+        max-height: 790px;
+      }
+      .hero-inner {
+        display: grid;
+        width: calc(100% - 28px);
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(0, 1fr);
+        gap: 4px;
+        padding: 82px 0 0;
+      }
+      .hero-copy-block {
+        align-self: start;
+      }
+      .hero-brand-line {
+        font-size: 37px;
+        line-height: 0.95;
+      }
+      .hero h1.hero-title {
+        margin-top: 9px;
+        font-size: 30px;
+        line-height: 1;
+      }
+      .hero-origin {
+        margin-top: 12px;
+        padding: 6px 9px;
+        font-size: 0.64rem;
+      }
+      .hero-product-stage {
+        min-height: 0;
+        align-self: stretch;
+      }
+      .hero-product-stage::before {
+        left: -16%;
+        bottom: -12%;
+        width: 86%;
+      }
+      .hero-product {
+        width: auto;
+        height: calc(100% - 4px);
+        max-width: 76%;
+        max-height: 520px;
+        justify-self: end;
+      }
+      .hero-scroll {
+        display: none;
+      }
+      .heritage-marquee {
+        min-height: 42px;
+      }
+      #product {
+        padding-top: 50px;
+      }
+      #product .section-head h2 {
+        font-size: 2.2rem;
+      }
+      #product .product-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      #product .product-visual {
+        width: min(100%, 320px);
+        max-width: 320px;
+        aspect-ratio: 0.75;
+      }
+      #product .variant-card h2 {
+        font-size: 2.5rem;
+      }
+    }
+
+    * {
+      letter-spacing: 0 !important;
+    }
+
+    /* Mukeja-inspired final direction */
+    :root {
+      --forest: #17462d;
+      --forest-deep: #0f3522;
+      --blush: #fff8f3;
+      --paper: #fffdfb;
+      --camel: #9a7a62;
+      --amber: #d88922;
+      --soft-line: #eadfd5;
+    }
+    html {
+      scroll-padding-top: 82px;
+    }
+    body {
+      color: var(--forest);
+      background: var(--paper);
+    }
+    main {
+      display: flex;
+      flex-direction: column;
+    }
+    .hero { order: 1; }
+    .heritage-marquee { order: 2; }
+    #product { order: 3; }
+    #culture { order: 4; }
+    #testimonials { order: 5; }
+    #why { order: 6; }
+    #about { order: 7; }
+
+    .site-header {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 80;
+      border: 0;
+      background: transparent;
+      backdrop-filter: none;
+      box-shadow: none;
+      transition: background 220ms ease, box-shadow 220ms ease;
+    }
+    .site-header .nav {
+      width: min(1220px, calc(100% - 48px));
+      min-height: 80px;
+    }
+    .brand-logo-mark {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      place-items: center;
+      flex: 0 0 auto;
+      padding: 9px 4px 7px;
+      overflow: hidden;
+      border: 1.5px solid #d9a744;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--forest);
+      box-shadow: 0 6px 14px rgba(15, 53, 34, 0.22);
+    }
+    .brand-logo-monogram {
+      display: inline-flex;
+      align-items: baseline;
+      color: #fff;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.45rem;
+      line-height: 0.82;
+    }
+    .brand-logo-monogram b {
+      color: #fff;
+      font-weight: 500;
+    }
+    .brand-logo-monogram i {
+      color: #e0b14e;
+      font-style: normal;
+      font-weight: 500;
+    }
+    .brand-logo-caption {
+      color: #fff;
+      font-size: 0.28rem;
+      font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .site-header .brand,
+    .site-header .nav-links,
+    .site-header .mobile-menu-button {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 180ms ease;
+    }
+    .site-header .nav-links,
+    .site-header .mobile-menu-button {
+      display: none !important;
+    }
+    .site-header .header-actions {
+      grid-column: 3;
+      margin-left: auto;
+    }
+    .site-header .profile-button,
+    .site-header .cart-button,
+    .site-header .mobile-menu-button {
+      width: 48px;
+      height: 48px;
+      min-height: 48px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--forest);
+      box-shadow: 0 8px 18px rgba(15, 53, 34, 0.2);
+    }
+    .site-header .profile-button {
+      width: auto;
+      min-width: 48px;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 14px;
+      border-radius: 24px;
+    }
+    .site-header .profile-button span {
+      display: inline;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .site-header .cart-button > span {
+      display: none;
+    }
+    .site-header .cart-count {
+      top: -2px;
+      right: -2px;
+      background: var(--amber);
+    }
+    .site-header.is-scrolled {
+      background: rgba(255, 253, 251, 0.98);
+      box-shadow: 0 1px 0 var(--soft-line);
+    }
+    .site-header.is-scrolled .brand {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+    .site-header.is-scrolled .brand img,
+    .site-header.is-scrolled .brand-logo-mark {
+      width: 48px;
+      height: 48px;
+    }
+    .site-header.is-scrolled .brand strong,
+    .site-header.is-scrolled .brand small {
+      color: var(--forest);
+    }
+    .site-header.is-scrolled .brand strong {
+      font-family: var(--serif);
+      font-size: 1.34rem;
+    }
+    .site-header.is-scrolled .brand small {
+      color: var(--camel);
+      font-size: 0.66rem;
+      text-transform: uppercase;
+    }
+    .hero {
+      min-height: 720px;
+      height: 100svh;
+      max-height: none;
+      display: block;
+      overflow: hidden;
+      color: #fff;
+      background-color: #d99a3f;
+      background-image: url("{{ url_for('static', filename='img/naivedyam-main-hero-user-20260729.png') }}");
+      background-size: cover;
+      background-position: center;
+    }
+    .hero::before,
+    .hero::after,
+    .hero-noise,
+    .hero-product-stage::before,
+    .hero-product-stage::after {
+      display: none;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      width: min(1390px, calc(100% - 56px));
+      height: 100%;
+      max-width: none;
+      min-height: 0;
+      display: none;
+      grid-template-columns: minmax(390px, 0.82fr) minmax(520px, 1.18fr);
+      align-items: center;
+      gap: 34px;
+      padding: 80px 0 38px;
+      text-align: left;
+    }
+    .hero-copy-block {
+      position: relative;
+      z-index: 5;
+      min-width: 0;
+      grid-column: 1;
+      grid-row: 1;
+      align-self: center;
+      justify-self: start;
+      width: min(100%, 620px);
+      transform: translateY(-130px);
+    }
+    .hero-brand-line {
+      display: inline;
+      color: var(--forest-deep);
+      font-size: clamp(48px, 4.25vw, 68px);
+      font-weight: 900;
+      line-height: 0.94;
+      text-transform: uppercase;
+    }
+    .hero-brand-line + .hero-brand-line::before {
+      content: " ";
+    }
+    .hero h1.hero-title {
+      margin-top: 16px;
+      color: var(--forest-deep);
+      font-family: var(--sans);
+      font-size: clamp(54px, 4.7vw, 76px);
+      font-weight: 500;
+      line-height: 0.92;
+      text-transform: uppercase;
+      text-shadow: none;
+    }
+    .hero-title span {
+      display: block;
+    }
+    .hero-origin {
+      display: inline-flex;
+      min-height: 52px;
+      align-items: center;
+      margin-top: 22px;
+      padding: 0 18px;
+      color: #fff;
+      background: var(--amber);
+      font-family: var(--serif);
+      font-size: 1.08rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .hero-product-stage {
+      position: relative;
+      z-index: 3;
+      min-width: 0;
+      grid-column: 2;
+      grid-row: 1;
+      height: 100%;
+      min-height: 0;
+      display: grid;
+      place-items: end center;
+    }
+    .hero-product {
+      width: min(64%, 470px);
+      height: auto;
+      max-width: none;
+      max-height: 72vh;
+      aspect-ratio: 1024 / 1537;
+      margin-bottom: 78px;
+      object-fit: contain;
+      object-position: bottom center;
+      filter: drop-shadow(0 28px 26px rgba(74, 42, 13, 0.28));
+    }
+    .hero-mobile-shop,
+    .hero-mobile-benefits {
+      display: none;
+    }
+    .hero-scroll {
+      display: none;
+    }
+
+    .heritage-marquee {
+      min-height: 66px;
+      border-top: 1px solid #e7d4bd;
+      border-bottom: 1px solid #e7d4bd;
+      color: var(--forest);
+      background: #fff8ed;
+    }
+    .heritage-marquee-track {
+      animation-duration: 30s;
+    }
+    .heritage-marquee span {
+      gap: 34px;
+      padding-right: 34px;
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .heritage-marquee span::after {
+      content: "•";
+      color: #d6c3ae;
+    }
+
+    .collection-section {
+      padding: 62px 0 78px;
+      overflow: hidden;
+      background-color: var(--paper);
+      background-image: url("{{ url_for('static', filename='img/mithila-harvest-720.webp') }}");
+      background-size: 520px;
+      background-position: right -260px center;
+      background-repeat: no-repeat;
+      background-blend-mode: screen;
+    }
+    .collection-inner {
+      width: min(1420px, calc(100% - 20px));
+      margin: 0 auto;
+    }
+    .collection-head,
+    .reference-section-head {
+      margin-bottom: 34px;
+      text-align: center;
+    }
+    .collection-head h2,
+    .reference-section-head h2 {
+      color: var(--forest);
+      font-family: var(--sans);
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+    .collection-head h2 em,
+    .reference-section-head h2 em {
+      color: var(--camel);
+      font-weight: 400;
+    }
+    .collection-head::after,
+    .reference-section-head::after {
+      content: "";
+      width: 96px;
+      height: 4px;
+      display: block;
+      margin: 26px auto 0;
+      background: var(--forest);
+    }
+    .featured-grid {
+      display: grid;
+      grid-template-columns: minmax(320px, 380px);
+      justify-content: center;
+      gap: 6px;
+    }
+    .feature-tile {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid #f0e7e0;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.92);
+    }
+    .feature-media {
+      position: relative;
+      width: calc(100% - 28px);
+      margin: 14px auto 0;
+      aspect-ratio: 0.8;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #fbf3ec;
+    }
+    .feature-media > img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .feature-media.product-pack > img {
+      object-fit: contain;
+      filter: drop-shadow(0 18px 22px rgba(58, 35, 24, 0.14));
+    }
+    .feature-media.duo-pack {
+      display: grid;
+      place-items: end center;
+    }
+    .feature-media.duo-pack img {
+      position: absolute;
+      bottom: 2%;
+      width: 62%;
+      height: 90%;
+      object-fit: contain;
+      clip-path: inset(1.3% 3.2% 1.5% 3.2% round 3%);
+      filter: drop-shadow(0 16px 16px rgba(58, 35, 24, 0.16));
+    }
+    .feature-media.duo-pack img:first-child {
+      left: 5%;
+      transform: rotate(-4deg);
+    }
+    .feature-media.duo-pack img:last-child {
+      right: 5%;
+      transform: rotate(4deg);
+    }
+    .tile-cart-button {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      z-index: 4;
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--forest);
+      box-shadow: 0 8px 18px rgba(15, 53, 34, 0.2);
+    }
+    .tile-cart-button:hover {
+      background: var(--amber);
+    }
+    .feature-tile h3 {
+      min-height: 60px;
+      display: grid;
+      place-items: center;
+      padding: 12px 10px;
+      color: var(--forest);
+      font-family: var(--serif);
+      font-size: 1.02rem;
+      line-height: 1.2;
+      text-align: center;
+      text-transform: uppercase;
+    }
+    .feature-meta {
+      min-height: 52px;
+      display: grid;
+      grid-template-columns: 1fr 0.82fr;
+      border-top: 1px solid #ebdfd5;
+      background: #fff8ed;
+    }
+    .feature-meta > * {
+      min-width: 0;
+      display: grid;
+      place-items: center;
+      padding: 8px;
+      border: 0;
+      color: var(--forest);
+      background: transparent;
+      font-size: 0.75rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .feature-meta > * + * {
+      border-left: 1px solid #ebdfd5;
+    }
+    .feature-meta button:hover {
+      color: #fff;
+      background: var(--forest);
+    }
+
+    .featured-product-layout {
+      width: min(1100px, calc(100% - 40px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(340px, 0.88fr) minmax(0, 1.12fr);
+      align-items: center;
+      gap: 74px;
+    }
+    .featured-product-media {
+      width: 100%;
+      aspect-ratio: 0.82;
+      display: grid;
+      place-items: center;
+      overflow: visible;
+      background: transparent;
+    }
+    .featured-product-media img {
+      width: 88%;
+      height: 94%;
+      object-fit: contain;
+      filter: drop-shadow(0 22px 24px rgba(58, 35, 24, 0.16));
+    }
+    .featured-product-details {
+      min-width: 0;
+    }
+    .product-detail-kicker {
+      display: block;
+      color: var(--camel);
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .featured-product-details h3 {
+      margin-top: 8px;
+      color: var(--forest);
+      font-family: var(--serif);
+      font-size: 3.5rem;
+      line-height: 1.05;
+    }
+    .featured-product-details .hindi-line {
+      margin-top: 8px;
+    }
+    .product-detail-copy {
+      max-width: 590px;
+      margin-top: 18px;
+      color: #607566;
+      font-size: 1rem;
+    }
+    .featured-price {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin-top: 24px;
+    }
+    .featured-price strong {
+      color: var(--forest);
+      font-family: var(--serif);
+      font-size: 2rem;
+    }
+    .featured-price span {
+      color: var(--camel);
+      font-size: 0.72rem;
+    }
+    .product-highlight-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 22px;
+      margin-top: 22px;
+      padding: 16px 0;
+      border-top: 1px solid var(--soft-line);
+      border-bottom: 1px solid var(--soft-line);
+    }
+    .product-highlight-row span {
+      position: relative;
+      padding-left: 14px;
+      color: var(--forest);
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .product-highlight-row span::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--amber);
+      transform: translateY(-50%);
+    }
+    .featured-product-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .featured-stepper {
+      width: 138px;
+      min-height: 52px;
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      align-items: stretch;
+      border: 1px solid #d9cfc6;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .featured-stepper button,
+    .featured-stepper span {
+      display: grid;
+      place-items: center;
+      border: 0;
+      color: var(--forest);
+      background: transparent;
+      font-size: 1.1rem;
+      font-weight: 900;
+    }
+    .featured-stepper button:hover {
+      color: #fff;
+      background: var(--forest);
+    }
+    .featured-add-button,
+    .featured-remove-button {
+      min-height: 52px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 0 20px;
+      border: 1px solid var(--forest);
+      border-radius: 4px;
+      font-size: 0.74rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .featured-add-button {
+      color: #fff;
+      background: var(--forest);
+    }
+    .featured-add-button:hover {
+      background: var(--amber);
+      border-color: var(--amber);
+    }
+    .featured-remove-button {
+      color: var(--forest);
+      background: transparent;
+    }
+    .featured-remove-button:hover:not(:disabled) {
+      color: #fff;
+      background: var(--forest);
+    }
+    .featured-remove-button:disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+    }
+
+    .story-social {
+      padding: 68px 0 88px;
+      border-top: 1px solid var(--soft-line);
+      background: var(--blush);
+    }
+    .story-social-inner {
+      width: min(1240px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+    .instagram-section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .instagram-profile-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 42px;
+      margin-bottom: 24px;
+      padding: 0 15px;
+      border: 1px solid var(--forest);
+      border-radius: 4px;
+      color: var(--forest);
+      font-size: 0.76rem;
+      font-weight: 900;
+    }
+    .instagram-profile-link:hover {
+      color: #fff;
+      background: var(--forest);
+    }
+    .story-reel {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .instagram-reel-card {
+      min-width: 0;
+      aspect-ratio: 9 / 16;
+      overflow: hidden;
+      border: 1px solid var(--soft-line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .instagram-reel-card iframe {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border: 0;
+      background: #fff;
+    }
+    .story-card {
+      position: relative;
+      min-width: 0;
+      aspect-ratio: 0.62;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #eee;
+    }
+    a.story-card {
+      display: block;
+      color: inherit;
+    }
+    .story-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 280ms ease;
+    }
+    .story-card:hover img {
+      transform: scale(1.025);
+    }
+    .story-card::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 34%;
+      background: rgba(15, 53, 34, 0.58);
+      pointer-events: none;
+    }
+    .story-card-copy {
+      position: absolute;
+      inset: auto 20px 18px;
+      z-index: 2;
+      color: #fff;
+    }
+    .story-card-copy strong {
+      display: block;
+      font-family: var(--serif);
+      font-size: 1.22rem;
+    }
+    .story-card-copy span {
+      font-size: 0.66rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .cart-item .remove-button {
+      width: auto;
+      min-width: 92px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 10px;
+      border: 1px solid #d9cfc6;
+      border-radius: 4px;
+      color: var(--forest);
+      font-size: 0.68rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .cart-item .remove-button:hover {
+      color: #fff;
+      border-color: var(--forest);
+      background: var(--forest);
+    }
+
+    body.account-modal-open {
+      overflow: hidden;
+    }
+    .account-modal-overlay {
+      padding: 20px;
+      background: rgba(18, 26, 21, 0.58);
+      backdrop-filter: blur(10px);
+    }
+    .account-modal {
+      position: relative;
+      width: min(900px, calc(100vw - 40px));
+      max-width: 900px;
+      height: min(540px, calc(100svh - 40px));
+      max-height: 540px;
+      aspect-ratio: auto;
+      display: grid;
+      grid-template-columns: minmax(0, 0.43fr) minmax(0, 0.57fr);
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      border-radius: 8px;
+      background: #fffaf5;
+      box-shadow: 0 28px 80px rgba(10, 34, 23, 0.3);
+    }
+    .account-brand-panel {
+      position: relative;
+      min-height: 0;
+      height: 100%;
+      display: grid;
+      align-content: start;
+      overflow: hidden;
+      isolation: isolate;
+      padding: 42px 36px;
+      color: #fff;
+      background: var(--forest) url("{{ url_for('static', filename='img/account-login-market-20260729.png') }}") center / cover no-repeat;
+    }
+    .account-brand-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      height: 100%;
+      border-radius: 0;
+      background: rgba(15, 53, 34, 0.64);
+    }
+    .account-brand-copy {
+      position: relative;
+      z-index: 2;
+      max-width: 310px;
+    }
+    .account-brand-copy span {
+      display: block;
+      margin-bottom: 14px;
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .account-mobile-welcome {
+      display: none !important;
+    }
+    .account-brand-copy h2 {
+      font-family: var(--serif);
+      font-size: 2.25rem;
+      line-height: 1.08;
+    }
+    .account-brand-copy h2 em {
+      display: inline;
+      color: #fff;
+      font-style: normal;
+      font-weight: inherit;
+    }
+    .account-brand-rule {
+      width: min(100%, 310px);
+      height: 1px;
+      margin-top: 20px;
+      background: rgba(255, 255, 255, 0.62);
+    }
+    .account-brand-copy p {
+      max-width: 410px;
+      margin-top: 18px;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 0.78rem;
+      line-height: 1.55;
+    }
+    .account-modal-content {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 36px 42px 34px;
+      overflow-y: auto;
+      text-align: left;
+    }
+    .account-modal-head {
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0;
+    }
+    .account-modal-identity {
+      display: flex;
+      align-items: center;
+      justify-items: start;
+      gap: 11px;
+    }
+    .account-modal-identity img {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 auto;
+      object-fit: contain;
+      border-radius: 50%;
+    }
+    .account-modal-identity strong {
+      display: block;
+      color: var(--forest);
+      font-family: var(--serif);
+      font-size: 1.18rem;
+      line-height: 1;
+    }
+    .account-modal-identity span {
+      display: block;
+      margin-top: 5px;
+      color: var(--camel);
+      font-size: 0.6rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .account-modal .close-button {
+      position: static;
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 1px solid var(--forest);
+      border-radius: 50%;
+      color: var(--forest);
+      background: transparent;
+    }
+    .account-modal .close-button:hover {
+      color: #fff;
+      background: var(--forest);
+    }
+    .account-modal-kicker {
+      display: none;
+    }
+    .account-modal-ornament {
+      display: none;
+    }
+    .account-modal-ornament::before,
+    .account-modal-ornament::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: #b69a66;
+    }
+    .account-modal-content > h2 {
+      max-width: 430px;
+      margin-top: 52px;
+      color: var(--forest);
+      font-family: var(--serif);
+      font-size: 2.8rem;
+      line-height: 1;
+    }
+    .account-modal-copy {
+      max-width: 420px;
+      margin-top: 16px;
+      color: #3d4941;
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+    .account-actions {
+      width: 100%;
+      gap: 10px;
+      margin-top: 26px;
+    }
+    .google-login-button,
+    .account-history-button,
+    .account-signout-button {
+      min-height: 52px;
+      border-radius: 4px;
+      font-size: 0.74rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .google-login-button {
+      justify-content: center;
+      gap: 14px;
+      margin-top: 0;
+      padding: 0 16px;
+      color: #fff;
+      border-color: var(--forest);
+      background: var(--forest);
+    }
+    .google-login-button:hover {
+      color: var(--forest);
+      background: #fff;
+    }
+    .google-button-mark {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .account-history-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      color: var(--forest);
+      border-color: var(--forest);
+      background: transparent;
+    }
+    .account-history-button:hover {
+      color: #fff;
+      background: var(--forest);
+    }
+    .account-signout-button {
+      color: #8f382f;
+      border-color: rgba(143, 56, 47, 0.36);
+    }
+    .account-trust {
+      display: none;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 34px;
+    }
+    .account-trust-item {
+      display: grid;
+      justify-items: center;
+      gap: 10px;
+      color: #37443c;
+      font-size: 0.76rem;
+      line-height: 1.25;
+    }
+    .account-trust-icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--forest);
+      background: #f0efd9;
+    }
+    .order-history-panel {
+      width: 100%;
+      margin-top: 18px;
+      border-color: var(--soft-line);
+      border-radius: 4px;
+      background: #fff;
+      text-align: left;
+    }
+
+    #testimonials {
+      padding: 76px 0 86px;
+      border-top: 1px solid var(--soft-line);
+      background: #fffaf5;
+    }
+    #testimonials .section-head {
+      margin-bottom: 38px;
+      text-align: center;
+    }
+    #testimonials .section-head .eyebrow {
+      display: none;
+    }
+    #testimonials .section-head h2 {
+      color: var(--forest);
+      font-family: var(--sans);
+      font-size: 3rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    #testimonials .section-head h2::after {
+      content: "";
+      width: 96px;
+      height: 4px;
+      display: block;
+      margin: 24px auto 0;
+      background: var(--camel);
+    }
+    #testimonials .testimonial-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    #testimonials .testimonial {
+      min-height: 330px;
+      padding: 34px;
+      border: 1px solid #f0e7df;
+      border-radius: 8px;
+      color: var(--forest);
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: none;
+    }
+    #testimonials .testimonial::before {
+      color: #e3d8ce;
+    }
+    #testimonials .testimonial .quote {
+      font-size: 1rem;
+      line-height: 1.7;
+      text-transform: uppercase;
+    }
+    #testimonials .rating-strip {
+      display: none;
+    }
+
+    #why {
+      padding: 84px 0 0;
+      background: #fff8f3;
+    }
+    #why .section-head {
+      margin-bottom: 62px;
+      text-align: center;
+    }
+    #why .section-head .eyebrow,
+    #why .section-head .hindi-line,
+    #why .section-head > p:last-child,
+    #why .proverb-card {
+      display: none;
+    }
+    #why .section-head h2 {
+      color: var(--forest);
+      font-family: var(--sans);
+      font-size: 3rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    #why .section-head h2::after {
+      content: "";
+      width: 96px;
+      height: 4px;
+      display: block;
+      margin: 24px auto 0;
+      background: var(--camel);
+    }
+    #why .why-grid {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      background: #fff4e4;
+    }
+    #why .why-card {
+      min-height: 146px;
+      padding: 0 18px 20px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+    #why .why-card:nth-child(n+5) {
+      display: none;
+    }
+    #why .why-icon {
+      width: 62px;
+      height: 62px;
+      margin: -31px auto 14px;
+      border: 1px solid #eee7df;
+      border-radius: 50%;
+      color: var(--forest);
+      background: #fff;
+      box-shadow: 0 4px 10px rgba(15, 53, 34, 0.12);
+    }
+    #why .why-card h3 {
+      color: var(--forest);
+      font-family: var(--serif);
+      font-size: 1.08rem;
+    }
+    #why .why-card .hindi-line {
+      display: none;
+    }
+    #why .why-card p:last-child {
+      color: var(--camel);
+      font-size: 0.66rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .journey-section {
+      position: relative;
+      min-height: 540px;
+      display: grid;
+      align-items: center;
+      overflow: hidden;
+      color: #fff;
+      background: var(--forest);
+    }
+    .journey-section > img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.68;
+    }
+    .journey-copy {
+      position: relative;
+      z-index: 2;
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      display: grid;
+      justify-items: end;
+    }
+    .journey-panel {
+      width: min(540px, 100%);
+      padding: 38px;
+      border: 1px solid rgba(255,255,255,0.28);
+      border-radius: 8px;
+      background: rgba(23, 70, 45, 0.84);
+    }
+    .journey-panel span {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .journey-panel h2 {
+      margin-top: 10px;
+      font-family: var(--serif);
+      font-size: 2.5rem;
+      line-height: 1.1;
+    }
+    .journey-panel p {
+      margin-top: 16px;
+      color: rgba(255,255,255,0.82);
+    }
+
+    .site-footer {
+      color: #fff;
+      background: var(--forest-deep);
+    }
+    .site-footer .footer-strip {
+      background-color: #fff8ed;
+      opacity: 0.94;
+    }
+
+    @media (max-width: 980px) {
+      .site-header .nav {
+        width: calc(100% - 28px);
+      }
+      .hero-inner {
+        width: calc(100% - 42px);
+        grid-template-columns: minmax(390px, 1.14fr) minmax(310px, 0.86fr);
+      }
+      .hero-brand-line {
+        font-size: 58px;
+      }
+      .hero h1.hero-title {
+        font-size: 48px;
+      }
+      .featured-grid {
+        grid-template-columns: minmax(320px, 380px);
+        justify-content: center;
+      }
+      .story-reel {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 820px) {
+      .featured-product-layout {
+        width: min(620px, calc(100% - 30px));
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      .featured-product-media {
+        width: min(100%, 420px);
+        margin: 0 auto;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .site-header .nav {
+        width: calc(100% - 20px);
+        min-height: 68px;
+      }
+      .site-header .brand > span:not(.brand-logo-mark) {
+        display: none;
+      }
+      .site-header .brand {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+      .site-header .brand img,
+      .site-header .brand-logo-mark {
+        width: 52px;
+        height: 52px;
+        filter: drop-shadow(0 5px 10px rgba(15, 53, 34, 0.2));
+      }
+      .site-header.is-scrolled .brand img,
+      .site-header.is-scrolled .brand-logo-mark {
+        width: 42px;
+        height: 42px;
+      }
+      .site-header .profile-button,
+      .site-header .cart-button,
+      .site-header .mobile-menu-button {
+        height: 42px;
+        min-height: 42px;
+      }
+      .site-header .profile-button {
+        width: auto;
+        min-width: 42px;
+        padding: 0 11px;
+      }
+      .site-header .cart-button,
+      .site-header .mobile-menu-button {
+        width: 42px;
+      }
+      .site-header .profile-button span,
+      .site-header .profile-button span:not(.profile-name) {
+        display: inline;
+      }
+      .hero {
+        min-height: 100svh;
+        height: auto;
+        max-height: none;
+        padding-bottom: 18px;
+        background-image: url("{{ url_for('static', filename='img/naivedyam-product-hero-mobile-20260729.png') }}");
+        background-position: center;
+      }
+      .hero-inner {
+        display: grid;
+        width: calc(100% - 28px);
+        height: auto;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+        gap: 14px;
+        padding: 86px 0 8px;
+      }
+      .hero-copy-block {
+        grid-column: 1;
+        grid-row: 1;
+        align-self: auto;
+        justify-self: center;
+        width: 100%;
+        text-align: center;
+        transform: none;
+      }
+      .hero-brand-line {
+        display: inline;
+        font-size: 21px;
+        line-height: 1;
+      }
+      .hero-brand-line + .hero-brand-line::before {
+        content: " ";
+      }
+      .hero h1.hero-title {
+        max-width: 100%;
+        margin: 13px auto 0;
+        font-family: var(--serif);
+        font-size: 40px;
+        font-weight: 700;
+        line-height: 0.95;
+        white-space: nowrap;
+      }
+      .hero h1.hero-title span {
+        display: block;
+        white-space: nowrap;
+      }
+      .hero-origin {
+        min-height: 34px;
+        margin-top: 16px;
+        padding: 0 16px;
+        border-radius: 8px;
+        font-size: 0.82rem;
+      }
+      .hero-product-stage {
+        grid-column: 1;
+        grid-row: 2;
+        height: auto;
+        align-self: auto;
+        justify-items: center;
+      }
+      .hero-product {
+        width: min(60vw, 278px);
+        height: auto;
+        max-width: none;
+        max-height: none;
+        aspect-ratio: 1024 / 1537;
+        margin-bottom: 0;
+        justify-self: center;
+      }
+      .hero-mobile-shop {
+        grid-column: 1;
+        grid-row: 3;
+        width: min(74vw, 310px);
+        min-height: 64px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        justify-self: center;
+        gap: 16px;
+        border-radius: 8px;
+        color: #fff;
+        background: var(--forest-deep);
+        font-size: 1.18rem;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+      .hero-mobile-benefits {
+        grid-column: 1;
+        grid-row: 4;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 4px;
+        padding: 12px 6px 10px;
+        background: rgba(249, 218, 159, 0.94);
+      }
+      .hero-mobile-benefit {
+        min-width: 0;
+        display: grid;
+        justify-items: center;
+        gap: 7px;
+        color: var(--forest-deep);
+        font-size: 0.7rem;
+        font-weight: 900;
+        line-height: 1.15;
+        text-align: center;
+        text-transform: uppercase;
+      }
+      .hero-mobile-benefit-icon {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border: 1px solid #b98a36;
+        border-radius: 50%;
+      }
+      .whatsapp {
+        display: none;
+      }
+      .heritage-marquee {
+        min-height: 52px;
+      }
+      .heritage-marquee span {
+        gap: 24px;
+        padding-right: 24px;
+        font-size: 0.82rem;
+      }
+      .collection-section {
+        padding: 50px 0 58px;
+      }
+      .collection-inner {
+        width: calc(100% - 18px);
+      }
+      .collection-head h2,
+      .reference-section-head h2,
+      #testimonials .section-head h2,
+      #why .section-head h2 {
+        font-size: 2rem;
+      }
+      .featured-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .feature-media {
+        aspect-ratio: 1;
+      }
+      .featured-product-layout {
+        width: 100%;
+        gap: 24px;
+      }
+      .featured-product-media {
+        width: min(100%, 340px);
+      }
+      .featured-product-details h3 {
+        font-size: 2.4rem;
+      }
+      .featured-product-actions {
+        display: grid;
+        grid-template-columns: 138px minmax(0, 1fr);
+      }
+      .featured-remove-button {
+        grid-column: 1 / -1;
+      }
+      .story-social {
+        padding: 54px 0 62px;
+      }
+      .story-social-inner {
+        width: calc(100% - 24px);
+      }
+      .instagram-section-head {
+        align-items: start;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .instagram-section-head.reference-section-head {
+        margin-bottom: 24px;
+      }
+      .instagram-profile-link {
+        margin-bottom: 0;
+      }
+      .account-modal-overlay {
+        place-items: end center;
+        padding: 0;
+        background: rgba(19, 22, 20, 0.62);
+        backdrop-filter: blur(8px);
+      }
+      .account-modal {
+        width: 100%;
+        max-width: none;
+        height: auto;
+        max-height: calc(100svh - 72px);
+        aspect-ratio: auto;
+        grid-template-columns: 1fr;
+        grid-template-rows: 112px auto;
+        overflow-y: auto;
+        border: 0;
+        border-radius: 32px 32px 0 0;
+        background: #fff;
+        box-shadow: 0 -18px 52px rgba(10, 28, 19, 0.26);
+        animation: mobileAccountSheetIn 280ms ease forwards;
+      }
+      @keyframes mobileAccountSheetIn {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+      }
+      .account-brand-panel {
+        min-height: 112px;
+        height: 112px;
+        display: grid;
+        align-content: center;
+        padding: 16px 24px;
+        background-position: 18% 58%;
+      }
+      .account-brand-panel::before {
+        height: 100%;
+        background: rgba(15, 53, 34, 0.48);
+      }
+      .account-brand-copy {
+        width: 100%;
+        max-width: none;
+        text-align: center;
+      }
+      .account-brand-copy > span:not(.account-mobile-welcome),
+      .account-brand-copy h2,
+      .account-brand-rule,
+      .account-brand-copy p {
+        display: none;
+      }
+      .account-brand-copy .account-mobile-welcome {
+        display: block !important;
+        margin: 0;
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 900;
+        line-height: 1.3;
+        text-transform: uppercase;
+      }
+      .account-modal-content {
+        position: relative;
+        align-items: stretch;
+        padding: 18px 16px 28px;
+        overflow: visible;
+        text-align: left;
+      }
+      .account-modal-head {
+        position: absolute;
+        top: -96px;
+        right: 16px;
+        width: auto;
+        z-index: 4;
+      }
+      .account-modal-identity {
+        display: none;
+      }
+      .account-modal .close-button {
+        width: 36px;
+        height: 36px;
+        border-color: rgba(255, 255, 255, 0.72);
+        color: var(--forest);
+        background: rgba(255, 255, 255, 0.9);
+      }
+      .account-modal-ornament {
+        display: none;
+      }
+      .account-modal-content > h2 {
+        max-width: 330px;
+        margin-top: 0;
+        font-size: 2.1rem;
+        line-height: 1;
+      }
+      .account-modal-copy {
+        margin-top: 8px;
+        font-size: 0.78rem;
+      }
+      .account-actions {
+        margin-top: 18px;
+      }
+      .google-login-button,
+      .account-history-button,
+      .account-signout-button {
+        min-height: 48px;
+        border-radius: 10px;
+        font-size: 0.68rem;
+      }
+      .account-trust {
+        display: none;
+      }
+      .account-trust-icon {
+        width: 44px;
+        height: 44px;
+      }
+      .account-trust-item {
+        font-size: 0.64rem;
+      }
+      .story-reel {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+      }
+      .story-card {
+        min-width: 78%;
+        scroll-snap-align: start;
+      }
+      .instagram-reel-card {
+        min-width: 82%;
+        scroll-snap-align: start;
+      }
+      #testimonials {
+        padding: 58px 0 64px;
+      }
+      #testimonials .testimonial-grid {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+      }
+      #testimonials .testimonial {
+        min-width: 88%;
+        min-height: 310px;
+        scroll-snap-align: start;
+      }
+      #why {
+        padding-top: 66px;
+      }
+      #why .section-head {
+        margin-bottom: 54px;
+      }
+      #why .why-grid {
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: 32px;
+      }
+      #why .why-card {
+        min-height: 154px;
+      }
+      .journey-section {
+        min-height: 570px;
+        align-items: end;
+      }
+      .journey-copy {
+        width: calc(100% - 24px);
+        padding-bottom: 18px;
+      }
+      .journey-panel {
+        padding: 24px;
+      }
+      .journey-panel h2 {
+        font-size: 2rem;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .hero h1.hero-title {
+        font-size: 36px;
+      }
+    }
+
+    @media (max-width: 340px) {
+      .hero h1.hero-title {
+        font-size: 32px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="petal-field" aria-hidden="true">
-    <span class="petal" style="--x:7%;--duration:17s;--delay:-2s;--drift:44px;--size:13px"></span>
-    <span class="petal gold" style="--x:14%;--duration:20s;--delay:-9s;--drift:-36px;--size:11px"></span>
-    <span class="petal" style="--x:24%;--duration:18s;--delay:-5s;--drift:72px;--size:15px"></span>
-    <span class="petal gold" style="--x:36%;--duration:21s;--delay:-12s;--drift:-58px;--size:12px"></span>
-    <span class="petal" style="--x:47%;--duration:16s;--delay:-7s;--drift:42px;--size:10px"></span>
-    <span class="petal gold" style="--x:58%;--duration:22s;--delay:-15s;--drift:-46px;--size:14px"></span>
-    <span class="petal" style="--x:68%;--duration:19s;--delay:-3s;--drift:64px;--size:13px"></span>
-    <span class="petal gold" style="--x:79%;--duration:18s;--delay:-11s;--drift:-32px;--size:11px"></span>
-    <span class="petal" style="--x:90%;--duration:23s;--delay:-8s;--drift:-78px;--size:15px"></span>
-  </div>
-  <div class="announcement" aria-label="Pulps and Leaves updates">
-    <div class="announcement-track">
-      <span>FREE DELIVERY on orders above Rs 699 - Bihar to your doorstep</span>
-      <span>बिहार की शुद्धता, आपके घर तक - Naivedyam Makhana is live</span>
-      <span>Tea launching soon - Mango season has ended for this harvest</span>
-    </div>
-  </div>
 
   <header class="site-header">
     <div class="container nav" data-nav>
       <a class="brand" href="#home" aria-label="Pulps and Leaves home">
-        <img src="{{ url_for('static', filename='img/logo-120.webp') }}" alt="Pulps and Leaves logo" width="120" height="120">
+        <span class="brand-logo-mark" role="img" aria-label="Pulps and Leaves logo">
+          <span class="brand-logo-monogram"><b>P</b><i>&amp;</i><b>L</b></span>
+          <span class="brand-logo-caption">PULPS &amp; LEAVES</span>
+        </span>
         <span>
           <strong>Pulps &amp; Leaves</strong>
           <small>पल्प्स एंड लीव्स</small>
@@ -2148,172 +4115,116 @@
 
   <main>
     <section class="hero" id="home">
-      <picture class="hero-picture">
-        <source srcset="{{ url_for('static', filename='img/pl-makhana-market-hero-720.avif') }} 720w, {{ url_for('static', filename='img/pl-makhana-market-hero-1200.avif') }} 1200w" sizes="100vw" type="image/avif">
-        <source srcset="{{ url_for('static', filename='img/pl-makhana-market-hero-720.webp') }} 720w, {{ url_for('static', filename='img/pl-makhana-market-hero-1200.webp') }} 1200w" sizes="100vw" type="image/webp">
-        <img src="{{ url_for('static', filename='img/pl-makhana-market-hero-1200.webp') }}" alt="Pulps and Leaves makhana market hero" width="1200" height="675" fetchpriority="high" decoding="async">
-      </picture>
-      <div class="madhubani-band top" aria-hidden="true"></div>
-      <div class="hero-frame" aria-hidden="true"></div>
+      <div class="hero-noise" aria-hidden="true"></div>
       <div class="container hero-inner">
-        <div class="hero-mark" aria-hidden="true">
-          <svg viewBox="0 0 80 80">
-            <!-- diya base -->
-            <ellipse cx="40" cy="60" rx="18" ry="5" fill="#8b4513" opacity=".5"/>
-            <!-- bowl outer -->
-            <path d="M16 48 Q16 62 40 62 Q64 62 64 48 L60 42 Q58 46 40 46 Q22 46 20 42 Z" fill="#cd6839"/>
-            <!-- bowl rim highlight -->
-            <ellipse cx="40" cy="45" rx="21" ry="5.5" fill="#e2725b"/>
-            <!-- bowl inner shadow -->
-            <ellipse cx="40" cy="45" rx="17" ry="4" fill="#b85530"/>
-            <!-- oil -->
-            <ellipse cx="40" cy="44" rx="14" ry="3" fill="#d4940c" opacity=".8"/>
-            <!-- spout right -->
-            <path d="M61 45 Q66 43 69 40" stroke="#cd6839" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <!-- spout left -->
-            <path d="M19 45 Q14 43 11 40" stroke="#cd6839" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <!-- wick -->
-            <rect x="39" y="34" width="2.5" height="10" rx="1.2" fill="#c8a876"/>
-            <!-- flame outer -->
-            <path class="flame" d="M40.2 18 C36 24 34 30 37.5 35 Q40.2 37 42.8 35 C46 30 44 24 40.2 18Z" fill="#fcd34d"/>
-            <!-- flame inner -->
-            <path class="flame flame-small" d="M40.2 22 C38 26 37 31 39.2 34 Q40.2 35 41.2 34 C43 31 42 26 40.2 22Z" fill="#fff" opacity=".8"/>
-            <!-- glow -->
-            <circle cx="40" cy="30" r="12" fill="#fcd34d" opacity=".1"/>
-          </svg>
+        <div class="hero-copy-block">
+          <span class="hero-brand-line">Pulps &amp;</span>
+          <span class="hero-brand-line">Leaves</span>
+          <h1 class="hero-title">Naivedyam <span>Makhana</span></h1>
+          <p class="hero-origin">Bihar to every home</p>
         </div>
-        <h1>Pulps &amp; Leaves</h1>
-        <p class="hero-subtitle">बिहार की आत्मा, हर दाने में</p>
-        <p class="hero-english">The Soul of Bihar in Every Bite</p>
-        <p class="hero-copy">Naivedyam Plain Makhana brings lotus-pond heritage into a clean modern snack. Mango season has ended, and our tea collection is launching soon.</p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#product">Shop The Harvest</a>
-          <a class="btn btn-secondary" href="#about">Our Story</a>
+        <div class="hero-product-stage">
+          <img
+            class="hero-product"
+            src="{{ url_for('static', filename='img/naivedyam-front-200g-cutout-20260729.png') }}"
+            alt="Pulps and Leaves Naivedyam Makhana front pouch"
+            width="1024"
+            height="1537"
+            fetchpriority="high"
+            decoding="async">
         </div>
-        <div class="trust-row" aria-label="Product highlights">
-          <span>Bihar grown</span>
-          <span>100% natural</span>
-          <span>No preservatives</span>
-          <span>Tea launching soon</span>
+        <a class="hero-mobile-shop" href="#product">
+          <span>Shop now</span>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <div class="hero-mobile-benefits" aria-label="Product benefits">
+          <div class="hero-mobile-benefit">
+            <span class="hero-mobile-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M19 3C12 4 7 8 6 15c4 1 9-2 13-12ZM6 15c-1 2-1 4-1 6m3-8c2 0 4 1 5 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            <span>100%<br>Natural</span>
+          </div>
+          <div class="hero-mobile-benefit">
+            <span class="hero-mobile-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 3v18M7 7c2 0 5 2 5 5-3 0-5-2-5-5Zm10 6c-2 0-5 2-5 5 3 0 5-2 5-5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span>Gluten<br>Free</span>
+          </div>
+          <div class="hero-mobile-benefit">
+            <span class="hero-mobile-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M5 12h14c0 4-3 7-7 7s-7-3-7-7Zm3-5c0-2 2-2 2-4m4 4c0-2 2-2 2-4M7 21h10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            <span>Roasted<br>Not Fried</span>
+          </div>
         </div>
       </div>
-      <div class="scroll-cue" aria-hidden="true">
-        <span>Scroll</span>
-        <svg viewBox="0 0 24 24"><path d="M12 5v13m0 0 5-5m-5 5-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="madhubani-band bottom" aria-hidden="true"></div>
+      <a class="hero-scroll" href="#product">
+        <span>Explore the harvest</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v13m0 0 5-5m-5 5-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
     </section>
 
-    <section class="section section-light" id="about">
-      <div class="container about-grid">
-        <div class="about-media" data-reveal="left">
-          <picture>
-            <source srcset="{{ url_for('static', filename='img/mithila-harvest-720.avif') }}" type="image/avif">
-            <source srcset="{{ url_for('static', filename='img/mithila-harvest-720.webp') }}" type="image/webp">
-            <img src="{{ url_for('static', filename='img/mithila-harvest-720.webp') }}" alt="Mithila wetland makhana harvest in Bihar" width="720" height="720" loading="lazy" decoding="async">
-          </picture>
-        </div>
-        <div class="story-copy" data-reveal="right">
-          <span class="eyebrow">Our Story</span>
-          <h2>From Bihar ponds to your pantry.</h2>
+    <section class="heritage-marquee" aria-label="Product highlights">
+      <div class="heritage-marquee-track">
+        <span>Make in India</span><span>100% Natural</span><span>Gluten Free</span><span>Protein Rich</span><span>Roasted, Not Fried</span><span>Farm to Table</span>
+        <span aria-hidden="true">Make in India</span><span aria-hidden="true">100% Natural</span><span aria-hidden="true">Gluten Free</span><span aria-hidden="true">Protein Rich</span><span aria-hidden="true">Roasted, Not Fried</span><span aria-hidden="true">Farm to Table</span>
+      </div>
+    </section>
+
+    <section class="journey-section" id="about">
+      <img src="{{ url_for('static', filename='img/mithila-harvest-720.webp') }}" alt="Traditional makhana harvest in the lotus ponds of Mithila" width="720" height="720" loading="lazy" decoding="async">
+      <div class="journey-copy">
+        <article class="journey-panel" data-reveal>
+          <span>Beyond borders</span>
+          <h2>Our journey from Bihar to every home.</h2>
+          <p>Pulps &amp; Leaves begins in the lotus ponds of Mithila, where makhana is still worked by hand. Naivedyam carries that craft into a clean, modern pouch without hiding where it came from.</p>
           <p class="hindi-line">"जल का मोती, मिथिला की शान"</p>
-          <p>Pulps &amp; Leaves is built around foods that carry memory: makhana from wetland craft, mangoes when the season is right, and tea that is preparing for its first launch.</p>
-          <p>Right now, Naivedyam Makhana is the live harvest. Mango season has ended for this year, so we are keeping it honest and seasonal.</p>
-          <div class="story-stats">
-            <span><strong>1</strong><small>ingredient</small></span>
-            <span><strong>0</strong><small>preservatives</small></span>
-            <span><strong>4</strong><small>delivery cities</small></span>
-          </div>
-        </div>
+        </article>
       </div>
     </section>
 
-    <section class="section section-soft" id="product">
-      <div class="container">
-        <div class="section-head" data-reveal>
-          <span class="eyebrow">The Harvest</span>
-          <h2>Plain Roasted Makhana</h2>
-          <p class="hindi-line">सादा भुना मखाना - बिहार की देन</p>
-          <p>One clean pouch. Slow-roasted crunch. A snack that belongs equally in a puja thaal, office drawer, and family movie night.</p>
-        </div>
-
-        <div class="product-grid">
-          <div class="product-visual" data-reveal="left">
-            <picture>
-              <source srcset="{{ url_for('static', filename='img/makhana-naivedyam-420-20260704.avif') }} 420w, {{ url_for('static', filename='img/makhana-naivedyam-700-20260704.avif') }} 700w" sizes="(max-width: 640px) 92vw, 520px" type="image/avif">
-              <source srcset="{{ url_for('static', filename='img/makhana-naivedyam-420-20260704.webp') }} 420w, {{ url_for('static', filename='img/makhana-naivedyam-700-20260704.webp') }} 700w" sizes="(max-width: 640px) 92vw, 520px" type="image/webp">
-              <img src="{{ url_for('static', filename='img/makhana-naivedyam-700-20260704.webp') }}" alt="Pulps and Leaves Naivedyam Makhana pouch" width="700" height="969" loading="lazy" decoding="async">
-            </picture>
-            <div class="discount-badge"><span>Save<br>22%</span></div>
+    <section class="collection-section" id="product">
+      <div class="collection-inner">
+        {% for product in products %}
+        <article class="featured-product-layout"
+            data-product
+            data-id="{{ product.slug }}"
+            data-name="{{ product.display_title }} {{ product.unit }}"
+            data-category="{{ product.category }}"
+            data-variant="{{ product.unit }}"
+            data-price="{{ product.price }}"
+            data-mrp="{{ product.mrp }}"
+            data-image="{{ url_for('static', filename='img/naivedyam-front-200g-cutout-20260729.png') }}">
+          <div class="featured-product-media">
+              <img src="{{ url_for('static', filename='img/naivedyam-front-200g-cutout-20260729.png') }}" alt="Pulps and Leaves Naivedyam Makhana 200g pouch" width="1024" height="1537" loading="lazy" decoding="async">
           </div>
 
-          <div class="product-copy" data-reveal="right">
-            <div class="badge-row">
-              <span>Naturally roasted</span>
-              <span>Gluten free</span>
-              <span>No preservatives</span>
+          <div class="featured-product-details">
+            <span class="product-detail-kicker">Plain roasted • 200g pack</span>
+            <h3>{{ product.display_title }}</h3>
+            <p class="hindi-line">सादा भुना मखाना</p>
+            <p class="product-detail-copy">{{ product.description }}. Light, crunchy, nutritious, and prepared without frying or preservatives.</p>
+            <div class="featured-price">
+              <strong>Rs {{ product.price }}</strong>
+              <span>Inclusive of taxes</span>
+            </div>
+            <div class="product-highlight-row" aria-label="Product highlights">
               <span>100% natural</span>
+              <span>Gluten free</span>
+              <span>Roasted, not fried</span>
             </div>
-
-            {% for product in products %}
-            <article class="variant-card"
-              data-product
-              data-id="{{ product.slug }}"
-              data-name="{{ product.display_title }} {{ product.unit }}"
-              data-category="{{ product.category }}"
-              data-variant="{{ product.unit }}"
-              data-price="{{ product.price }}"
-              data-mrp="{{ product.mrp }}"
-              data-image="{{ url_for('static', filename='img/makhana-naivedyam-420-20260704.webp') }}">
-              <span class="variant-label">Select pack size</span>
-              <h2>{{ product.display_title }}</h2>
-              <p class="hindi-line">सादा भुना मखाना</p>
-              <p>{{ product.description }}. {{ product.pieces_label }} for daily snacking, family sharing, and festive gifting.</p>
-              <div class="price-row">
-                <strong>Rs {{ product.price }}</strong>
-                <s>Rs {{ product.mrp }}</s>
-                <em>{{ product.availability_label }}</em>
+            <div class="featured-product-actions">
+              <div class="featured-stepper" aria-label="Quantity in bag">
+                <button type="button" data-feature-minus="{{ product.slug }}" aria-label="Remove one pouch from bag" title="Remove one">−</button>
+                <span data-feature-quantity="{{ product.slug }}" aria-live="polite">0</span>
+                <button type="button" data-add-product="{{ product.slug }}" aria-label="Add one pouch to bag" title="Add one">+</button>
               </div>
-              <div class="nutrition-grid" aria-label="Nutrition highlights">
-                <span><strong>9g</strong><small>protein</small></span>
-                <span><strong>350</strong><small>kcal</small></span>
-                <span><strong>0g</strong><small>trans fat</small></span>
-                <span><strong>1</strong><small>ingredient</small></span>
-              </div>
-              <div class="qty-row">
-                <button class="btn add-button" type="button" data-add-product="{{ product.slug }}">Add to Cart</button>
-              </div>
-            </article>
-            {% endfor %}
-
-            <div class="soon-grid">
-              <article class="soon-card">
-                <picture>
-                  <source srcset="{{ url_for('static', filename='img/tea-240.avif') }} 240w, {{ url_for('static', filename='img/tea-420.avif') }} 420w" sizes="90px" type="image/avif">
-                  <img src="{{ url_for('static', filename='img/tea-240.webp') }}" alt="Pulps and Leaves tea" width="240" height="240" loading="lazy" decoding="async">
-                </picture>
-                <div>
-                  <strong>Tea Collection</strong>
-                  <p class="hindi-line">चाय जल्द लॉन्च हो रही है</p>
-                  <p>Tea is launching soon with Pulps &amp; Leaves.</p>
-                  <span class="soon-tag">Launching soon</span>
-                </div>
-              </article>
-              <article class="soon-card">
-                <picture>
-                  <source srcset="{{ url_for('static', filename='img/5kg-240.avif') }} 240w, {{ url_for('static', filename='img/5kg-420.avif') }} 420w" sizes="90px" type="image/avif">
-                  <img src="{{ url_for('static', filename='img/5kg-240.webp') }}" alt="Pulps and Leaves mango box" width="240" height="160" loading="lazy" decoding="async">
-                </picture>
-                <div>
-                  <strong>Malda Mangoes</strong>
-                  <p class="hindi-line">आम का मौसम समाप्त हो गया है</p>
-                  <p>Mango season has ended. Mango boxes return next harvest.</p>
-                  <span class="soon-tag">Season ended</span>
-                </div>
-              </article>
+              <button class="featured-add-button" type="button" data-add-product="{{ product.slug }}">
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <span data-feature-add-label="{{ product.slug }}">Add to Bag</span>
+              </button>
+              <button class="featured-remove-button" type="button" data-feature-remove="{{ product.slug }}" disabled>
+                <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m3 0-1 14H7L6 7m4 4v6m4-6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Remove from Bag</span>
+              </button>
             </div>
           </div>
-        </div>
+        </article>
+        {% endfor %}
       </div>
     </section>
 
@@ -2321,34 +4232,34 @@
       <div class="container">
         <div class="section-head" data-reveal>
           <span class="eyebrow">Why Makhana</span>
-          <h2>Why Choose Makhana?</h2>
+          <h2>Why Choose Pulps &amp; Leaves?</h2>
           <p class="hindi-line">मखाना क्यों खाएं?</p>
           <p>Ancient wisdom, confirmed by modern science. Bihar's secret superfood for millennia.</p>
         </div>
         <div class="why-grid">
           <article class="why-card" data-reveal style="--reveal-delay:0ms">
             <div class="why-icon"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 21C7 16 5 12 5 8a7 7 0 0 1 14 0c0 4-2 8-7 13Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9 9h6M9 13h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-            <h3>Protein Powerhouse</h3>
+            <h3>100% Natural</h3>
             <p class="hindi-line">प्रोटीन का भंडार</p>
-            <p>Plant-powered protein for steady snacking, fasting days, and everyday pantry bowls.</p>
+            <p>Purely natural</p>
           </article>
           <article class="why-card" data-reveal style="--reveal-delay:80ms">
             <div class="why-icon"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 3v18M5 10c4 0 7-3 7-7 0 4 3 7 7 7M5 14c4 0 7 3 7 7 0-4 3-7 7-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-            <h3>Heart Healthy</h3>
+            <h3>Sourced from Bihar</h3>
             <p class="hindi-line">हृदय के लिए लाभकारी</p>
-            <p>Light, low-fat crunch that feels clean after evening chai or a workday break.</p>
+            <p>Mithila's finest</p>
           </article>
           <article class="why-card" data-reveal style="--reveal-delay:160ms">
             <div class="why-icon"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M4 17c4-8 12-8 16 0M6 17h12M8 13l-2-4h12l-2 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <h3>Antioxidant Rich</h3>
+            <h3>Hygienic Packaging</h3>
             <p class="hindi-line">एंटीऑक्सीडेंट से भरपूर</p>
-            <p>Naturally nourishing fox nuts, roasted simply without a complicated ingredient list.</p>
+            <p>Safe and clean</p>
           </article>
           <article class="why-card" data-reveal style="--reveal-delay:240ms">
             <div class="why-icon"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M4 8h16v12H4zM8 8V5h8v3M8 13h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
-            <h3>Ayurvedic Superfood</h3>
+            <h3>Healthy Snacking</h3>
             <p class="hindi-line">आयुर्वेदिक औषधि</p>
-            <p>A traditional sattvic food loved across homes, festivals, and mindful diets.</p>
+            <p>Nutritious snack</p>
           </article>
           <article class="why-card" data-reveal style="--reveal-delay:320ms">
             <div class="why-icon"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M6 19c3-8 9-12 12-14 0 9-4 14-12 14Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M6 19c3-4 6-6 10-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
@@ -2370,67 +4281,32 @@
       </div>
     </section>
 
-    <section class="section section-dark" id="culture">
-      <div class="container">
-        <div class="section-head" data-reveal>
-          <span class="eyebrow">Heritage &amp; Tradition</span>
-          <h2>Makhana is ceremony, memory, and Bihar.</h2>
-          <p class="hindi-line">संस्कृति और विरासत</p>
-          <p>Makhana is ceremony, memory, and Bihar identity. Pulps &amp; Leaves keeps that story visible.</p>
-        </div>
-        <div class="heritage-grid">
-          <article class="heritage-card" data-reveal style="--reveal-delay:0ms">
-            <svg viewBox="0 0 60 60" aria-hidden="true"><path d="M30 50Q15 38 15 25C15 15 22 8 30 6c8 2 15 9 15 19q0 13-15 25Z" fill="currentColor" opacity=".2" stroke="currentColor" stroke-width="1.5"/><circle cx="30" cy="28" r="4" fill="currentColor"/></svg>
-            <h3>Chhath Puja</h3>
-            <p class="hindi-line">छठ पूजा</p>
-            <p>During Bihar's most sacred festival, makhana is offered as pure prasad and shared with family.</p>
+    <section class="story-social" id="culture">
+      <div class="story-social-inner">
+        <header class="reference-section-head instagram-section-head" data-reveal>
+          <h2>Instagram <em>Feed</em></h2>
+          <a class="instagram-profile-link" href="https://www.instagram.com/pulpsandleaves/" target="_blank" rel="noopener noreferrer" aria-label="Follow Pulps and Leaves on Instagram">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.8" r="1" fill="currentColor"/></svg>
+            <span>@pulpsandleaves</span>
+          </a>
+        </header>
+        <div class="story-reel">
+          <article class="instagram-reel-card" data-reveal>
+            <iframe src="https://www.instagram.com/reel/DaC2pNKIS1X/embed/" title="Pulps and Leaves Instagram reel about Bihar makhana" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
           </article>
-          <article class="heritage-card" data-reveal style="--reveal-delay:120ms">
-            <svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="20" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="30" cy="30" r="8" fill="currentColor" opacity=".45"/><path d="M30 6v10M30 44v10M6 30h10M44 30h10M13 13l7 7M40 40l7 7M47 13l-7 7M20 40l-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-            <h3>Madhubani Art</h3>
-            <p class="hindi-line">मधुबनी चित्रकला</p>
-            <p>Mithila folk patterns and lotus motifs shape the visual language of Pulps &amp; Leaves.</p>
+          <article class="instagram-reel-card" data-reveal style="--reveal-delay:70ms">
+            <iframe src="https://www.instagram.com/reel/DZns3EUoSx8/embed/" title="Pulps and Leaves Instagram reel" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
           </article>
-          <article class="heritage-card" data-reveal style="--reveal-delay:240ms">
-            <svg viewBox="0 0 60 60" aria-hidden="true"><path d="M30 50Q20 42 20 28c0-10 5-16 10-19 5 3 10 9 10 19q0 14-10 22Z" fill="currentColor" opacity=".18" stroke="currentColor" stroke-width="1.5"/><path d="M18 18q12 10 24 0M18 30q12 10 24 0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-            <h3>Lotus Ponds of Darbhanga</h3>
-            <p class="hindi-line">दरभंगा के कमल तालाब</p>
-            <p>Farmers still work the cold wetlands by hand, preserving the pond-to-pop craft.</p>
+          <article class="instagram-reel-card" data-reveal style="--reveal-delay:140ms">
+            <iframe src="https://www.instagram.com/reel/DZaqgibI0gj/embed/" title="Pulps and Leaves Instagram reel" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
           </article>
-        </div>
-        <div class="heritage-quote" data-reveal>
-          <p class="hindi-line">"मखाना बिहार की पहचान है,<br>हमारे पूर्वजों की देन है।"</p>
-          <p>"Makhana is Bihar's identity - a gift from our ancestors."</p>
+          <article class="instagram-reel-card" data-reveal style="--reveal-delay:210ms">
+            <iframe src="https://www.instagram.com/reel/DY5DhX2IOzl/embed/" title="Pulps and Leaves Instagram reel" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+          </article>
         </div>
       </div>
     </section>
 
-    <section class="section section-soft" id="testimonials">
-      <div class="container">
-        <div class="section-head" data-reveal>
-          <span class="eyebrow">Their Words</span>
-          <h2>Stories from snackers.</h2>
-        </div>
-        <div class="testimonial-grid">
-          <article class="testimonial" data-reveal style="--reveal-delay:0ms">
-            <p class="quote">"The crunch is light enough for evening tea and clean enough for the kids' snack box."</p>
-            <p class="hindi-line">घर जैसा स्वाद</p>
-            <div class="person"><span class="avatar">A</span><span><strong>Ananya</strong><small>Bengaluru</small></span></div>
-          </article>
-          <article class="testimonial" data-reveal style="--reveal-delay:120ms">
-            <p class="quote">"Plain makhana is exactly what I wanted. Simple, premium, and very easy to keep on the desk."</p>
-            <p class="hindi-line">सादा और शुद्ध</p>
-            <div class="person"><span class="avatar">R</span><span><strong>Rohit</strong><small>Pune</small></span></div>
-          </article>
-          <article class="testimonial" data-reveal style="--reveal-delay:240ms">
-            <p class="quote">"Feels traditional without feeling old-fashioned. It works beautifully in gifting hampers."</p>
-            <p class="hindi-line">बिहार की खुशबू</p>
-            <div class="person"><span class="avatar">M</span><span><strong>Meera</strong><small>Mumbai</small></span></div>
-          </article>
-        </div>
-        <div class="rating-strip"><span class="stars">5.0 *****</span><span>Built for homes that read the label</span></div>
-      </div>
-    </section>
   </main>
 
   <footer class="site-footer">
@@ -2505,7 +4381,6 @@
           </div>
           <div class="cart-items" data-cart-items></div>
           <input type="hidden" name="cart_items" data-cart-input>
-          <input type="hidden" name="coupon_codes" data-coupon-input>
         </section>
 
         <section class="delivery-section">
@@ -2557,22 +4432,6 @@
           </div>
         </div>
 
-        <div class="coupon-field">
-          <span>Apply coupons</span>
-          <div class="coupon-option" data-coupon-option hidden>
-            <div>
-              <strong>LOVEFORMALDA <small>10% OFF</small></strong>
-              <small>Private coupon</small>
-            </div>
-            <button class="coupon-apply-button" type="button" data-coupon-toggle data-coupon-code="LOVEFORMALDA" aria-pressed="false">Apply</button>
-          </div>
-          <div class="coupon-entry-row">
-            <input type="text" data-manual-coupon placeholder="Have a private coupon?">
-            <button type="button" data-manual-coupon-apply>Apply</button>
-          </div>
-          <p class="coupon-note" data-coupon-note>Select a coupon to apply savings.</p>
-        </div>
-
         <div class="summary-line"><span>Items total</span><strong data-summary-subtotal>Rs 0</strong></div>
         <div class="summary-line"><span>Delivery<small>Free on order above Rs 699</small></span><strong data-summary-delivery>Rs 0</strong></div>
         <div class="summary-line" data-savings-line hidden><span>Savings</span><strong data-summary-savings>-Rs 0</strong></div>
@@ -2605,25 +4464,65 @@
 
   <div class="account-modal-overlay" data-account-modal aria-hidden="true">
     <section class="account-modal" role="dialog" aria-modal="true" aria-labelledby="accountModalTitle">
-      <div class="account-modal-head">
-        <h2 id="accountModalTitle" data-account-modal-title>Create your account</h2>
-        <button class="close-button" type="button" data-account-close aria-label="Close account popup">x</button>
+      <div class="account-brand-panel">
+        <div class="account-brand-copy">
+          <span>Pulps &amp; Leaves Family</span>
+          <span class="account-mobile-welcome">Welcome back to the Pulps &amp; Leaves family.</span>
+          <h2>Welcome back to the Pulps &amp; Leaves <em>family.</em></h2>
+          <div class="account-brand-rule" aria-hidden="true"></div>
+          <p>Sign in once for faster checkout and order history connected securely to your Google account.</p>
+        </div>
       </div>
-      <p data-account-modal-copy>Join Pulps &amp; Leaves Family</p>
-      <div class="account-actions">
-        <button class="google-login-button" type="button" data-google-login {% if customer_authenticated %}hidden{% endif %} {% if not google_login_enabled %}disabled{% endif %}>
-          <span class="google-action-copy">Continue with
-            <span class="google-mark google-wordmark" role="img" aria-label="Google">
-              <span class="google-letter google-blue" aria-hidden="true">G</span><span class="google-letter google-red" aria-hidden="true">o</span><span class="google-letter google-yellow" aria-hidden="true">o</span><span class="google-letter google-blue" aria-hidden="true">g</span><span class="google-letter google-green" aria-hidden="true">l</span><span class="google-letter google-red" aria-hidden="true">e</span>
+      <div class="account-modal-content">
+        <div class="account-modal-head">
+          <div class="account-modal-identity">
+            <img src="{{ url_for('static', filename='img/logo-favicon.png') }}" alt="" width="96" height="96">
+            <div>
+              <strong>Pulps &amp; Leaves</strong>
+              <span>Naivedyam Makhana</span>
+            </div>
+          </div>
+          <button class="close-button" type="button" data-account-close aria-label="Close account popup">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <span class="account-modal-kicker">Welcome back</span>
+        <div class="account-modal-ornament" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 20c-1-7 2-12 8-15-1 7-3 12-8 15Zm0 0c-1-5-4-8-8-10 0 5 3 9 8 10Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2 id="accountModalTitle" data-account-modal-title>Your account</h2>
+        <p class="account-modal-copy" data-account-modal-copy>Sign in once to checkout faster and see your order history.</p>
+        <div class="account-actions">
+          <button class="google-login-button" type="button" data-google-login {% if customer_authenticated %}hidden{% endif %} {% if not google_login_enabled %}disabled{% endif %}>
+            <span class="google-button-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18"><path d="M21.6 12.23c0-.72-.06-1.25-.2-1.8H12v3.4h5.52a4.74 4.74 0 0 1-2.05 3.02v2.2h2.84c1.66-1.53 3.29-3.97 3.29-6.82Z" fill="#4285F4"/><path d="M12 22c2.7 0 4.97-.9 6.63-2.45l-3.16-2.7c-.85.58-1.98.98-3.47.98-2.61 0-4.83-1.76-5.62-4.14H3.47v2.27A10 10 0 0 0 12 22Z" fill="#34A853"/><path d="M6.38 13.69A6 6 0 0 1 6.05 12c0-.59.11-1.16.33-1.69V8.04H3.47A10 10 0 0 0 2 12c0 1.43.31 2.78.87 4l3.51-2.31Z" fill="#FBBC05"/><path d="M12 6.17c1.84 0 3.07.8 3.78 1.46l2.91-2.84A9.76 9.76 0 0 0 12 2 10 10 0 0 0 3.47 8.04l2.91 2.27C7.17 7.93 9.39 6.17 12 6.17Z" fill="#EA4335"/></svg>
             </span>
-          </span>
-        </button>
-        <button class="account-history-button" type="button" data-order-history>Order History</button>
-        <button class="account-signout-button" type="button" data-logout hidden>Sign out</button>
-      </div>
-      <div class="order-history-panel" data-order-history-panel>
-        <div class="order-history-status" data-order-history-status>Sign in to see your past orders.</div>
-        <div class="order-history-list" data-order-history-list></div>
+            <span>Continue with Google</span>
+          </button>
+          <button class="account-history-button" type="button" data-order-history>
+            <svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8m0-5v5h5m4-1v5l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-order-history-label>Order History</span>
+          </button>
+          <button class="account-signout-button" type="button" data-logout hidden>Sign out</button>
+        </div>
+        <div class="account-trust" aria-label="Account benefits">
+          <div class="account-trust-item">
+            <span class="account-trust-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Zm-3 9h6v5H9v-5Zm1-1V9a2 2 0 0 1 4 0v2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span>Secure<br>&amp; Private</span>
+          </div>
+          <div class="account-trust-item">
+            <span class="account-trust-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="27" height="27"><path d="M20 4C12 5 7 10 6 18c6 1 12-4 14-14ZM6 18l-2 2m5-5 5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+            <span>Quick<br>&amp; Easy</span>
+          </div>
+          <div class="account-trust-item">
+            <span class="account-trust-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="27" height="27"><path d="m12 3 2 2 3-.2.8 2.8 2.5 1.5-1 2.8 1 2.8-2.5 1.5-.8 2.8-3-.2-2 2-2-2-3 .2-.8-2.8-2.5-1.5 1-2.8-1-2.8 2.5-1.5.8-2.8 3 .2 2-2Zm-3 9 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span>Trusted by<br>Thousands</span>
+          </div>
+        </div>
+        <div class="order-history-panel" data-order-history-panel>
+          <div class="order-history-status" data-order-history-status>Sign in to see your past orders.</div>
+          <div class="order-history-list" data-order-history-list></div>
+        </div>
       </div>
     </section>
   </div>
@@ -2631,11 +4530,11 @@
   <script>
     (() => {
       const nav = document.querySelector("[data-nav]");
+      const siteHeader = document.querySelector(".site-header");
       const drawer = document.querySelector("[data-drawer]");
       const orderForm = document.querySelector("[data-order-form]");
       const cartItemsNode = document.querySelector("[data-cart-items]");
       const cartInput = document.querySelector("[data-cart-input]");
-      const couponInput = document.querySelector("[data-coupon-input]");
       const cartCount = document.querySelector("[data-cart-count]");
       const summarySubtitle = document.querySelector("[data-summary-subtitle]");
       const summarySubtotal = document.querySelector("[data-summary-subtotal]");
@@ -2643,11 +4542,6 @@
       const summarySavings = document.querySelector("[data-summary-savings]");
       const summaryTotal = document.querySelector("[data-summary-total]");
       const savingsLine = document.querySelector("[data-savings-line]");
-      const couponOption = document.querySelector("[data-coupon-option]");
-      const couponToggle = document.querySelector("[data-coupon-toggle]");
-      const couponNote = document.querySelector("[data-coupon-note]");
-      const manualCouponInput = document.querySelector("[data-manual-coupon]");
-      const manualCouponApply = document.querySelector("[data-manual-coupon-apply]");
       const submitButton = document.querySelector("[data-submit-order]");
       const orderResult = document.querySelector("[data-order-result]");
       const toast = document.querySelector("[data-toast]");
@@ -2658,6 +4552,15 @@
       const googleLoginButton = document.querySelector("[data-google-login]");
       const logoutButton = document.querySelector("[data-logout]");
       const orderHistoryButton = document.querySelector("[data-order-history]");
+      const orderHistoryLabel = document.querySelector("[data-order-history-label]");
+
+      function syncSiteHeader() {
+        siteHeader?.classList.toggle("is-scrolled", window.scrollY > Math.min(window.innerHeight * 0.72, 620));
+      }
+
+      window.addEventListener("scroll", syncSiteHeader, { passive: true });
+      window.addEventListener("resize", syncSiteHeader, { passive: true });
+      syncSiteHeader();
       const orderHistoryPanel = document.querySelector("[data-order-history-panel]");
       const orderHistoryStatus = document.querySelector("[data-order-history-status]");
       const orderHistoryList = document.querySelector("[data-order-history-list]");
@@ -2680,11 +4583,7 @@
       const DELIVERY_CHARGE = 30;
       const ONLINE_PAYMENT_MINIMUM_SUBTOTAL = 699;
       const ONLINE_PAYMENT_DISCOUNT = 40;
-      const LOVEFORMALDA = "LOVEFORMALDA";
-      const FREE_DELIVERY_COUPON = "PLB699FD";
       const GOOGLE_LOGIN_URL = {{ url_for('google_login') | tojson }};
-      let appliedCoupon = "";
-      let manualCoupon = "";
       let checkoutToken = makeCheckoutToken();
       let razorpayCheckoutPromise = null;
 
@@ -2724,22 +4623,12 @@
           count += item.quantity;
           subtotal += item.quantity * item.price;
         });
-        const codes = couponCodes();
-        const couponDiscount = codes.includes(LOVEFORMALDA) ? Math.min(subtotal, Math.round(subtotal * 0.1)) : 0;
         const onlineDiscount = selectedPaymentMethod() === "razorpay" && paymentState.razorpayEnabled && subtotal >= ONLINE_PAYMENT_MINIMUM_SUBTOTAL
-          ? Math.min(ONLINE_PAYMENT_DISCOUNT, Math.max(subtotal - couponDiscount, 0))
+          ? Math.min(ONLINE_PAYMENT_DISCOUNT, subtotal)
           : 0;
-        const discount = Math.min(subtotal, couponDiscount + onlineDiscount);
-        const hasFreeDeliveryCoupon = codes.includes(FREE_DELIVERY_COUPON) && subtotal > 0 && subtotal < DELIVERY_FREE_ABOVE;
-        const delivery = subtotal === 0 || subtotal > DELIVERY_FREE_ABOVE || hasFreeDeliveryCoupon ? 0 : DELIVERY_CHARGE;
-        return { count, subtotal, couponDiscount, onlineDiscount, discount, delivery, total: Math.max(0, subtotal - discount) + delivery };
-      }
-
-      function couponCodes() {
-        const codes = [];
-        if (appliedCoupon) codes.push(appliedCoupon);
-        if (manualCoupon && !codes.includes(manualCoupon)) codes.push(manualCoupon);
-        return codes;
+        const discount = Math.min(subtotal, onlineDiscount);
+        const delivery = subtotal === 0 || subtotal > DELIVERY_FREE_ABOVE ? 0 : DELIVERY_CHARGE;
+        return { count, subtotal, onlineDiscount, discount, delivery, total: Math.max(0, subtotal - discount) + delivery };
       }
 
       function showToast(message, duration = 3200) {
@@ -2757,6 +4646,7 @@
         if (!accountModal) return;
         accountModal.classList.toggle("is-open", open);
         accountModal.setAttribute("aria-hidden", open ? "false" : "true");
+        document.body.classList.toggle("account-modal-open", open);
         if (!open) resetOrderHistoryPanel();
       }
 
@@ -2770,7 +4660,7 @@
       }
 
       function renderAccountSummary() {
-        if (accountTitle) accountTitle.textContent = accountState.authenticated ? "Your account" : "Create your account";
+        if (accountTitle) accountTitle.textContent = accountState.authenticated ? "Your account" : "Sign in";
         if (accountCopy) {
           accountCopy.textContent = accountState.authenticated
             ? accountState.customerEmail || accountState.customerName || "Signed in"
@@ -2778,7 +4668,7 @@
         }
         if (googleLoginButton) googleLoginButton.hidden = accountState.authenticated;
         if (logoutButton) logoutButton.hidden = !accountState.authenticated;
-        if (orderHistoryButton) orderHistoryButton.textContent = "Order History";
+        if (orderHistoryLabel) orderHistoryLabel.textContent = "Order History";
       }
 
       function openAccountModal(message, view = "account") {
@@ -2993,9 +4883,25 @@
         drawer?.setAttribute("aria-hidden", open ? "false" : "true");
       }
 
+      function syncProductQuantityDisplays() {
+        document.querySelectorAll("[data-feature-quantity]").forEach((node) => {
+          const quantity = cart.get(node.dataset.featureQuantity)?.quantity || 0;
+          node.textContent = String(quantity);
+        });
+        document.querySelectorAll("[data-feature-remove]").forEach((button) => {
+          const quantity = cart.get(button.dataset.featureRemove)?.quantity || 0;
+          button.disabled = quantity === 0;
+        });
+        document.querySelectorAll("[data-feature-add-label]").forEach((node) => {
+          const quantity = cart.get(node.dataset.featureAddLabel)?.quantity || 0;
+          node.textContent = quantity > 0 ? "Add Another" : "Add to Bag";
+        });
+      }
+
       function renderCart() {
         const { count, subtotal, discount, delivery, total } = totals();
         cartCount.textContent = String(count);
+        syncProductQuantityDisplays();
         summarySubtitle.textContent = count ? `${count} ${count === 1 ? "item" : "items"} in cart` : "Cart is empty";
         summarySubtotal.textContent = money(subtotal);
         summaryDelivery.textContent = delivery ? money(delivery) : "Free";
@@ -3015,24 +4921,9 @@
           submitButton.textContent = `Place Order - ${money(total)}`;
         }
         drawer?.classList.toggle("is-empty", count === 0);
-        couponOption?.classList.toggle("is-applied", appliedCoupon === LOVEFORMALDA);
-        if (couponToggle) {
-          couponToggle.textContent = appliedCoupon === LOVEFORMALDA ? "Applied" : "Apply";
-          couponToggle.setAttribute("aria-pressed", appliedCoupon === LOVEFORMALDA ? "true" : "false");
-        }
-        if (couponNote) {
-          couponNote.textContent = couponCodes().includes(LOVEFORMALDA)
-            ? `LOVEFORMALDA applied. You saved ${money(discount)}.`
-            : couponCodes().includes(FREE_DELIVERY_COUPON)
-            ? `${FREE_DELIVERY_COUPON} applied. Delivery is free below Rs 699.`
-            : manualCoupon
-            ? `${manualCoupon} will be checked on submit.`
-            : "Enter a private coupon to apply savings.";
-        }
         cartInput.value = JSON.stringify(
           Array.from(cart.values()).map((item) => ({ id: item.id, quantity: item.quantity }))
         );
-        couponInput.value = JSON.stringify(couponCodes());
 
         if (!cart.size) {
           cartItemsNode.innerHTML = `
@@ -3063,7 +4954,7 @@
                 </div>
                 <div class="cart-item-price">
                   <strong>${money(item.price * item.quantity)}</strong>
-                  ${item.mrp ? `<s>${money(item.mrp * item.quantity)}</s>` : ""}
+                  ${item.mrp > item.price ? `<s>${money(item.mrp * item.quantity)}</s>` : ""}
                 </div>
               </div>
               <div class="cart-item-divider"></div>
@@ -3073,7 +4964,10 @@
                 <span>${item.quantity}</span>
                 <button type="button" data-cart-plus="${item.id}" aria-label="Increase ${item.name}">+</button>
               </div>
-              <button class="remove-button" type="button" data-cart-remove="${item.id}" aria-label="Remove ${item.name}">x</button>
+              <button class="remove-button" type="button" data-cart-remove="${item.id}" aria-label="Remove ${item.name}">
+                <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m3 0-1 14H7L6 7m4 4v6m4-6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Remove</span>
+              </button>
               </div>
             </div>
           </article>
@@ -3099,7 +4993,7 @@
 
       document.querySelectorAll("[data-add-product]").forEach((button) => {
         button.addEventListener("click", () => {
-          addToCart(button.dataset.addProduct, 1);
+          addToCart(button.dataset.addProduct, Number(button.dataset.addQuantity || 1));
         });
       });
 
@@ -3107,43 +5001,24 @@
         const openButton = event.target.closest("[data-cart-open]");
         const closeButton = event.target.closest("[data-cart-close]");
         const addMoreButton = event.target.closest("[data-add-more]");
-        const couponButton = event.target.closest("[data-coupon-toggle]");
-        const manualCouponButton = event.target.closest("[data-manual-coupon-apply]");
         const menuToggle = event.target.closest("[data-menu-toggle]");
         const cartMinus = event.target.closest("[data-cart-minus]");
         const cartPlus = event.target.closest("[data-cart-plus]");
         const cartRemove = event.target.closest("[data-cart-remove]");
+        const featureMinus = event.target.closest("[data-feature-minus]");
+        const featureRemove = event.target.closest("[data-feature-remove]");
         if (openButton) setDrawerOpen(true);
         if (closeButton) setDrawerOpen(false);
         if (addMoreButton) {
           setDrawerOpen(false);
           document.querySelector("#product")?.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-        if (couponButton) {
-          appliedCoupon = appliedCoupon === LOVEFORMALDA ? "" : LOVEFORMALDA;
-          renderCart();
-        }
-        if (manualCouponButton) {
-          const code = String(manualCouponInput?.value || "").trim().toUpperCase();
-          manualCoupon = code && code !== appliedCoupon ? code : "";
-          if (code === LOVEFORMALDA) {
-            appliedCoupon = LOVEFORMALDA;
-            manualCoupon = "";
-          } else {
-            appliedCoupon = "";
-          }
-          renderCart();
-        }
         if (menuToggle) nav?.classList.toggle("is-open");
         if (cartMinus) setItemQuantity(cartMinus.dataset.cartMinus, (cart.get(cartMinus.dataset.cartMinus)?.quantity || 0) - 1);
         if (cartPlus) setItemQuantity(cartPlus.dataset.cartPlus, (cart.get(cartPlus.dataset.cartPlus)?.quantity || 0) + 1);
         if (cartRemove) setItemQuantity(cartRemove.dataset.cartRemove, 0);
-      });
-
-      manualCouponInput?.addEventListener("keydown", (event) => {
-        if (event.key !== "Enter") return;
-        event.preventDefault();
-        manualCouponApply?.click();
+        if (featureMinus) setItemQuantity(featureMinus.dataset.featureMinus, (cart.get(featureMinus.dataset.featureMinus)?.quantity || 0) - 1);
+        if (featureRemove) setItemQuantity(featureRemove.dataset.featureRemove, 0);
       });
 
       document.querySelectorAll(".nav-links a").forEach((link) => {
@@ -3200,7 +5075,6 @@
       function buildPayload() {
         const payload = Object.fromEntries(new FormData(orderForm).entries());
         payload.cart_items = cartInput.value;
-        payload.coupon_codes = couponInput.value;
         payload.payment_method = selectedPaymentMethod();
         payload.checkout_token = checkoutToken;
         payload.source = "Website";
@@ -3220,8 +5094,6 @@
         orderResult.classList.remove("error");
         rememberOrderForHistory(order);
         cart.clear();
-        appliedCoupon = "";
-        manualCoupon = "";
         checkoutToken = makeCheckoutToken();
         orderForm.reset();
         renderCart();

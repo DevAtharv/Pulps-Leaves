@@ -1,1 +1,10 @@
-.vercel
+.vercel/
+.codex-local-deps/
+.dist/
+.playwright-cli/
+.codex-ui-source/
+.codex-video-frames/
+.codex-desktop*.png
+.codex-mobile*.png
+output/
+*.log

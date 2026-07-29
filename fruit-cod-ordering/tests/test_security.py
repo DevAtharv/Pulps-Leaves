@@ -17,6 +17,7 @@ os.environ.setdefault("FLASK_ENV", "development")
 os.environ.setdefault("SECRET_KEY", "test-secret-key-with-more-than-32-bytes")
 
 import app as app_module
+from order_manager import OrderManager
 from sheets_handler import SheetsHandler
 
 
@@ -180,6 +181,30 @@ class SecurityTests(unittest.TestCase):
         self.assertIn('aria-label="Profile"', page)
         self.assertNotIn('aria-label="Login with Google"', page)
         self.assertNotIn("Link an older order", page)
+
+    def test_coupon_ui_and_endpoint_are_removed(self):
+        page = self.client.get("/").get_data(as_text=True)
+        self.assertNotIn("Apply coupons", page)
+        self.assertNotIn("data-manual-coupon", page)
+        self.assertEqual(self.client.post("/api/coupons/preview", json={"code": "LOVEFORMALDA"}).status_code, 404)
+
+    def test_makhana_cart_uses_the_public_rs_350_price(self):
+        manager = OrderManager(sheets_handler=FakeSheets([]))
+        clean_data, errors = manager.validate_new_order(
+            {
+                "name": "Test Customer",
+                "phone": "9876543210",
+                "city": "bangalore",
+                "address": "12 Test Road",
+                "cart_items": [{"id": "roasted-himalayan-makhana", "quantity": 1}],
+                "coupon_codes": ["LOVEFORMALDA"],
+                "payment_method": "cod",
+            }
+        )
+        self.assertEqual(errors, {})
+        self.assertEqual(clean_data["subtotal"], 350)
+        self.assertEqual(clean_data["discount"], 0)
+        self.assertEqual(clean_data["total_amount"], 380)
 
     def test_google_callback_stays_on_the_current_live_host(self):
         with patch.dict(os.environ, {"GOOGLE_OAUTH_REDIRECT_URI": "https://pulpsandleaves.com/auth/google/callback"}, clear=False):

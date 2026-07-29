@@ -28,15 +28,15 @@ CITY_ALIASES = {
 
 PRODUCTS = [
     {
-        "name": "Naivedyam Makhana 100g Pack",
+        "name": "Naivedyam Makhana 200g Pack",
         "display_title": "Naivedyam Makhana",
         "slug": "roasted-himalayan-makhana",
         "category": "Makhana",
-        "price": 349,
-        "mrp": 449,
-        "unit": "100g Pack",
+        "price": 350,
+        "mrp": 350,
+        "unit": "200g Pack",
         "pieces_label": "Light, crunchy, nutritious",
-        "description": "Premium roasted makhana 100g pouch",
+        "description": "Premium roasted makhana 200g pouch",
         "available_months": list(range(1, 13)),
         "availability_label": "Available now",
     },
