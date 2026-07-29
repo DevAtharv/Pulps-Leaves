@@ -206,6 +206,34 @@ class SecurityTests(unittest.TestCase):
         self.assertEqual(clean_data["discount"], 0)
         self.assertEqual(clean_data["total_amount"], 380)
 
+    def test_masala_makhana_is_available_at_the_server_validated_price(self):
+        manager = OrderManager(sheets_handler=FakeSheets([]))
+        clean_data, errors = manager.validate_new_order(
+            {
+                "name": "Test Customer",
+                "phone": "9876543210",
+                "city": "bangalore",
+                "address": "12 Test Road",
+                "cart_items": [
+                    {"id": "roasted-himalayan-makhana", "quantity": 1},
+                    {"id": "roasted-makhana-masala-combo", "quantity": 1},
+                ],
+                "payment_method": "cod",
+            }
+        )
+        self.assertEqual(errors, {})
+        self.assertEqual(clean_data["subtotal"], 700)
+        self.assertEqual(clean_data["delivery_charge"], 0)
+        self.assertEqual(clean_data["total_amount"], 700)
+        self.assertIn("Roasted Makhana with 3 Masala Packs x 1", clean_data["product_summary"])
+
+    def test_homepage_renders_both_products_and_two_slides(self):
+        page = self.client.get("/").get_data(as_text=True)
+        self.assertIn('data-id="roasted-makhana-masala-combo"', page)
+        self.assertIn("naivedyam-masala-pack-200g-20260729.webp", page)
+        self.assertIn("naivedyam-masala-hero-20260729.webp", page)
+        self.assertEqual(page.count("data-hero-slide "), 2)
+
     def test_google_callback_stays_on_the_current_live_host(self):
         with patch.dict(os.environ, {"GOOGLE_OAUTH_REDIRECT_URI": "https://pulpsandleaves.com/auth/google/callback"}, clear=False):
             with app_module.app.test_request_context("/", base_url="https://www.pulpsandleaves.com"):

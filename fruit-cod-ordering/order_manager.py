@@ -17,8 +17,15 @@ WEB_CART_PRODUCTS = {
     "malda-mango-3kg-box": {"name": "Malda Mango 3Kg Box", "price": 693},
     "assam-breakfast-tea": {"name": "Husk and Dew", "price": 449},
     "roasted-himalayan-makhana": {"name": "Naivedyam Makhana", "price": 350},
+    "roasted-makhana-masala-combo": {
+        "name": "Roasted Makhana with 3 Masala Packs",
+        "price": 350,
+    },
 }
-ACTIVE_WEB_PRODUCT_IDS = {"roasted-himalayan-makhana"}
+ACTIVE_WEB_PRODUCT_IDS = {
+    "roasted-himalayan-makhana",
+    "roasted-makhana-masala-combo",
+}
 DELIVERY_FREE_ABOVE = 699
 DELIVERY_CHARGE = 30
 ONLINE_PAYMENT_MINIMUM_SUBTOTAL = 699
@@ -95,7 +102,7 @@ class OrderManager:
                 quantity = item["quantity"]
                 total_quantity += quantity
                 if item["id"] not in ACTIVE_WEB_PRODUCT_IDS:
-                    errors["product"] = "Only Naivedyam Makhana is available right now."
+                    errors["product"] = "This product is not available right now."
                     continue
                 catalog_item = WEB_CART_PRODUCTS[item["id"]]
                 subtotal += quantity * catalog_item["price"]

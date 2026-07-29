@@ -2596,6 +2596,8 @@
       text-transform: uppercase;
     }
     .hero {
+      position: relative;
+      isolation: isolate;
       min-height: 720px;
       height: 100svh;
       max-height: none;
@@ -2603,9 +2605,86 @@
       overflow: hidden;
       color: #fff;
       background-color: #d99a3f;
-      background-image: url("{{ url_for('static', filename='img/naivedyam-main-hero-user-20260729.png') }}");
-      background-size: cover;
-      background-position: center;
+    }
+    .hero-slides {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      background: #d99a3f;
+    }
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 700ms ease, visibility 700ms ease;
+    }
+    .hero-slide.is-active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .hero-slide picture,
+    .hero-slide img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .hero-slide img {
+      object-fit: cover;
+      object-position: center;
+    }
+    .hero-carousel-controls {
+      position: absolute;
+      right: 50%;
+      bottom: 28px;
+      z-index: 8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.46);
+      border-radius: 28px;
+      background: rgba(15, 53, 34, 0.82);
+      box-shadow: 0 10px 26px rgba(15, 38, 26, 0.2);
+      backdrop-filter: blur(8px);
+      transform: translateX(50%);
+    }
+    .hero-carousel-button {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      color: #fff;
+      background: transparent;
+    }
+    .hero-carousel-button:hover,
+    .hero-carousel-button:focus-visible {
+      color: var(--forest-deep);
+      background: #fff;
+    }
+    .hero-carousel-dots {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 3px;
+    }
+    .hero-carousel-dot {
+      width: 9px;
+      height: 9px;
+      padding: 0;
+      border: 1px solid rgba(255, 255, 255, 0.78);
+      border-radius: 50%;
+      background: transparent;
+      transition: width 220ms ease, background-color 220ms ease;
+    }
+    .hero-carousel-dot[aria-current="true"] {
+      width: 24px;
+      border-radius: 8px;
+      background: #fff;
     }
     .hero::before,
     .hero::after,
@@ -2889,6 +2968,19 @@
       align-items: center;
       gap: 74px;
     }
+    .featured-product-layout + .featured-product-layout {
+      margin-top: 76px;
+      padding-top: 76px;
+      border-top: 1px solid var(--soft-line);
+    }
+    .featured-product-layout:nth-of-type(even) .featured-product-media {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .featured-product-layout:nth-of-type(even) .featured-product-details {
+      grid-column: 1;
+      grid-row: 1;
+    }
     .featured-product-media {
       width: 100%;
       aspect-ratio: 0.82;
@@ -2902,6 +2994,9 @@
       height: 94%;
       object-fit: contain;
       filter: drop-shadow(0 22px 24px rgba(58, 35, 24, 0.16));
+    }
+    .featured-product-layout[data-id="roasted-makhana-masala-combo"] .featured-product-media img {
+      mix-blend-mode: multiply;
     }
     .featured-product-details {
       min-width: 0;
@@ -3623,6 +3718,15 @@
         grid-template-columns: 1fr;
         gap: 30px;
       }
+      .featured-product-layout + .featured-product-layout {
+        margin-top: 56px;
+        padding-top: 56px;
+      }
+      .featured-product-layout:nth-of-type(even) .featured-product-media,
+      .featured-product-layout:nth-of-type(even) .featured-product-details {
+        grid-column: 1;
+        grid-row: auto;
+      }
       .featured-product-media {
         width: min(100%, 420px);
         margin: 0 auto;
@@ -3677,8 +3781,32 @@
         height: auto;
         max-height: none;
         padding-bottom: 18px;
-        background-image: url("{{ url_for('static', filename='img/naivedyam-product-hero-mobile-20260729.png') }}");
-        background-position: center;
+      }
+      .hero-slide[data-slide-index="1"] {
+        background: #f6f2eb;
+      }
+      .hero-slide[data-slide-index="1"] picture {
+        width: 118%;
+        margin-left: -9%;
+      }
+      .hero-slide[data-slide-index="1"] img {
+        object-fit: contain;
+        object-position: center;
+      }
+      .hero-carousel-controls {
+        right: 50%;
+        bottom: 8px;
+        gap: 0;
+        padding: 6px 10px;
+        transform: translateX(50%);
+      }
+      .hero-carousel-button {
+        display: none;
+      }
+      .hero[data-active-slide="1"] .hero-inner {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
       }
       .hero-inner {
         display: grid;
@@ -3688,6 +3816,7 @@
         grid-template-rows: auto auto auto auto;
         gap: 14px;
         padding: 86px 0 8px;
+        transition: opacity 300ms ease, visibility 300ms ease;
       }
       .hero-copy-block {
         grid-column: 1;
@@ -4038,6 +4167,14 @@
         font-size: 32px;
       }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-slide,
+      .hero-inner,
+      .hero-carousel-dot {
+        transition: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -4082,7 +4219,45 @@
   </header>
 
   <main>
-    <section class="hero" id="home">
+    <section class="hero" id="home" data-hero data-active-slide="0">
+      <div class="hero-slides" data-hero-slides>
+        <div class="hero-slide is-active" data-hero-slide data-slide-index="0" aria-hidden="false">
+          <picture>
+            <source media="(max-width: 640px)" srcset="{{ url_for('static', filename='img/naivedyam-product-hero-mobile-20260729.png') }}">
+            <img
+              src="{{ url_for('static', filename='img/naivedyam-main-hero-user-20260729.png') }}"
+              alt="Pulps and Leaves Naivedyam Makhana beside a Mithila lotus pond"
+              width="1672"
+              height="941"
+              fetchpriority="high"
+              decoding="async">
+          </picture>
+        </div>
+        <div class="hero-slide" data-hero-slide data-slide-index="1" aria-hidden="true">
+          <picture>
+            <source media="(max-width: 640px)" srcset="{{ url_for('static', filename='img/naivedyam-masala-pack-200g-20260729.webp') }}">
+            <img
+              src="{{ url_for('static', filename='img/naivedyam-masala-hero-20260729.webp') }}"
+              alt="Pulps and Leaves roasted makhana with three masala packets"
+              width="1672"
+              height="941"
+              loading="eager"
+              decoding="async">
+          </picture>
+        </div>
+      </div>
+      <div class="hero-carousel-controls" role="group" aria-label="Homepage slideshow controls">
+        <button class="hero-carousel-button" type="button" data-hero-prev aria-label="Previous slide" title="Previous slide">
+          <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="m15 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="hero-carousel-dots" role="group" aria-label="Choose a slide">
+          <button class="hero-carousel-dot" type="button" data-hero-dot="0" aria-label="Show plain Naivedyam Makhana" aria-current="true"></button>
+          <button class="hero-carousel-dot" type="button" data-hero-dot="1" aria-label="Show roasted makhana with masala packets" aria-current="false"></button>
+        </div>
+        <button class="hero-carousel-button" type="button" data-hero-next aria-label="Next slide" title="Next slide">
+          <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
       <div class="hero-noise" aria-hidden="true"></div>
       <div class="container hero-inner">
         <div class="hero-copy-block">
@@ -4156,24 +4331,32 @@
             data-variant="{{ product.unit }}"
             data-price="{{ product.price }}"
             data-mrp="{{ product.mrp }}"
-            data-image="{{ url_for('static', filename='img/naivedyam-front-200g-cutout-20260729.png') }}">
+            data-image="{{ url_for('static', filename=product.image) }}"
+            data-cart-badge="{{ product.cart_badge }}"
+            data-secondary-title="{{ product.secondary_title }}">
           <div class="featured-product-media">
-              <img src="{{ url_for('static', filename='img/naivedyam-front-200g-cutout-20260729.png') }}" alt="Pulps and Leaves Naivedyam Makhana 200g pouch" width="1024" height="1537" loading="lazy" decoding="async">
+              <img
+                src="{{ url_for('static', filename=product.image) }}"
+                alt="{{ product.image_alt }}"
+                width="{{ product.image_width }}"
+                height="{{ product.image_height }}"
+                loading="lazy"
+                decoding="async">
           </div>
 
           <div class="featured-product-details">
-            <span class="product-detail-kicker">Plain roasted • 200g pack</span>
+            <span class="product-detail-kicker">{{ product.kicker }}</span>
             <h3>{{ product.display_title }}</h3>
-            <p class="hindi-line">सादा भुना मखाना</p>
-            <p class="product-detail-copy">{{ product.description }}. Light, crunchy, nutritious, and prepared without frying or preservatives.</p>
+            <p class="hindi-line">{{ product.secondary_title }}</p>
+            <p class="product-detail-copy">{{ product.details }}</p>
             <div class="featured-price">
               <strong>Rs {{ product.price }}</strong>
               <span>Inclusive of taxes</span>
             </div>
             <div class="product-highlight-row" aria-label="Product highlights">
-              <span>100% natural</span>
-              <span>Gluten free</span>
-              <span>Roasted, not fried</span>
+              {% for highlight in product.highlights %}
+              <span>{{ highlight }}</span>
+              {% endfor %}
             </div>
             <div class="featured-product-actions">
               <div class="featured-stepper" aria-label="Quantity in bag">
@@ -4529,6 +4712,76 @@
       window.addEventListener("scroll", syncSiteHeader, { passive: true });
       window.addEventListener("resize", syncSiteHeader, { passive: true });
       syncSiteHeader();
+
+      const hero = document.querySelector("[data-hero]");
+      const heroSlides = Array.from(document.querySelectorAll("[data-hero-slide]"));
+      const heroDots = Array.from(document.querySelectorAll("[data-hero-dot]"));
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      let activeHeroSlide = 0;
+      let heroAutoplayTimer = null;
+      let heroTouchStartX = null;
+
+      function showHeroSlide(index) {
+        if (!hero || !heroSlides.length) return;
+        activeHeroSlide = (index + heroSlides.length) % heroSlides.length;
+        hero.dataset.activeSlide = String(activeHeroSlide);
+        heroSlides.forEach((slide, slideIndex) => {
+          const isActive = slideIndex === activeHeroSlide;
+          slide.classList.toggle("is-active", isActive);
+          slide.setAttribute("aria-hidden", isActive ? "false" : "true");
+        });
+        heroDots.forEach((dot, dotIndex) => {
+          dot.setAttribute("aria-current", dotIndex === activeHeroSlide ? "true" : "false");
+        });
+      }
+
+      function stopHeroAutoplay() {
+        window.clearInterval(heroAutoplayTimer);
+        heroAutoplayTimer = null;
+      }
+
+      function startHeroAutoplay() {
+        stopHeroAutoplay();
+        if (
+          !hero ||
+          heroSlides.length < 2 ||
+          reduceMotion.matches ||
+          document.hidden
+        ) return;
+        heroAutoplayTimer = window.setInterval(() => showHeroSlide(activeHeroSlide + 1), 6500);
+      }
+
+      function selectHeroSlide(index) {
+        showHeroSlide(index);
+        startHeroAutoplay();
+      }
+
+      document.querySelector("[data-hero-prev]")?.addEventListener("click", () => selectHeroSlide(activeHeroSlide - 1));
+      document.querySelector("[data-hero-next]")?.addEventListener("click", () => selectHeroSlide(activeHeroSlide + 1));
+      heroDots.forEach((dot) => {
+        dot.addEventListener("click", () => selectHeroSlide(Number(dot.dataset.heroDot || 0)));
+      });
+      hero?.addEventListener("touchstart", (event) => {
+        heroTouchStartX = event.changedTouches[0]?.clientX ?? null;
+        stopHeroAutoplay();
+      }, { passive: true });
+      hero?.addEventListener("touchend", (event) => {
+        const endX = event.changedTouches[0]?.clientX;
+        if (heroTouchStartX !== null && typeof endX === "number") {
+          const delta = endX - heroTouchStartX;
+          if (Math.abs(delta) >= 48) showHeroSlide(activeHeroSlide + (delta < 0 ? 1 : -1));
+        }
+        heroTouchStartX = null;
+        startHeroAutoplay();
+      }, { passive: true });
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) stopHeroAutoplay();
+        else startHeroAutoplay();
+      });
+      reduceMotion.addEventListener?.("change", startHeroAutoplay);
+      showHeroSlide(0);
+      startHeroAutoplay();
+
       const orderHistoryPanel = document.querySelector("[data-order-history-panel]");
       const orderHistoryStatus = document.querySelector("[data-order-history-status]");
       const orderHistoryList = document.querySelector("[data-order-history-list]");
@@ -4565,6 +4818,8 @@
             price: Number(card.dataset.price || 0),
             mrp: Number(card.dataset.mrp || 0),
             image: card.dataset.image,
+            badge: card.dataset.cartBadge,
+            secondaryTitle: card.dataset.secondaryTitle,
           },
         ])
       );
@@ -4909,15 +5164,15 @@
 
         cartItemsNode.innerHTML = Array.from(cart.values()).map((item) => `
           <article class="cart-item">
-            <img src="${item.image}" alt="${item.name}" width="104" height="104" loading="lazy" decoding="async">
+            <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" width="104" height="104" loading="lazy" decoding="async">
             <div class="cart-item-main">
               <div class="cart-item-top">
                 <div>
-                  <strong>${item.name}</strong>
+                  <strong>${escapeHtml(item.name)}</strong>
                   <div class="cart-item-badges">
-                    <span class="cart-item-badge">Healthy Range</span>
-                    <small class="font-hindi">सादा भुना मखाना</small>
-                    <small>${item.variant}</small>
+                    <span class="cart-item-badge">${escapeHtml(item.badge || "Makhana")}</span>
+                    <small class="font-hindi">${escapeHtml(item.secondaryTitle || "")}</small>
+                    <small>${escapeHtml(item.variant)}</small>
                   </div>
                 </div>
                 <div class="cart-item-price">
