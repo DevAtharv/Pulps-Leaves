@@ -56,9 +56,29 @@ LEGACY_ORDER_HEADERS = [header for header in ORDER_HEADERS if header != "Checkou
 ORDER_HEADER_ALIASES = {
     "Email": "Customer Email",
     "Email Address": "Customer Email",
+    "Email ID": "Customer Email",
+    "E-mail": "Customer Email",
+    "E-mail Address": "Customer Email",
+    "Customer E-mail": "Customer Email",
     "Customer Email ID": "Customer Email",
     "Google Email": "Customer Email",
 }
+
+
+def normalize_order_header(header):
+    return re.sub(r"[^a-z0-9]+", " ", str(header or "").strip().casefold()).strip()
+
+
+ORDER_HEADER_LOOKUP = {
+    normalize_order_header(header): header
+    for header in ORDER_HEADERS
+}
+ORDER_HEADER_LOOKUP.update(
+    {
+        normalize_order_header(alias): canonical
+        for alias, canonical in ORDER_HEADER_ALIASES.items()
+    }
+)
 
 
 CUSTOMER_HEADERS = [
@@ -454,7 +474,7 @@ class SheetsHandler:
         worksheets = [
             worksheet
             for worksheet in self._spreadsheet.worksheets()
-            if worksheet.title.startswith(prefix)
+            if worksheet.title == self.worksheet_name or worksheet.title.startswith(prefix)
         ]
         if not worksheets:
             worksheets = [self._today_worksheet()]
@@ -873,7 +893,10 @@ class SheetsHandler:
     @staticmethod
     def _order_headers_from_row(row):
         cleaned = [
-            ORDER_HEADER_ALIASES.get(str(header).strip(), str(header).strip())
+            ORDER_HEADER_LOOKUP.get(
+                normalize_order_header(header),
+                str(header).strip(),
+            )
             for header in row
         ]
         if "Order ID" not in cleaned:

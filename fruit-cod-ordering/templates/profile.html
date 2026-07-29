@@ -456,6 +456,11 @@
       text-align: center;
     }
 
+    .orders-empty .secondary-button {
+      min-width: 150px;
+      margin-top: 6px;
+    }
+
     .orders-loading svg {
       animation: spin 900ms linear infinite;
     }
@@ -1158,9 +1163,12 @@
         if (ordersLoaded) return;
         ordersLoading.hidden = false;
         ordersList.hidden = true;
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 18000);
         try {
           const response = await fetch("/api/me/orders", {
             headers: { Accept: "application/json" },
+            signal: controller.signal,
           });
           const data = await response.json();
           if (response.status === 401) {
@@ -1171,9 +1179,20 @@
           ordersLoaded = true;
           renderOrders(Array.isArray(data.orders) ? data.orders : []);
         } catch (error) {
+          const message = error.name === "AbortError"
+            ? "The request took too long. Please try again."
+            : (error.message || "Please try again.");
           ordersLoading.hidden = true;
           ordersList.hidden = false;
-          ordersList.innerHTML = `<div class="orders-empty"><strong>Orders could not be loaded</strong><span>${escapeHtml(error.message || "Please try again.")}</span></div>`;
+          ordersList.innerHTML = `
+            <div class="orders-empty">
+              <strong>Orders could not be loaded</strong>
+              <span>${escapeHtml(message)}</span>
+              <button class="secondary-button" type="button" data-retry-orders>Try again</button>
+            </div>`;
+          ordersList.querySelector("[data-retry-orders]")?.addEventListener("click", loadOrders);
+        } finally {
+          window.clearTimeout(timeout);
         }
       }
 

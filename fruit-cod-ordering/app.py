@@ -991,8 +991,13 @@ def my_orders():
     try:
         orders = order_manager.sheets.get_all_orders()
     except Exception as error:
-        log_checkout("order_history_fallback_empty", error=str(error))
-        orders = []
+        log_checkout("order_history_load_failed", error=str(error))
+        return jsonify(
+            {
+                "ok": False,
+                "error": "Your order history could not be loaded right now. Please try again.",
+            }
+        ), 503
 
     seen_order_ids = set()
     for order in orders:

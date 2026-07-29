@@ -137,6 +137,13 @@ class SecurityTests(unittest.TestCase):
         self.assertEqual([item["order_id"] for item in payload["orders"]], ["PLEMAIL1", "PLOWN001"])
         self.assertNotIn("razorpay_payment_id", payload["orders"][0])
 
+    def test_history_reports_storage_failure_instead_of_empty_orders(self):
+        self.login()
+        with patch.object(self.manager.sheets, "get_all_orders", side_effect=RuntimeError("sheet unavailable")):
+            response = self.client.get("/api/me/orders")
+        self.assertEqual(response.status_code, 503)
+        self.assertFalse(response.get_json()["ok"])
+
     def test_authenticated_customer_can_place_cod_order(self):
         self.login()
         response = self.client.post(
@@ -258,7 +265,7 @@ class SecurityTests(unittest.TestCase):
     def test_homepage_renders_both_products_and_two_slides(self):
         page = self.client.get("/").get_data(as_text=True)
         self.assertIn('data-id="roasted-makhana-masala-combo"', page)
-        self.assertIn("naivedyam-masala-pack-200g-20260729.webp", page)
+        self.assertIn("naivedyam-masala-pack-cutout-200g-20260729.webp", page)
         self.assertIn("naivedyam-masala-hero-20260729.webp", page)
         self.assertIn("hero-product--masala", page)
         self.assertNotIn("जय बिहार", page)
@@ -315,6 +322,35 @@ class SecurityTests(unittest.TestCase):
     def test_legacy_email_header_maps_to_customer_email(self):
         headers = SheetsHandler._order_headers_from_row(["Order ID", "Email", "Phone"])
         self.assertEqual(headers[1], "Customer Email")
+
+    def test_order_headers_are_case_and_format_tolerant(self):
+        headers = SheetsHandler._order_headers_from_row([" order id ", "E-MAIL ADDRESS", "google subject"])
+        self.assertEqual(headers, ["Order ID", "Customer Email", "Google Subject"])
+
+    def test_order_history_includes_the_original_orders_tab(self):
+        class Worksheet:
+            def __init__(self, title):
+                self.title = title
+
+        class Spreadsheet:
+            def worksheets(self):
+                return [
+                    Worksheet("Customers"),
+                    Worksheet("Orders"),
+                    Worksheet("Orders 2026-07-29"),
+                    Worksheet("Atharv"),
+                ]
+
+        handler = SheetsHandler.__new__(SheetsHandler)
+        handler.daily_worksheets = True
+        handler.worksheet_name = "Orders"
+        handler._spreadsheet = Spreadsheet()
+        handler._worksheet = Worksheet("Orders 2026-07-29")
+
+        self.assertEqual(
+            [worksheet.title for worksheet in handler._order_worksheets()],
+            ["Orders", "Orders 2026-07-29"],
+        )
 
 
 if __name__ == "__main__":
