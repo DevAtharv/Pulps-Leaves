@@ -2510,41 +2510,12 @@
     .brand-logo-mark {
       width: 54px;
       height: 54px;
-      display: grid;
-      grid-template-rows: 1fr auto;
-      place-items: center;
+      display: block;
       flex: 0 0 auto;
-      padding: 9px 4px 7px;
       overflow: hidden;
-      border: 1.5px solid #d9a744;
       border-radius: 50%;
-      color: #fff;
-      background: var(--forest);
+      background: var(--forest) url("{{ url_for('static', filename='img/pulps-leaves-logo-user-20260729.png') }}") center / 135% no-repeat;
       box-shadow: 0 6px 14px rgba(15, 53, 34, 0.22);
-    }
-    .brand-logo-monogram {
-      display: inline-flex;
-      align-items: baseline;
-      color: #fff;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 1.45rem;
-      line-height: 0.82;
-    }
-    .brand-logo-monogram b {
-      color: #fff;
-      font-weight: 500;
-    }
-    .brand-logo-monogram i {
-      color: #e0b14e;
-      font-style: normal;
-      font-weight: 500;
-    }
-    .brand-logo-caption {
-      color: #fff;
-      font-size: 0.28rem;
-      font-weight: 800;
-      line-height: 1;
-      white-space: nowrap;
     }
     .site-header .brand,
     .site-header .nav-links,
@@ -4074,10 +4045,7 @@
   <header class="site-header">
     <div class="container nav" data-nav>
       <a class="brand" href="#home" aria-label="Pulps and Leaves home">
-        <span class="brand-logo-mark" role="img" aria-label="Pulps and Leaves logo">
-          <span class="brand-logo-monogram"><b>P</b><i>&amp;</i><b>L</b></span>
-          <span class="brand-logo-caption">PULPS &amp; LEAVES</span>
-        </span>
+        <span class="brand-logo-mark" role="img" aria-label="Pulps and Leaves logo"></span>
         <span>
           <strong>Pulps &amp; Leaves</strong>
           <small>पल्प्स एंड लीव्स</small>
