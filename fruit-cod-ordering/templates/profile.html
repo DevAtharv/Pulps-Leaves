@@ -1,0 +1,1288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Manage your Pulps & Leaves profile, delivery address, and orders.">
+  <title>My Profile | Pulps & Leaves</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/logo-favicon.png') }}" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest: #174d32;
+      --forest-deep: #103b27;
+      --leaf: #67806c;
+      --paper: #fbf7f1;
+      --surface: #fffdf9;
+      --line: #e8e0d6;
+      --gold: #c88a1d;
+      --ink: #202a24;
+      --muted: #707b73;
+      --danger: #c13b37;
+      --shadow: 0 14px 34px rgba(33, 53, 40, 0.08);
+      --sans: "Manrope", Arial, sans-serif;
+      --serif: "Playfair Display", Georgia, serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      color-scheme: light;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: var(--sans);
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .profile-header {
+      min-height: 88px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 253, 249, 0.94);
+    }
+
+    .header-inner {
+      width: min(1240px, calc(100% - 40px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .header-brand {
+      min-width: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .header-logo {
+      width: 52px;
+      height: 52px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(200, 138, 29, 0.55);
+      border-radius: 50%;
+      background-image: url("{{ url_for('static', filename='img/pulps-leaves-logo-user-20260729.png') }}");
+      background-position: center;
+      background-size: 135%;
+      box-shadow: 0 6px 18px rgba(23, 77, 50, 0.12);
+    }
+
+    .header-brand-copy {
+      min-width: 0;
+      display: flex;
+      align-items: baseline;
+      gap: 18px;
+    }
+
+    .header-brand-copy strong {
+      color: var(--forest);
+      font-family: var(--serif);
+      font-size: 1.34rem;
+      line-height: 1;
+    }
+
+    .header-brand-copy span {
+      color: #98a097;
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .back-to-shop {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--forest);
+      background: var(--surface);
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .back-to-shop:hover,
+    .back-to-shop:focus-visible {
+      border-color: var(--forest);
+      outline: none;
+    }
+
+    .profile-page {
+      width: min(1240px, calc(100% - 40px));
+      margin: 32px auto 72px;
+    }
+
+    .profile-layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      align-items: start;
+      gap: 34px;
+    }
+
+    .profile-sidebar {
+      min-height: 540px;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 20px 20px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 24px;
+    }
+
+    .profile-identity {
+      display: grid;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .profile-avatar {
+      width: 102px;
+      height: 102px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border: 4px solid #fff;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--forest);
+      box-shadow: 0 10px 24px rgba(23, 77, 50, 0.18);
+      font-family: var(--serif);
+      font-size: 2rem;
+      text-transform: uppercase;
+    }
+
+    .profile-avatar img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .profile-identity h1 {
+      width: 100%;
+      margin: 16px 0 0;
+      overflow: hidden;
+      color: var(--forest);
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+
+    .profile-identity p {
+      width: 100%;
+      margin: 7px 0 0;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 0.69rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .profile-tabs {
+      display: grid;
+      gap: 8px;
+      margin-top: 30px;
+    }
+
+    .profile-tab {
+      min-height: 50px;
+      display: grid;
+      grid-template-columns: 22px minmax(0, 1fr) 16px;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      color: #647068;
+      background: transparent;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-align: left;
+      text-transform: uppercase;
+    }
+
+    .profile-tab svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .profile-tab .tab-arrow {
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+
+    .profile-tab:hover,
+    .profile-tab:focus-visible {
+      border-color: var(--line);
+      color: var(--forest);
+      outline: none;
+    }
+
+    .profile-tab[aria-selected="true"] {
+      color: #fff;
+      background: var(--forest);
+      box-shadow: 0 8px 18px rgba(23, 77, 50, 0.18);
+    }
+
+    .profile-tab[aria-selected="true"] .tab-arrow {
+      opacity: 1;
+      transform: none;
+    }
+
+    .logout-button {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: auto;
+      padding: 0 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      color: var(--danger);
+      background: transparent;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .logout-button:hover,
+    .logout-button:focus-visible {
+      border-color: rgba(193, 59, 55, 0.24);
+      background: rgba(193, 59, 55, 0.05);
+      outline: none;
+    }
+
+    .profile-main {
+      min-width: 0;
+    }
+
+    .section-heading {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .heading-icon {
+      width: 50px;
+      height: 50px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--forest);
+      box-shadow: 0 8px 18px rgba(23, 77, 50, 0.18);
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      color: var(--forest);
+      font-size: 1.45rem;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .section-heading p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .info-card,
+    .form-panel,
+    .orders-state,
+    .order-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: 0 10px 26px rgba(33, 53, 40, 0.05);
+    }
+
+    .info-card {
+      min-height: 242px;
+      display: flex;
+      flex-direction: column;
+      padding: 30px 32px;
+    }
+
+    .card-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #87938a;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .detail-list {
+      display: grid;
+      gap: 20px;
+      margin: 24px 0 0;
+    }
+
+    .detail-row {
+      display: grid;
+      gap: 4px;
+    }
+
+    .detail-row dt {
+      color: #8a958d;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .detail-row dd {
+      min-width: 0;
+      margin: 0;
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .address-copy {
+      margin: 25px 0 0;
+      color: var(--ink);
+      font-size: 0.84rem;
+      font-weight: 700;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+    }
+
+    .address-copy small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 600;
+    }
+
+    .text-action {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      gap: 8px;
+      margin-top: auto;
+      padding: 0;
+      border: 0;
+      color: var(--forest);
+      background: transparent;
+      font-size: 0.66rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .text-action:hover,
+    .text-action:focus-visible {
+      color: var(--gold);
+      outline: none;
+    }
+
+    .orders-state {
+      min-height: 280px;
+      padding: 22px;
+    }
+
+    .orders-loading,
+    .orders-empty {
+      min-height: 230px;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .orders-loading svg {
+      animation: spin 900ms linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .orders-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .order-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      padding: 20px;
+    }
+
+    .order-card h3 {
+      margin: 0;
+      color: var(--forest);
+      font-family: var(--serif);
+      font-size: 1.05rem;
+    }
+
+    .order-card p {
+      margin: 8px 0 0;
+      color: var(--ink);
+      font-size: 0.78rem;
+      line-height: 1.55;
+    }
+
+    .order-card small {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 0.66rem;
+    }
+
+    .order-side {
+      min-width: 110px;
+      display: grid;
+      justify-items: end;
+      align-content: space-between;
+      gap: 14px;
+    }
+
+    .order-status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border: 1px solid rgba(23, 77, 50, 0.18);
+      border-radius: 14px;
+      color: var(--forest);
+      background: #eef4ef;
+      font-size: 0.61rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .order-total {
+      color: var(--forest);
+      font-family: var(--serif);
+      font-size: 1.12rem;
+    }
+
+    .form-panel {
+      padding: 30px 32px;
+    }
+
+    .form-intro {
+      max-width: 620px;
+      margin: 0 0 25px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.65;
+    }
+
+    .profile-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .form-field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .form-field-wide {
+      grid-column: 1 / -1;
+    }
+
+    .form-field label {
+      color: #78847b;
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      width: 100%;
+      border: 1px solid #dcd4ca;
+      border-radius: 6px;
+      color: var(--ink);
+      background: #fff;
+      outline: none;
+    }
+
+    .form-field input,
+    .form-field select {
+      height: 50px;
+      padding: 0 14px;
+    }
+
+    .form-field textarea {
+      min-height: 116px;
+      resize: vertical;
+      padding: 13px 14px;
+      line-height: 1.5;
+    }
+
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-field textarea:focus {
+      border-color: var(--forest);
+      box-shadow: 0 0 0 3px rgba(23, 77, 50, 0.08);
+    }
+
+    .field-error {
+      min-height: 16px;
+      color: var(--danger);
+      font-size: 0.64rem;
+    }
+
+    .form-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .primary-button,
+    .secondary-button {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 0 20px;
+      border-radius: 6px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .primary-button {
+      border: 1px solid var(--forest);
+      color: #fff;
+      background: var(--forest);
+    }
+
+    .primary-button:hover,
+    .primary-button:focus-visible {
+      background: var(--forest-deep);
+      outline: none;
+    }
+
+    .primary-button:disabled {
+      cursor: wait;
+      opacity: 0.65;
+    }
+
+    .secondary-button {
+      border: 1px solid var(--line);
+      color: var(--forest);
+      background: transparent;
+    }
+
+    .secondary-button:hover,
+    .secondary-button:focus-visible {
+      border-color: var(--forest);
+      outline: none;
+    }
+
+    .save-status {
+      min-height: 20px;
+      grid-column: 1 / -1;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.69rem;
+    }
+
+    .save-status.is-error {
+      color: var(--danger);
+    }
+
+    .profile-toast {
+      min-width: 220px;
+      max-width: calc(100% - 32px);
+      min-height: 46px;
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 10px 16px;
+      border-radius: 6px;
+      color: #fff;
+      background: var(--forest);
+      box-shadow: var(--shadow);
+      font-size: 0.73rem;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .profile-toast.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (max-width: 860px) {
+      .profile-page {
+        width: min(680px, calc(100% - 24px));
+        margin-top: 20px;
+      }
+
+      .profile-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .profile-sidebar {
+        min-height: 0;
+        position: static;
+        padding: 18px;
+      }
+
+      .profile-identity {
+        grid-template-columns: 70px minmax(0, 1fr);
+        justify-items: start;
+        column-gap: 14px;
+        text-align: left;
+      }
+
+      .profile-avatar {
+        width: 70px;
+        height: 70px;
+        grid-row: 1 / span 2;
+        font-size: 1.35rem;
+      }
+
+      .profile-identity h1 {
+        align-self: end;
+        margin-top: 0;
+      }
+
+      .profile-identity p {
+        align-self: start;
+      }
+
+      .profile-tabs {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin-top: 18px;
+      }
+
+      .profile-tab {
+        min-height: 46px;
+        grid-template-columns: 20px minmax(0, 1fr);
+        padding: 0 10px;
+      }
+
+      .profile-tab .tab-arrow {
+        display: none;
+      }
+
+      .logout-button {
+        margin-top: 10px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .profile-header {
+        min-height: 72px;
+      }
+
+      .header-inner {
+        width: calc(100% - 24px);
+      }
+
+      .header-logo {
+        width: 44px;
+        height: 44px;
+      }
+
+      .header-brand-copy strong {
+        font-size: 1.04rem;
+      }
+
+      .header-brand-copy span,
+      .back-to-shop span {
+        display: none;
+      }
+
+      .back-to-shop {
+        width: 42px;
+        min-height: 42px;
+        justify-content: center;
+        padding: 0;
+      }
+
+      .section-heading {
+        align-items: flex-start;
+      }
+
+      .heading-icon {
+        width: 44px;
+        height: 44px;
+      }
+
+      .section-heading h2 {
+        font-size: 1.14rem;
+      }
+
+      .section-heading p {
+        font-size: 0.62rem;
+        line-height: 1.45;
+      }
+
+      .overview-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .info-card {
+        min-height: 220px;
+        padding: 24px 20px;
+      }
+
+      .profile-tabs {
+        gap: 5px;
+      }
+
+      .profile-tab {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 4px;
+        padding: 7px 4px;
+        font-size: 0.57rem;
+        text-align: center;
+      }
+
+      .profile-tab svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .form-panel {
+        padding: 24px 18px;
+      }
+
+      .profile-form {
+        grid-template-columns: 1fr;
+      }
+
+      .form-field-wide,
+      .form-actions,
+      .save-status {
+        grid-column: 1;
+      }
+
+      .form-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .primary-button,
+      .secondary-button {
+        width: 100%;
+      }
+
+      .orders-state {
+        padding: 12px;
+      }
+
+      .order-card {
+        grid-template-columns: 1fr;
+      }
+
+      .order-side {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  {% set customer_initial = (customer.name or customer.email or "P")[0] %}
+  {% set default_city = cities.get(customer.city) %}
+
+  <header class="profile-header">
+    <div class="header-inner">
+      <a class="header-brand" href="{{ url_for('index') }}" aria-label="Pulps and Leaves home">
+        <span class="header-logo" role="img" aria-label="Pulps and Leaves logo"></span>
+        <span class="header-brand-copy">
+          <strong>Pulps &amp; Leaves</strong>
+          <span>Bihar to every home</span>
+        </span>
+      </a>
+      <a class="back-to-shop" href="{{ url_for('index') }}#product" aria-label="Back to shop">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="m15 18-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Back to shop</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="profile-page">
+    <div class="profile-layout">
+      <aside class="profile-sidebar">
+        <div class="profile-identity">
+          <div class="profile-avatar" aria-label="{{ customer.name or 'Pulps and Leaves customer' }}">
+            <span>{{ customer_initial }}</span>
+            {% if customer.picture %}
+            <img src="{{ customer.picture }}" alt="" referrerpolicy="no-referrer" onerror="this.hidden=true">
+            {% endif %}
+          </div>
+          <h1 data-profile-name>{{ customer.name or "Pulps & Leaves Customer" }}</h1>
+          <p title="{{ customer.email }}">{{ customer.email }}</p>
+        </div>
+
+        <nav class="profile-tabs" role="tablist" aria-label="Profile sections">
+          <button class="profile-tab" type="button" role="tab" aria-selected="true" aria-controls="profile-overview" data-profile-tab="overview">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span>Overview</span>
+            <svg class="tab-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="profile-tab" type="button" role="tab" aria-selected="false" aria-controls="profile-orders" data-profile-tab="orders">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l2 4v14H4V7l2-4Zm-2 4h16M9 11a3 3 0 0 0 6 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Orders</span>
+            <svg class="tab-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="profile-tab" type="button" role="tab" aria-selected="false" aria-controls="profile-address" data-profile-tab="address">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Zm-8 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Address</span>
+            <svg class="tab-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </nav>
+
+        <button class="logout-button" type="button" data-profile-logout>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M10 5H5v14h5m4-3 4-4-4-4m4 4H9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Sign out</span>
+        </button>
+      </aside>
+
+      <section class="profile-main">
+        <header class="section-heading">
+          <span class="heading-icon" aria-hidden="true" data-heading-icon>
+            <svg viewBox="0 0 24 24" width="25" height="25"><path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <div>
+            <h2 data-section-title>Account overview</h2>
+            <p data-section-subtitle>Manage your profile information and preferences.</p>
+          </div>
+        </header>
+
+        <section id="profile-overview" role="tabpanel" data-profile-panel="overview">
+          <div class="overview-grid">
+            <article class="info-card">
+              <span class="card-label">
+                <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                Personal details
+              </span>
+              <dl class="detail-list">
+                <div class="detail-row">
+                  <dt>Full name</dt>
+                  <dd data-overview-name>{{ customer.name or "Not available" }}</dd>
+                </div>
+                <div class="detail-row">
+                  <dt>Email address</dt>
+                  <dd>{{ customer.email }}</dd>
+                </div>
+                <div class="detail-row">
+                  <dt>Phone number</dt>
+                  <dd data-overview-phone>{{ customer.phone or "Not added yet" }}</dd>
+                </div>
+              </dl>
+              <button class="text-action" type="button" data-open-address>
+                <span>Edit details</span>
+                <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </article>
+
+            <article class="info-card">
+              <span class="card-label">
+                <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Zm-8 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Default address
+              </span>
+              <p class="address-copy">
+                <span data-overview-address>{{ customer.address or "Add your delivery address to make checkout faster." }}</span>
+                <small data-overview-city>{{ default_city.label if default_city else "No city selected" }}</small>
+              </p>
+              <button class="text-action" type="button" data-open-address>
+                <span>Manage address</span>
+                <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </article>
+          </div>
+        </section>
+
+        <section id="profile-orders" role="tabpanel" data-profile-panel="orders" hidden>
+          <div class="orders-state">
+            <div class="orders-loading" data-orders-loading>
+              <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span>Loading your orders...</span>
+            </div>
+            <div class="orders-list" data-orders-list hidden></div>
+          </div>
+        </section>
+
+        <section id="profile-address" role="tabpanel" data-profile-panel="address" hidden>
+          <div class="form-panel">
+            <p class="form-intro">Keep your phone number and delivery address current so checkout is faster and your order reaches the right place.</p>
+            <form class="profile-form" data-profile-form novalidate>
+              <div class="form-field">
+                <label for="profileName">Full name</label>
+                <input id="profileName" type="text" value="{{ customer.name }}" readonly aria-readonly="true">
+              </div>
+              <div class="form-field">
+                <label for="profileEmail">Google email</label>
+                <input id="profileEmail" type="email" value="{{ customer.email }}" readonly aria-readonly="true">
+              </div>
+              <div class="form-field">
+                <label for="profilePhone">Phone number</label>
+                <input id="profilePhone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="14" value="{{ customer.phone }}" placeholder="98765 43210" required>
+                <span class="field-error" data-field-error="phone"></span>
+              </div>
+              <div class="form-field">
+                <label for="profileCity">Default city</label>
+                <select id="profileCity" name="city" autocomplete="address-level2" required>
+                  <option value="">Select a city</option>
+                  {% for city_key, city in cities.items() %}
+                  <option value="{{ city_key }}" {% if customer.city == city_key %}selected{% endif %}>{{ city.label }}</option>
+                  {% endfor %}
+                </select>
+                <span class="field-error" data-field-error="city"></span>
+              </div>
+              <div class="form-field form-field-wide">
+                <label for="profileAddress">Delivery address</label>
+                <textarea id="profileAddress" name="address" autocomplete="street-address" maxlength="300" placeholder="House/Flat No., Building, Street and Area" required>{{ customer.address }}</textarea>
+                <span class="field-error" data-field-error="address"></span>
+              </div>
+              <div class="form-actions">
+                <button class="primary-button" type="submit" data-save-profile>
+                  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 4h12l2 2v14H5V4Zm3 0v6h8V4m-8 16v-6h8v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                  <span>Save changes</span>
+                </button>
+                <button class="secondary-button" type="button" data-cancel-profile>Cancel</button>
+              </div>
+              <p class="save-status" data-save-status aria-live="polite"></p>
+            </form>
+          </div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <div class="profile-toast" role="status" aria-live="polite" data-profile-toast></div>
+
+  <script>
+    (() => {
+      const initialCustomer = {{ customer | tojson }};
+      const tabs = Array.from(document.querySelectorAll("[data-profile-tab]"));
+      const panels = Array.from(document.querySelectorAll("[data-profile-panel]"));
+      const sectionTitle = document.querySelector("[data-section-title]");
+      const sectionSubtitle = document.querySelector("[data-section-subtitle]");
+      const profileForm = document.querySelector("[data-profile-form]");
+      const saveButton = document.querySelector("[data-save-profile]");
+      const saveStatus = document.querySelector("[data-save-status]");
+      const ordersLoading = document.querySelector("[data-orders-loading]");
+      const ordersList = document.querySelector("[data-orders-list]");
+      const toast = document.querySelector("[data-profile-toast]");
+      let ordersLoaded = false;
+
+      const sectionCopy = {
+        overview: {
+          title: "Account overview",
+          subtitle: "Manage your profile information and preferences.",
+        },
+        orders: {
+          title: "Your orders",
+          subtitle: "Track current orders and review your order history.",
+        },
+        address: {
+          title: "Delivery details",
+          subtitle: "Update the details used for checkout and delivery.",
+        },
+      };
+
+      function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;",
+        }[character]));
+      }
+
+      function showToast(message) {
+        if (!toast) return;
+        toast.textContent = message;
+        toast.classList.add("is-visible");
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(() => toast.classList.remove("is-visible"), 2800);
+      }
+
+      function setActiveSection(name, updateHash = true) {
+        const selected = sectionCopy[name] ? name : "overview";
+        tabs.forEach((tab) => {
+          const isActive = tab.dataset.profileTab === selected;
+          tab.setAttribute("aria-selected", isActive ? "true" : "false");
+          tab.tabIndex = isActive ? 0 : -1;
+        });
+        panels.forEach((panel) => {
+          panel.hidden = panel.dataset.profilePanel !== selected;
+        });
+        sectionTitle.textContent = sectionCopy[selected].title;
+        sectionSubtitle.textContent = sectionCopy[selected].subtitle;
+        if (updateHash) history.replaceState(null, "", `#${selected}`);
+        if (selected === "orders") loadOrders();
+      }
+
+      function formatOrderDate(value) {
+        const parsed = new Date(value);
+        if (!value || Number.isNaN(parsed.getTime())) return value || "Recently placed";
+        return parsed.toLocaleDateString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        });
+      }
+
+      function renderOrders(orders) {
+        ordersLoading.hidden = true;
+        ordersList.hidden = false;
+        if (!orders.length) {
+          ordersList.innerHTML = `
+            <div class="orders-empty">
+              <svg viewBox="0 0 24 24" width="34" height="34" aria-hidden="true"><path d="M6 3h12l2 4v14H4V7l2-4Zm-2 4h16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <strong>No orders yet</strong>
+              <span>Your first Pulps & Leaves order will appear here.</span>
+            </div>`;
+          return;
+        }
+
+        ordersList.innerHTML = orders.map((order) => {
+          const cityAddress = [order.city, order.address].filter(Boolean).join(" - ");
+          const payment = [order.payment_mode, order.payment_status].filter(Boolean).join(" - ");
+          return `
+            <article class="order-card">
+              <div>
+                <h3>Order ${escapeHtml(order.order_id || "received")}</h3>
+                <p>${escapeHtml(order.product || "Pulps & Leaves order")}</p>
+                <small>${escapeHtml(formatOrderDate(order.timestamp))}${cityAddress ? ` - ${escapeHtml(cityAddress)}` : ""}</small>
+                ${payment ? `<small>${escapeHtml(payment)}</small>` : ""}
+              </div>
+              <div class="order-side">
+                <span class="order-status">${escapeHtml(order.order_status || "Received")}</span>
+                <strong class="order-total">Rs ${Number(order.total_amount || 0).toLocaleString("en-IN")}</strong>
+              </div>
+            </article>`;
+        }).join("");
+      }
+
+      async function loadOrders() {
+        if (ordersLoaded) return;
+        ordersLoading.hidden = false;
+        ordersList.hidden = true;
+        try {
+          const response = await fetch("/api/me/orders", {
+            headers: { Accept: "application/json" },
+          });
+          const data = await response.json();
+          if (response.status === 401) {
+            window.location.assign(`/auth/google?next=${encodeURIComponent("/profile#orders")}`);
+            return;
+          }
+          if (!response.ok || !data.ok) throw new Error(data.error || "Could not load orders.");
+          ordersLoaded = true;
+          renderOrders(Array.isArray(data.orders) ? data.orders : []);
+        } catch (error) {
+          ordersLoading.hidden = true;
+          ordersList.hidden = false;
+          ordersList.innerHTML = `<div class="orders-empty"><strong>Orders could not be loaded</strong><span>${escapeHtml(error.message || "Please try again.")}</span></div>`;
+        }
+      }
+
+      function clearFieldErrors() {
+        document.querySelectorAll("[data-field-error]").forEach((node) => {
+          node.textContent = "";
+        });
+      }
+
+      function updateOverview(customer) {
+        const phone = customer.phone || "Not added yet";
+        const address = customer.address || "Add your delivery address to make checkout faster.";
+        const citySelect = document.querySelector("[name='city']");
+        const cityLabel = citySelect?.selectedOptions?.[0]?.textContent || "No city selected";
+        document.querySelector("[data-overview-phone]").textContent = phone;
+        document.querySelector("[data-overview-address]").textContent = address;
+        document.querySelector("[data-overview-city]").textContent = customer.city ? cityLabel : "No city selected";
+      }
+
+      function rememberSavedFormValues() {
+        Array.from(profileForm.elements).forEach((field) => {
+          if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+            field.defaultValue = field.value;
+          }
+          if (field instanceof HTMLSelectElement) {
+            Array.from(field.options).forEach((option) => {
+              option.defaultSelected = option.selected;
+            });
+          }
+        });
+      }
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => setActiveSection(tab.dataset.profileTab));
+      });
+
+      document.querySelectorAll("[data-open-address]").forEach((button) => {
+        button.addEventListener("click", () => setActiveSection("address"));
+      });
+
+      document.querySelector("[data-cancel-profile]")?.addEventListener("click", () => {
+        profileForm.reset();
+        clearFieldErrors();
+        saveStatus.textContent = "";
+        setActiveSection("overview");
+      });
+
+      profileForm?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        clearFieldErrors();
+        saveStatus.textContent = "Saving your details...";
+        saveStatus.classList.remove("is-error");
+        saveButton.disabled = true;
+        const payload = {
+          phone: profileForm.elements.phone.value.trim(),
+          city: profileForm.elements.city.value,
+          address: profileForm.elements.address.value.trim(),
+        };
+        try {
+          const response = await fetch("/api/me", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+          const data = await response.json();
+          if (!response.ok || !data.ok) {
+            Object.entries(data.errors || {}).forEach(([field, message]) => {
+              const errorNode = document.querySelector(`[data-field-error="${field}"]`);
+              if (errorNode) errorNode.textContent = message;
+            });
+            throw new Error(data.error || "Please check the highlighted details.");
+          }
+          initialCustomer.phone = data.customer.phone;
+          initialCustomer.city = data.customer.city;
+          initialCustomer.address = data.customer.address;
+          updateOverview(initialCustomer);
+          rememberSavedFormValues();
+          saveStatus.textContent = "Your delivery details are up to date.";
+          showToast("Profile updated");
+        } catch (error) {
+          saveStatus.textContent = error.message || "Could not save your profile.";
+          saveStatus.classList.add("is-error");
+        } finally {
+          saveButton.disabled = false;
+        }
+      });
+
+      document.querySelector("[data-profile-logout]")?.addEventListener("click", async () => {
+        const button = document.querySelector("[data-profile-logout]");
+        button.disabled = true;
+        try {
+          const response = await fetch("/auth/logout", {
+            method: "POST",
+            headers: { Accept: "application/json" },
+          });
+          if (!response.ok) throw new Error("Could not sign out.");
+          window.location.assign("/");
+        } catch (error) {
+          button.disabled = false;
+          showToast(error.message || "Could not sign out.");
+        }
+      });
+
+      const initialSection = window.location.hash.replace("#", "");
+      setActiveSection(sectionCopy[initialSection] ? initialSection : "overview", false);
+    })();
+  </script>
+</body>
+</html>

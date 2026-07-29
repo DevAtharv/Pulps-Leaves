@@ -400,6 +400,8 @@ def customer_payload(customer):
         "phone": customer.get("Phone") or customer.get("phone", ""),
         "city": customer.get("Default City") or customer.get("city", ""),
         "address": customer.get("Default Address") or customer.get("address", ""),
+        "created_at": customer.get("Created At") or customer.get("created_at", ""),
+        "updated_at": customer.get("Updated At") or customer.get("updated_at", ""),
     }
 
 
@@ -528,6 +530,20 @@ def index():
         google_login_enabled=google_oauth_enabled(),
         razorpay_enabled=razorpay_enabled(),
         razorpay_key_id=razorpay_config()["key_id"] if razorpay_enabled() else "",
+    )
+
+
+@app.get("/profile")
+def profile():
+    customer = customer_payload(current_customer())
+    if not customer:
+        if google_oauth_enabled():
+            return redirect(url_for("google_login", next=url_for("profile")))
+        return redirect(url_for("index", account_error="sign_in_required"))
+    return render_template(
+        "profile.html",
+        customer=customer,
+        cities=AVAILABLE_CITIES,
     )
 
 
@@ -915,18 +931,33 @@ def update_me():
     if not customer:
         return jsonify({"ok": False, "auth_required": True, "error": "Please sign in first."}), 401
     payload = request.get_json(silent=True) or request.form.to_dict()
+    phone_raw = str(payload.get("phone", "")).strip()
+    city_raw = str(payload.get("city", "")).strip()
+    address = str(payload.get("address", "")).strip()
+    phone = normalize_phone(phone_raw)
+    city = city_by_choice(city_raw)
+    errors = {}
+    if not phone:
+        errors["phone"] = "Please enter a valid 10-digit Indian mobile number."
+    if not city:
+        errors["city"] = "Please select a supported delivery city."
+    if len(address) < 8 or len(address) > 300:
+        errors["address"] = "Please enter a complete delivery address of up to 300 characters."
+    if errors:
+        return jsonify({"ok": False, "errors": errors}), 400
+
     remember_customer_checkout_details(
-        phone=payload.get("phone", ""),
-        city=payload.get("city", ""),
-        address=payload.get("address", ""),
+        phone=phone,
+        city=city,
+        address=address,
     )
     try:
         updated = order_manager.sheets.update_customer_profile(
             customer_payload(customer)["google_subject"],
             {
-                "phone": payload.get("phone", ""),
-                "city": payload.get("city", ""),
-                "address": payload.get("address", ""),
+                "phone": phone,
+                "city": city,
+                "address": address,
             },
         )
     except Exception as error:
@@ -937,9 +968,9 @@ def update_me():
             profile = customer_payload(current_customer() or customer)
             profile.update(
                 {
-                    "phone": payload.get("phone", ""),
-                    "city": payload.get("city", ""),
-                    "address": payload.get("address", ""),
+                    "phone": phone,
+                    "city": city,
+                    "address": address,
                 }
             )
             updated = order_manager.sheets.upsert_customer(profile)

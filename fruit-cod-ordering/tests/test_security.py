@@ -182,6 +182,34 @@ class SecurityTests(unittest.TestCase):
         self.assertNotIn('aria-label="Login with Google"', page)
         self.assertNotIn("Link an older order", page)
 
+    def test_profile_requires_google_login(self):
+        response = self.client.get("/profile")
+        self.assertEqual(response.status_code, 302)
+
+    def test_authenticated_profile_renders_without_wallet(self):
+        self.login()
+        response = self.client.get("/profile")
+        page = response.get_data(as_text=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Account overview", page)
+        self.assertIn("Your orders", page)
+        self.assertIn("Default address", page)
+        self.assertNotIn("wallet", page.lower())
+
+    def test_authenticated_home_profile_links_to_profile_page(self):
+        self.login()
+        page = self.client.get("/").get_data(as_text=True)
+        self.assertIn('href="/profile" aria-label="Profile"', page)
+
+    def test_profile_update_rejects_invalid_delivery_details(self):
+        self.login()
+        response = self.client.post(
+            "/api/me",
+            json={"phone": "123", "city": "unknown", "address": "x"},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(set(response.get_json()["errors"]), {"phone", "city", "address"})
+
     def test_coupon_ui_and_endpoint_are_removed(self):
         page = self.client.get("/").get_data(as_text=True)
         self.assertNotIn("Apply coupons", page)
@@ -232,6 +260,8 @@ class SecurityTests(unittest.TestCase):
         self.assertIn('data-id="roasted-makhana-masala-combo"', page)
         self.assertIn("naivedyam-masala-pack-200g-20260729.webp", page)
         self.assertIn("naivedyam-masala-hero-20260729.webp", page)
+        self.assertIn("hero-product--masala", page)
+        self.assertNotIn("जय बिहार", page)
         self.assertEqual(page.count("data-hero-slide "), 2)
 
     def test_google_callback_stays_on_the_current_live_host(self):
