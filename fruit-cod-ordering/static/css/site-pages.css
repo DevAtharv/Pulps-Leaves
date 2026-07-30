@@ -4,11 +4,15 @@
 
 .page-site-header {
   position: fixed;
+  border-bottom-color: var(--line);
+  background: rgba(255, 250, 242, 0.985);
+  box-shadow: 0 8px 30px rgba(24, 50, 34, 0.08);
+  backdrop-filter: blur(14px);
 }
 
 .page-shop-link {
   color: var(--forest);
-  background: rgba(255, 250, 242, 0.88);
+  background: var(--ivory);
 }
 
 .catalog-product {
@@ -28,7 +32,7 @@
   display: grid;
   place-items: center;
   overflow: hidden;
-  border: 1px solid rgba(18, 63, 42, 0.12);
+  border: 1px solid var(--line);
   border-radius: 6px 0 0 6px;
   background:
     linear-gradient(rgba(255, 250, 242, 0.54), rgba(255, 250, 242, 0.54)),
@@ -37,25 +41,18 @@
 
 .catalog-product--mango .catalog-visual {
   background:
-    linear-gradient(rgba(255, 244, 210, 0.68), rgba(255, 244, 210, 0.68)),
+    linear-gradient(rgba(243, 225, 206, 0.78), rgba(243, 225, 206, 0.78)),
     url("../img/pl-lotus-hero-desktop-20260730.webp") center / cover;
 }
 
 .catalog-product--tea .catalog-visual {
   background:
-    linear-gradient(rgba(225, 238, 222, 0.72), rgba(225, 238, 222, 0.72)),
+    linear-gradient(rgba(223, 233, 223, 0.82), rgba(223, 233, 223, 0.82)),
     url("../img/pl-lotus-hero-desktop-20260730.webp") center / cover;
 }
 
 .catalog-visual::after {
-  width: min(52%, 360px);
-  aspect-ratio: 1;
-  position: absolute;
-  bottom: -20%;
-  left: -8%;
-  content: "";
-  border: 1px solid rgba(18, 63, 42, 0.12);
-  border-radius: 50%;
+  display: none;
 }
 
 .catalog-visual img {
@@ -78,10 +75,10 @@
   top: 24px;
   left: 24px;
   padding: 9px 13px;
-  border: 1px solid rgba(18, 63, 42, 0.24);
+  border: 1px solid rgba(18, 63, 42, 0.28);
   border-radius: 3px;
   color: var(--forest);
-  background: rgba(255, 250, 242, 0.88);
+  background: rgba(255, 250, 242, 0.96);
   font-size: 0.65rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -93,10 +90,10 @@
   flex-direction: column;
   justify-content: center;
   padding: 58px clamp(38px, 5vw, 76px);
-  border: 1px solid rgba(18, 63, 42, 0.12);
+  border: 1px solid var(--line);
   border-left: 0;
   border-radius: 0 6px 6px 0;
-  background: rgba(255, 250, 242, 0.94);
+  background: var(--ivory);
 }
 
 .page-breadcrumb {
@@ -129,7 +126,7 @@
 .catalog-lead {
   max-width: 570px;
   margin: 27px 0 0;
-  color: #435148;
+  color: var(--ink-soft);
   font-size: 0.92rem;
   line-height: 1.78;
 }
@@ -148,7 +145,7 @@
   border: 1px solid rgba(18, 63, 42, 0.18);
   border-radius: 3px;
   color: var(--forest);
-  background: rgba(110, 134, 101, 0.08);
+  background: rgba(99, 125, 107, 0.1);
   font-size: 0.62rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -189,7 +186,8 @@
 
 .category-links {
   padding: 92px 0 110px;
-  background: rgba(247, 237, 229, 0.88);
+  border-top: 1px solid rgba(21, 35, 27, 0.08);
+  background: var(--surface-blush);
 }
 
 .category-link-grid {
@@ -206,7 +204,7 @@
   overflow: hidden;
   border: 1px solid rgba(18, 63, 42, 0.14);
   border-radius: 6px;
-  background: rgba(255, 250, 242, 0.92);
+  background: var(--white);
   transition: border-color 180ms ease, transform 180ms ease;
 }
 
@@ -266,7 +264,7 @@
 .policy-header > p {
   max-width: 720px;
   margin: 28px 0 0;
-  color: #435148;
+  color: var(--ink-soft);
   font-size: 1rem;
   line-height: 1.75;
 }
@@ -335,7 +333,7 @@
 
 .policy-content p {
   margin: 16px 0 0;
-  color: #435148;
+  color: var(--ink-soft);
   font-size: 0.88rem;
   line-height: 1.82;
 }

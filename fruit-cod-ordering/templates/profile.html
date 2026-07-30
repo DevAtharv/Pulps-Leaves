@@ -8,22 +8,22 @@
   <link rel="icon" href="{{ url_for('static', filename='img/logo-favicon.png') }}" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --forest: #174d32;
-      --forest-deep: #103b27;
-      --leaf: #67806c;
-      --paper: #fbf7f1;
-      --surface: #fffdf9;
-      --line: #e8e0d6;
-      --gold: #c88a1d;
-      --ink: #202a24;
-      --muted: #707b73;
-      --danger: #c13b37;
+      --forest: #123f2a;
+      --forest-deep: #0b3422;
+      --leaf: #637d6b;
+      --paper: #f4ede3;
+      --surface: #fffaf2;
+      --line: #dfd7cc;
+      --gold: #d3a445;
+      --ink: #15231b;
+      --muted: #58675e;
+      --danger: #a72f2d;
       --shadow: 0 14px 34px rgba(33, 53, 40, 0.08);
       --sans: "Manrope", Arial, sans-serif;
-      --serif: "Playfair Display", Georgia, serif;
+      --serif: "DM Serif Display", Georgia, serif;
     }
 
     * {
@@ -75,7 +75,7 @@
       display: flex;
       align-items: center;
       border-bottom: 1px solid var(--line);
-      background: rgba(255, 253, 249, 0.94);
+      background: rgba(255, 250, 242, 0.985);
     }
 
     .header-inner {
@@ -121,7 +121,7 @@
     }
 
     .header-brand-copy span {
-      color: #98a097;
+      color: var(--muted);
       font-size: 0.62rem;
       font-weight: 800;
       text-transform: uppercase;
@@ -241,7 +241,7 @@
       padding: 0 14px;
       border: 1px solid transparent;
       border-radius: 6px;
-      color: #647068;
+      color: var(--muted);
       background: transparent;
       font-size: 0.68rem;
       font-weight: 800;
@@ -296,8 +296,8 @@
 
     .logout-button:hover,
     .logout-button:focus-visible {
-      border-color: rgba(193, 59, 55, 0.24);
-      background: rgba(193, 59, 55, 0.05);
+      border-color: rgba(167, 47, 45, 0.28);
+      background: rgba(167, 47, 45, 0.06);
       outline: none;
     }
 
@@ -368,7 +368,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      color: #87938a;
+      color: var(--muted);
       font-size: 0.68rem;
       font-weight: 800;
       text-transform: uppercase;
@@ -386,7 +386,7 @@
     }
 
     .detail-row dt {
-      color: #8a958d;
+      color: var(--muted);
       font-size: 0.65rem;
       font-weight: 700;
       text-transform: uppercase;
@@ -559,7 +559,7 @@
     }
 
     .form-field label {
-      color: #78847b;
+      color: var(--muted);
       font-size: 0.65rem;
       font-weight: 800;
       text-transform: uppercase;
@@ -691,6 +691,12 @@
     .profile-toast.is-visible {
       opacity: 1;
       transform: none;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid var(--gold) !important;
+      outline-offset: 3px;
     }
 
     @media (max-width: 860px) {
