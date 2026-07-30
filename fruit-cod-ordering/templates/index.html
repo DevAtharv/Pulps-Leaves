@@ -4174,6 +4174,354 @@
       }
     }
 
+    .social-showcase {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.8fr);
+      gap: 12px;
+    }
+    .social-story-stack {
+      display: grid;
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .social-story {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--forest);
+    }
+    .social-story-feature {
+      aspect-ratio: 16 / 9;
+    }
+    .social-story img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      transition: transform 260ms ease;
+    }
+    .social-story:hover img {
+      transform: scale(1.025);
+    }
+    .social-story::after {
+      content: "";
+      position: absolute;
+      inset: 44% 0 0;
+      background: linear-gradient(180deg, transparent, rgba(7, 35, 23, 0.82));
+    }
+    .social-story > span {
+      position: absolute;
+      z-index: 1;
+      inset: auto 18px 16px;
+      display: grid;
+      gap: 3px;
+    }
+    .social-story strong {
+      font-family: var(--serif);
+      font-size: clamp(1.15rem, 2vw, 1.8rem);
+      line-height: 1.05;
+    }
+    .social-story small {
+      font-size: 0.66rem;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .roots-map-section {
+      display: grid;
+      grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.28fr);
+      min-height: 470px;
+      background: #fffaf2;
+    }
+    .roots-map-copy {
+      display: grid;
+      align-content: center;
+      padding: clamp(42px, 7vw, 92px);
+      color: #fff;
+      background: var(--forest);
+    }
+    .roots-map-copy .eyebrow {
+      color: var(--saffron-2);
+    }
+    .roots-map-copy h2 {
+      margin-top: 12px;
+      color: #fff;
+      font-family: var(--serif);
+      font-size: clamp(2.7rem, 5vw, 5rem);
+      line-height: 0.95;
+    }
+    .roots-map-copy h2 em {
+      color: var(--saffron-2);
+      font-style: normal;
+    }
+    .roots-map-copy p {
+      max-width: 510px;
+      margin-top: 20px;
+      color: rgba(255, 255, 255, 0.78);
+      line-height: 1.75;
+    }
+    .roots-map-copy a {
+      width: fit-content;
+      margin-top: 28px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--saffron-2);
+      color: #fff;
+      font-size: 0.74rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .roots-map-frame {
+      min-height: 470px;
+    }
+    .roots-map-frame iframe {
+      width: 100%;
+      height: 100%;
+      min-height: 470px;
+      display: block;
+      border: 0;
+    }
+
+    .coupon-offers {
+      display: grid;
+      gap: 10px;
+      margin: 4px 0 18px;
+      padding: 16px 0;
+      border-top: 1px solid #e5ded4;
+      border-bottom: 1px solid #e5ded4;
+    }
+    .coupon-offers-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .coupon-offers-head > span {
+      color: var(--forest);
+      font-size: 0.82rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .coupon-offers-head small,
+    .coupon-feedback {
+      color: var(--muted);
+      font-size: 0.7rem;
+      line-height: 1.45;
+    }
+    .coupon-offer-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .coupon-offer {
+      min-width: 0;
+      min-height: 72px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 11px;
+      border: 1px solid #ddd4c7;
+      border-radius: 6px;
+      color: var(--forest-deep);
+      background: #fff;
+      text-align: left;
+    }
+    .coupon-offer:hover {
+      border-color: var(--forest);
+    }
+    .coupon-offer.is-applied {
+      border-color: var(--forest);
+      background: #edf4eb;
+      box-shadow: inset 0 0 0 1px var(--forest);
+    }
+    .coupon-offer > span {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+    .coupon-offer strong {
+      color: var(--forest);
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+    }
+    .coupon-offer small {
+      color: var(--muted);
+      font-size: 0.65rem;
+      line-height: 1.35;
+    }
+    .coupon-offer em {
+      color: var(--forest);
+      font-size: 0.68rem;
+      font-style: normal;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .coupon-feedback {
+      min-height: 1em;
+      margin: 0;
+    }
+
+    body.order-success-open {
+      overflow: hidden;
+    }
+    .order-success-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 160;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(8, 28, 19, 0.66);
+      backdrop-filter: blur(8px);
+    }
+    .order-success-overlay.is-open {
+      display: grid;
+    }
+    .order-success-dialog {
+      position: relative;
+      width: min(100%, 480px);
+      display: grid;
+      justify-items: center;
+      padding: 38px 32px 30px;
+      border: 1px solid rgba(201, 145, 42, 0.36);
+      border-radius: 8px;
+      color: var(--forest-deep);
+      background: #fffaf2;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.28);
+      text-align: center;
+    }
+    .order-success-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(15, 69, 43, 0.26);
+      border-radius: 50%;
+      color: var(--forest);
+      background: transparent;
+    }
+    .order-success-mark {
+      width: 64px;
+      height: 64px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--forest);
+    }
+    .order-success-dialog > span {
+      margin-top: 20px;
+      color: var(--saffron);
+      font-size: 0.7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .order-success-dialog h2 {
+      margin-top: 8px;
+      color: var(--forest);
+      font-family: var(--serif);
+      font-size: clamp(2rem, 6vw, 3rem);
+      line-height: 1;
+    }
+    .order-success-dialog p {
+      max-width: 350px;
+      margin-top: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .order-success-number {
+      width: 100%;
+      margin-top: 22px;
+      padding: 16px;
+      border: 1px dashed var(--saffron);
+      border-radius: 6px;
+      color: var(--forest);
+      background: #f8efd9;
+      font-size: clamp(1.5rem, 6vw, 2.15rem);
+      letter-spacing: 0.08em;
+    }
+    .order-success-actions {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 22px;
+    }
+    .order-success-actions button {
+      min-height: 46px;
+      padding: 0 12px;
+      border: 1px solid var(--forest);
+      border-radius: 6px;
+      color: var(--forest);
+      background: transparent;
+      font-size: 0.7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .order-success-actions button:first-child {
+      color: #fff;
+      background: var(--forest);
+    }
+
+    @media (max-width: 760px) {
+      .social-showcase {
+        grid-template-columns: 1fr;
+      }
+      .social-story-feature {
+        aspect-ratio: 4 / 3;
+      }
+      .social-story-stack {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: none;
+      }
+      .social-story-stack .social-story {
+        aspect-ratio: 4 / 5;
+      }
+      .social-story > span {
+        inset: auto 12px 12px;
+      }
+      .social-story strong {
+        font-size: 1rem;
+      }
+      .social-story small {
+        font-size: 0.58rem;
+      }
+      .roots-map-section {
+        grid-template-columns: 1fr;
+        min-height: 0;
+      }
+      .roots-map-copy {
+        padding: 52px 22px;
+      }
+      .roots-map-copy h2 {
+        font-size: 3.3rem;
+      }
+      .roots-map-frame,
+      .roots-map-frame iframe {
+        min-height: 340px;
+      }
+      .coupon-offer-list {
+        grid-template-columns: 1fr;
+      }
+      .coupon-offers-head {
+        align-items: start;
+        flex-direction: column;
+        gap: 3px;
+      }
+      .order-success-dialog {
+        padding: 34px 18px 22px;
+      }
+      .order-success-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
     @media (max-width: 340px) {
       .hero h1.hero-title {
         font-size: 32px;
@@ -4197,7 +4545,6 @@
         <span class="brand-logo-mark" role="img" aria-label="Pulps and Leaves logo"></span>
         <span>
           <strong>Pulps &amp; Leaves</strong>
-          <small>पल्प्स एंड लीव्स</small>
         </span>
       </a>
       <nav class="nav-links" aria-label="Primary navigation">
@@ -4367,7 +4714,9 @@
           <div class="featured-product-details">
             <span class="product-detail-kicker">{{ product.kicker }}</span>
             <h3>{{ product.display_title }}</h3>
+            {% if product.secondary_title %}
             <p class="hindi-line">{{ product.secondary_title }}</p>
+            {% endif %}
             <p class="product-detail-copy">{{ product.details }}</p>
             <div class="featured-price">
               <strong>Rs {{ product.price }}</strong>
@@ -4384,7 +4733,7 @@
                 <span data-feature-quantity="{{ product.slug }}" aria-live="polite">0</span>
                 <button type="button" data-add-product="{{ product.slug }}" aria-label="Add one pouch to bag" title="Add one">+</button>
               </div>
-              <button class="featured-add-button" type="button" data-add-product="{{ product.slug }}">
+              <button class="featured-add-button" type="button" data-feature-primary data-add-product="{{ product.slug }}">
                 <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                 <span data-feature-add-label="{{ product.slug }}">Add to Bag</span>
               </button>
@@ -4455,26 +4804,47 @@
     <section class="story-social" id="culture">
       <div class="story-social-inner">
         <header class="reference-section-head instagram-section-head" data-reveal>
-          <h2>Instagram <em>Feed</em></h2>
+          <div>
+            <span class="eyebrow">Stories, harvests, and new launches</span>
+            <h2>Follow Our <em>Journey</em></h2>
+          </div>
           <a class="instagram-profile-link" href="https://www.instagram.com/pulpsandleaves/" target="_blank" rel="noopener noreferrer" aria-label="Follow Pulps and Leaves on Instagram">
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.8" r="1" fill="currentColor"/></svg>
             <span>@pulpsandleaves</span>
           </a>
         </header>
-        <div class="story-reel">
-          <article class="instagram-reel-card" data-reveal>
-            <iframe src="https://www.instagram.com/reel/DaC2pNKIS1X/embed/" title="Pulps and Leaves Instagram reel about Bihar makhana" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
-          </article>
-          <article class="instagram-reel-card" data-reveal style="--reveal-delay:70ms">
-            <iframe src="https://www.instagram.com/reel/DZns3EUoSx8/embed/" title="Pulps and Leaves Instagram reel" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
-          </article>
-          <article class="instagram-reel-card" data-reveal style="--reveal-delay:140ms">
-            <iframe src="https://www.instagram.com/reel/DZaqgibI0gj/embed/" title="Pulps and Leaves Instagram reel" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
-          </article>
-          <article class="instagram-reel-card" data-reveal style="--reveal-delay:210ms">
-            <iframe src="https://www.instagram.com/reel/DY5DhX2IOzl/embed/" title="Pulps and Leaves Instagram reel" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
-          </article>
+        <div class="social-showcase">
+          <a class="social-story social-story-feature" href="https://www.instagram.com/pulpsandleaves/" target="_blank" rel="noopener noreferrer" data-reveal>
+            <img src="{{ url_for('static', filename='img/naivedyam-main-hero-user-20260729.png') }}" alt="Pulps and Leaves Naivedyam Makhana in a lotus pond landscape" width="1672" height="941" loading="lazy" decoding="async">
+            <span><strong>From Bihar to every home</strong><small>See the story on Instagram</small></span>
+          </a>
+          <div class="social-story-stack">
+            <a class="social-story" href="https://www.instagram.com/pulpsandleaves/" target="_blank" rel="noopener noreferrer" data-reveal style="--reveal-delay:80ms">
+              <img src="{{ url_for('static', filename='img/naivedyam-masala-hero-20260729.webp') }}" alt="Naivedyam roasted makhana with three masala packets" width="1672" height="941" loading="lazy" decoding="async">
+              <span><strong>Season it your way</strong><small>Three masalas, one pouch</small></span>
+            </a>
+            <a class="social-story" href="https://www.instagram.com/pulpsandleaves/" target="_blank" rel="noopener noreferrer" data-reveal style="--reveal-delay:160ms">
+              <img src="{{ url_for('static', filename='img/mithila-harvest-720.webp') }}" alt="Traditional makhana harvest in Mithila" width="720" height="720" loading="lazy" decoding="async">
+              <span><strong>Rooted in Mithila</strong><small>Meet the craft behind the crunch</small></span>
+            </a>
+          </div>
         </div>
+      </div>
+    </section>
+
+    <section class="roots-map-section" id="location">
+      <div class="roots-map-copy" data-reveal>
+        <span class="eyebrow">Our roots</span>
+        <h2>Mithila, <em>Bihar</em></h2>
+        <p>Naivedyam begins in Bihar's makhana-growing heartland, where lotus ponds and generations of harvest knowledge shape every pouch.</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=Darbhanga%2C%20Bihar" target="_blank" rel="noopener noreferrer">Open in Google Maps</a>
+      </div>
+      <div class="roots-map-frame" data-reveal style="--reveal-delay:100ms">
+        <iframe
+          src="https://www.google.com/maps?q=Darbhanga%2C%20Bihar&output=embed"
+          title="Google Map showing Darbhanga in the Mithila region of Bihar"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
     </section>
 
@@ -4486,7 +4856,6 @@
       <div class="footer-brand">
         <img src="{{ url_for('static', filename='img/logo-120.webp') }}" alt="Pulps and Leaves logo" width="120" height="120">
         <h3>Pulps &amp; Leaves</h3>
-        <p class="hindi-line">पल्प्स एंड लीव्स</p>
         <p>From Indian roots to modern homes. Naivedyam Makhana is live, tea is launching soon, and mangoes return next season.</p>
         <p class="hindi-line">"बिहार की शुद्धता, आपके घर तक"</p>
       </div>
@@ -4503,6 +4872,7 @@
         <a href="#product">The Harvest</a>
         <a href="#why">Why Makhana</a>
         <a href="#culture">Heritage</a>
+        <a href="#location">Our Roots</a>
         <a href="https://wa.me/919835496666?text=Hi%20Pulps%20%26%20Leaves%2C%20I%20want%20to%20ask%20about%20Naivedyam%20Makhana." target="_blank" rel="noopener">WhatsApp Us</a>
       </div>
     </div>
@@ -4524,7 +4894,6 @@
         <img src="{{ url_for('static', filename='img/logo-120.webp') }}" alt="" width="120" height="120" loading="lazy" decoding="async">
         <span>
           <strong>Pulps &amp; Leaves</strong>
-          <small>पल्प्स एंड लीव्स</small>
         </span>
       </button>
       <div class="secure-checkout">
@@ -4602,6 +4971,26 @@
           </div>
         </div>
 
+        <div class="coupon-offers" aria-labelledby="couponOffersTitle">
+          <div class="coupon-offers-head">
+            <span id="couponOffersTitle">Coupon offers</span>
+            <small>Use one offer per order</small>
+          </div>
+          <div class="coupon-offer-list">
+            {% for coupon in coupon_offers %}
+            <button class="coupon-offer" type="button" data-coupon-apply="{{ coupon.code }}" aria-pressed="false">
+              <span>
+                <strong>{{ coupon.code }}</strong>
+                <small>{{ coupon.description }}</small>
+              </span>
+              <em>Apply</em>
+            </button>
+            {% endfor %}
+          </div>
+          <p class="coupon-feedback" data-coupon-feedback>Select an offer to apply it to this order.</p>
+          <input type="hidden" name="coupon_codes" value="[]" data-coupon-input>
+        </div>
+
         <div class="summary-line"><span>Items total</span><strong data-summary-subtotal>Rs 0</strong></div>
         <div class="summary-line"><span>Delivery<small>Free on order above Rs 699</small></span><strong data-summary-delivery>Rs 0</strong></div>
         <div class="summary-line" data-savings-line hidden><span>Savings</span><strong data-summary-savings>-Rs 0</strong></div>
@@ -4631,6 +5020,25 @@
   </aside>
 
   <div class="toast" data-toast role="status" aria-live="polite"></div>
+
+  <div class="order-success-overlay" data-order-success aria-hidden="true">
+    <section class="order-success-dialog" role="dialog" aria-modal="true" aria-labelledby="orderSuccessTitle">
+      <button class="order-success-close" type="button" data-order-success-close aria-label="Close order confirmation">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+      </button>
+      <div class="order-success-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="34" height="34"><path d="m5 12 4 4L19 6" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span>Order confirmed</span>
+      <h2 id="orderSuccessTitle">Your order is placed</h2>
+      <p>Save this number to track your order and find it later in Order History.</p>
+      <strong class="order-success-number" data-order-success-number>PL000000</strong>
+      <div class="order-success-actions">
+        <button type="button" data-order-success-history>View Order History</button>
+        <button type="button" data-order-success-close>Continue Shopping</button>
+      </div>
+    </section>
+  </div>
 
   <div class="account-modal-overlay" data-account-modal aria-hidden="true">
     <section class="account-modal" role="dialog" aria-modal="true" aria-labelledby="accountModalTitle">
@@ -4712,9 +5120,15 @@
       const summarySavings = document.querySelector("[data-summary-savings]");
       const summaryTotal = document.querySelector("[data-summary-total]");
       const savingsLine = document.querySelector("[data-savings-line]");
+      const couponInput = document.querySelector("[data-coupon-input]");
+      const couponFeedback = document.querySelector("[data-coupon-feedback]");
+      const couponButtons = Array.from(document.querySelectorAll("[data-coupon-apply]"));
       const submitButton = document.querySelector("[data-submit-order]");
       const orderResult = document.querySelector("[data-order-result]");
       const toast = document.querySelector("[data-toast]");
+      const orderSuccess = document.querySelector("[data-order-success]");
+      const orderSuccessNumber = document.querySelector("[data-order-success-number]");
+      const orderSuccessHistory = document.querySelector("[data-order-success-history]");
       const accountModal = document.querySelector("[data-account-modal]");
       const accountClose = document.querySelector("[data-account-close]");
       const accountTitle = document.querySelector("[data-account-modal-title]");
@@ -4823,9 +5237,11 @@
       const DELIVERY_CHARGE = 30;
       const ONLINE_PAYMENT_MINIMUM_SUBTOTAL = 699;
       const ONLINE_PAYMENT_DISCOUNT = 40;
+      const couponOffers = {{ coupon_offers | tojson }};
       const GOOGLE_LOGIN_URL = {{ url_for('google_login') | tojson }};
       let checkoutToken = makeCheckoutToken();
       let razorpayCheckoutPromise = null;
+      let appliedCouponCode = "";
 
       const products = new Map(
         Array.from(document.querySelectorAll("[data-product]")).map((card) => [
@@ -4868,9 +5284,28 @@
         const onlineDiscount = selectedPaymentMethod() === "razorpay" && paymentState.razorpayEnabled && subtotal >= ONLINE_PAYMENT_MINIMUM_SUBTOTAL
           ? Math.min(ONLINE_PAYMENT_DISCOUNT, subtotal)
           : 0;
-        const discount = Math.min(subtotal, onlineDiscount);
-        const delivery = subtotal === 0 || subtotal > DELIVERY_FREE_ABOVE ? 0 : DELIVERY_CHARGE;
-        return { count, subtotal, onlineDiscount, discount, delivery, total: Math.max(0, subtotal - discount) + delivery };
+        const coupon = couponOffers.find((offer) => offer.code === appliedCouponCode) || null;
+        const couponEligible = Boolean(coupon && subtotal >= Number(coupon.minimum_subtotal || 0));
+        const couponDiscount = couponEligible
+          ? Math.min(
+              Number(coupon.max_discount || subtotal) || subtotal,
+              Math.round((subtotal * Number(coupon.rate_bps || 0)) / 10000)
+            )
+          : 0;
+        const discount = Math.min(subtotal, onlineDiscount + couponDiscount);
+        const couponWaivesDelivery = couponEligible && Boolean(coupon.waives_delivery);
+        const delivery = subtotal === 0 || subtotal > DELIVERY_FREE_ABOVE || couponWaivesDelivery ? 0 : DELIVERY_CHARGE;
+        return {
+          count,
+          subtotal,
+          onlineDiscount,
+          coupon,
+          couponEligible,
+          couponDiscount,
+          discount,
+          delivery,
+          total: Math.max(0, subtotal - discount) + delivery,
+        };
       }
 
       function showToast(message, duration = 3200) {
@@ -5125,6 +5560,18 @@
         drawer?.setAttribute("aria-hidden", open ? "false" : "true");
       }
 
+      function setOrderSuccessOpen(open) {
+        if (!orderSuccess) return;
+        orderSuccess.classList.toggle("is-open", open);
+        orderSuccess.setAttribute("aria-hidden", open ? "false" : "true");
+        document.body.classList.toggle("order-success-open", open);
+      }
+
+      function showOrderSuccess(orderId) {
+        if (orderSuccessNumber) orderSuccessNumber.textContent = orderId || "Order received";
+        setOrderSuccessOpen(true);
+      }
+
       function syncProductQuantityDisplays() {
         document.querySelectorAll("[data-feature-quantity]").forEach((node) => {
           const quantity = cart.get(node.dataset.featureQuantity)?.quantity || 0;
@@ -5136,12 +5583,12 @@
         });
         document.querySelectorAll("[data-feature-add-label]").forEach((node) => {
           const quantity = cart.get(node.dataset.featureAddLabel)?.quantity || 0;
-          node.textContent = quantity > 0 ? "Add Another" : "Add to Bag";
+          node.textContent = quantity > 0 ? "Go to Cart" : "Add to Bag";
         });
       }
 
       function renderCart() {
-        const { count, subtotal, discount, delivery, total } = totals();
+        const { count, subtotal, coupon, couponEligible, discount, delivery, total } = totals();
         cartCount.textContent = String(count);
         syncProductQuantityDisplays();
         summarySubtitle.textContent = count ? `${count} ${count === 1 ? "item" : "items"} in cart` : "Cart is empty";
@@ -5151,6 +5598,22 @@
         if (summarySavings && savingsLine) {
           savingsLine.hidden = discount <= 0;
           summarySavings.textContent = `-${money(discount)}`;
+        }
+        couponButtons.forEach((button) => {
+          const isApplied = button.dataset.couponApply === appliedCouponCode;
+          button.classList.toggle("is-applied", isApplied);
+          button.setAttribute("aria-pressed", isApplied ? "true" : "false");
+          const action = button.querySelector("em");
+          if (action) action.textContent = isApplied ? "Applied" : "Apply";
+        });
+        if (couponInput) {
+          couponInput.value = JSON.stringify(couponEligible && coupon ? [coupon.code] : []);
+        }
+        if (couponFeedback) {
+          if (!count) couponFeedback.textContent = "Add a product to use a coupon.";
+          else if (coupon && couponEligible) couponFeedback.textContent = `${coupon.code} applied to this order.`;
+          else if (coupon) couponFeedback.textContent = `${coupon.code} needs a minimum order of ${money(coupon.minimum_subtotal)}.`;
+          else couponFeedback.textContent = "Select an offer to apply it to this order.";
         }
         submitButton.disabled = count === 0;
         if (count === 0) {
@@ -5190,7 +5653,7 @@
                   <strong>${escapeHtml(item.name)}</strong>
                   <div class="cart-item-badges">
                     <span class="cart-item-badge">${escapeHtml(item.badge || "Makhana")}</span>
-                    <small class="font-hindi">${escapeHtml(item.secondaryTitle || "")}</small>
+                    ${item.secondaryTitle ? `<small class="font-hindi">${escapeHtml(item.secondaryTitle)}</small>` : ""}
                     <small>${escapeHtml(item.variant)}</small>
                   </div>
                 </div>
@@ -5235,7 +5698,12 @@
 
       document.querySelectorAll("[data-add-product]").forEach((button) => {
         button.addEventListener("click", () => {
-          addToCart(button.dataset.addProduct, Number(button.dataset.addQuantity || 1));
+          const productId = button.dataset.addProduct;
+          if (button.hasAttribute("data-feature-primary") && (cart.get(productId)?.quantity || 0) > 0) {
+            setDrawerOpen(true);
+            return;
+          }
+          addToCart(productId, Number(button.dataset.addQuantity || 1));
         });
       });
 
@@ -5283,6 +5751,13 @@
       }
 
       paymentInputs.forEach((input) => input.addEventListener("change", renderCart));
+      couponButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const code = button.dataset.couponApply || "";
+          appliedCouponCode = appliedCouponCode === code ? "" : code;
+          renderCart();
+        });
+      });
 
       async function parseResponse(response) {
         const text = await response.text();
@@ -5332,14 +5807,18 @@
       }
 
       function handleOrderSuccess(order, message = "Order placed") {
-        orderResult.textContent = `${message}. Order ID: ${order?.["Order ID"] || "received"}.`;
+        const orderId = order?.["Order ID"] || "";
+        orderResult.textContent = `${message}. Order ID: ${orderId || "received"}.`;
         orderResult.classList.remove("error");
         rememberOrderForHistory(order);
+        setDrawerOpen(false);
         cart.clear();
+        appliedCouponCode = "";
         checkoutToken = makeCheckoutToken();
         orderForm.reset();
         renderCart();
         showToast(message);
+        showOrderSuccess(orderId);
       }
 
       async function submitCodOrder(payload) {
@@ -5446,6 +5925,22 @@
           }
         } finally {
           renderCart();
+        }
+      });
+
+      document.querySelectorAll("[data-order-success-close]").forEach((button) => {
+        button.addEventListener("click", () => setOrderSuccessOpen(false));
+      });
+      orderSuccess?.addEventListener("click", (event) => {
+        if (event.target === orderSuccess) setOrderSuccessOpen(false);
+      });
+      orderSuccessHistory?.addEventListener("click", () => {
+        setOrderSuccessOpen(false);
+        openAccountModal("", "orders");
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && orderSuccess?.classList.contains("is-open")) {
+          setOrderSuccessOpen(false);
         }
       });
 

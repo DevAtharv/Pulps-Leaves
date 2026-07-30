@@ -217,11 +217,41 @@ class SecurityTests(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(set(response.get_json()["errors"]), {"phone", "city", "address"})
 
-    def test_coupon_ui_and_endpoint_are_removed(self):
+    def test_coupon_offers_are_visible_and_server_validated(self):
         page = self.client.get("/").get_data(as_text=True)
-        self.assertNotIn("Apply coupons", page)
-        self.assertNotIn("data-manual-coupon", page)
-        self.assertEqual(self.client.post("/api/coupons/preview", json={"code": "LOVEFORMALDA"}).status_code, 404)
+        self.assertIn("Coupon offers", page)
+        self.assertIn('data-coupon-apply="NAIVEDYAM10"', page)
+        self.assertIn('data-coupon-apply="FREESHIP"', page)
+        preview = self.client.post("/api/coupons/preview", json={"code": "NAIVEDYAM10"})
+        self.assertEqual(preview.status_code, 200)
+        self.assertEqual(preview.get_json()["coupon"]["rate_bps"], 1000)
+        self.assertEqual(self.client.post("/api/coupons/preview", json={"code": "PL99FS022E"}).status_code, 404)
+
+    def test_coupon_totals_are_calculated_on_the_server(self):
+        manager = OrderManager(sheets_handler=FakeSheets([]))
+        base_payload = {
+            "name": "Test Customer",
+            "phone": "9876543210",
+            "city": "bangalore",
+            "address": "12 Test Road",
+            "cart_items": [{"id": "roasted-himalayan-makhana", "quantity": 1}],
+            "payment_method": "cod",
+        }
+        percentage, percentage_errors = manager.validate_new_order(
+            {**base_payload, "coupon_codes": ["NAIVEDYAM10"]}
+        )
+        self.assertEqual(percentage_errors, {})
+        self.assertEqual(percentage["coupon_discount"], 35)
+        self.assertEqual(percentage["delivery_charge"], 30)
+        self.assertEqual(percentage["total_amount"], 345)
+
+        free_ship, free_ship_errors = manager.validate_new_order(
+            {**base_payload, "coupon_codes": ["FREESHIP"]}
+        )
+        self.assertEqual(free_ship_errors, {})
+        self.assertEqual(free_ship["coupon_discount"], 0)
+        self.assertEqual(free_ship["delivery_charge"], 0)
+        self.assertEqual(free_ship["total_amount"], 350)
 
     def test_makhana_cart_uses_the_public_rs_350_price(self):
         manager = OrderManager(sheets_handler=FakeSheets([]))
@@ -270,6 +300,18 @@ class SecurityTests(unittest.TestCase):
         self.assertIn("hero-product--masala", page)
         self.assertNotIn("जय बिहार", page)
         self.assertEqual(page.count("data-hero-slide "), 2)
+
+    def test_homepage_uses_updated_product_and_social_copy(self):
+        page = self.client.get("/").get_data(as_text=True)
+        self.assertIn("Plain Makhana - 200g pack", page)
+        self.assertNotIn("सादा भुना मखाना", page)
+        self.assertNotIn("3 मसाला पैक के साथ भुना मखाना", page)
+        self.assertNotIn("पल्प्स एंड लीव्स", page)
+        self.assertIn('node.textContent = quantity > 0 ? "Go to Cart" : "Add to Bag";', page)
+        self.assertIn("Follow Our", page)
+        self.assertNotIn("instagram.com/reel/", page)
+        self.assertIn("google.com/maps?q=Darbhanga", page)
+        self.assertIn("data-order-success-number", page)
 
     def test_google_callback_stays_on_the_current_live_host(self):
         with patch.dict(os.environ, {"GOOGLE_OAUTH_REDIRECT_URI": "https://pulpsandleaves.com/auth/google/callback"}, clear=False):

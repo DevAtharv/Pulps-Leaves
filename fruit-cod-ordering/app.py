@@ -530,6 +530,7 @@ def index():
         google_login_enabled=google_oauth_enabled(),
         razorpay_enabled=razorpay_enabled(),
         razorpay_key_id=razorpay_config()["key_id"] if razorpay_enabled() else "",
+        coupon_offers=OrderManager.coupon_offers(),
     )
 
 
@@ -560,6 +561,15 @@ def apple_touch_icon():
 @app.get("/robots.txt")
 def robots_txt():
     return app.response_class("User-agent: *\nAllow: /\n", mimetype="text/plain")
+
+
+@app.post("/api/coupons/preview")
+def coupon_preview():
+    payload = request.get_json(silent=True) or {}
+    preview = OrderManager.coupon_preview(payload.get("code", ""))
+    if not preview:
+        return jsonify({"ok": False, "error": "Coupon code is not valid."}), 404
+    return jsonify({"ok": True, "coupon": preview})
 
 
 @app.post("/api/admin/sync-atharv")
