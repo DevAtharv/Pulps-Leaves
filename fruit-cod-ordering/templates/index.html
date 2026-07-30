@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="preload" href="{{ url_for('static', filename='img/pl-lotus-hero-desktop-20260730.avif') }}" as="image" type="image/avif" media="(min-width: 821px)" fetchpriority="high">
   <link rel="preload" href="{{ url_for('static', filename='img/pl-lotus-hero-mobile-20260730.avif') }}" as="image" type="image/avif" media="(max-width: 820px)" fetchpriority="high">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront-v2.css') }}?v=20260730i">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront-v2.css') }}?v=20260730j">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Skip to content</a>
@@ -129,6 +129,36 @@
             </div>
           </div>
         </article>
+
+        <article class="hero-slide hero-slide--flavours" data-hero-slide data-slide-index="2" aria-hidden="true">
+          <div class="hero-background">
+            <picture>
+              <source media="(max-width: 820px)" srcset="{{ url_for('static', filename='img/pl-lotus-hero-mobile-20260730.avif') }}" type="image/avif">
+              <source media="(max-width: 820px)" srcset="{{ url_for('static', filename='img/pl-lotus-hero-mobile-20260730.webp') }}" type="image/webp">
+              <source srcset="{{ url_for('static', filename='img/pl-lotus-hero-desktop-20260730.avif') }}" type="image/avif">
+              <img src="{{ url_for('static', filename='img/pl-lotus-hero-desktop-20260730.webp') }}" alt="" width="1600" height="900">
+            </picture>
+          </div>
+          <div class="hero-shade" aria-hidden="true"></div>
+          <div class="hero-inner">
+            <div class="hero-copy">
+              <span class="eyebrow">Three flavours to explore</span>
+              <h1><span>Pulps &amp; Leaves</span>Pick your crunch</h1>
+              <p>Peri Peri, Cream &amp; Onion, and Tangy Tomato makhana: three bright takes on our clean roasted crunch.</p>
+              <div class="hero-price"><strong>Rs 350</strong><span>200g pack</span></div>
+              <div class="hero-actions">
+                <button class="primary-button" type="button" data-add-product="flavoured-makhana-trio">
+                  <span data-feature-add-label="flavoured-makhana-trio">Add to bag</span>
+                  <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <a class="secondary-button" href="#shop">Choose a flavour</a>
+              </div>
+            </div>
+            <div class="hero-product hero-product--flavours" aria-hidden="true">
+              <img src="{{ url_for('static', filename='img/naivedyam-flavour-trio-200g-20260730.png') }}" alt="" width="1022" height="1140">
+            </div>
+          </div>
+        </article>
       </div>
 
       <div class="hero-pagination" aria-label="Hero slides">
@@ -137,6 +167,7 @@
         </button>
         <button class="hero-dot" type="button" aria-label="Show plain makhana" data-hero-dot="0" aria-current="true"></button>
         <button class="hero-dot" type="button" aria-label="Show masala makhana" data-hero-dot="1" aria-current="false"></button>
+        <button class="hero-dot" type="button" aria-label="Show flavoured makhana" data-hero-dot="2" aria-current="false"></button>
         <button class="hero-arrow" type="button" aria-label="Next slide" data-hero-next>
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -162,8 +193,8 @@
       <div class="section-shell">
         <header class="section-heading centered" data-reveal>
           <span class="section-kicker">Choose your crunch</span>
-          <h2>Two packs. One honest snack.</h2>
-          <p>Our Naivedyam range stays focused: premium makhana in a generous 200g pouch, plain or ready for three flavours.</p>
+          <h2>Three packs. One honest snack.</h2>
+          <p>Our Naivedyam range stays focused: premium makhana in a generous 200g pack, plain, ready to season, or full of flavour.</p>
         </header>
 
         {% for product in products %}
@@ -179,7 +210,7 @@
           data-cart-badge="{{ product.cart_badge }}"
           data-secondary-title="{{ product.secondary_title }}"
         >
-          <div class="product-media {% if product.slug == 'roasted-makhana-masala-combo' %}product-media--dark{% endif %}" data-reveal="{% if loop.index is odd %}left{% else %}right{% endif %}">
+          <div class="product-media {% if product.slug == 'roasted-makhana-masala-combo' %}product-media--dark{% elif product.slug == 'flavoured-makhana-trio' %}product-media--flavours{% endif %}" data-reveal="{% if loop.index is odd %}left{% else %}right{% endif %}">
             <img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.image_alt }}" width="{{ product.image_width }}" height="{{ product.image_height }}" loading="lazy" decoding="async">
           </div>
           <div class="product-copy" data-reveal="{% if loop.index is odd %}right{% else %}left{% endif %}">
@@ -490,6 +521,31 @@
     </section>
   </div>
 
+  <div class="order-success-overlay" data-order-success-modal aria-hidden="true">
+    <section class="order-success-modal" role="dialog" aria-modal="true" aria-labelledby="orderSuccessTitle" aria-describedby="orderSuccessCopy">
+      <div class="celebration-confetti" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+      <button class="icon-close order-success-close" type="button" aria-label="Close order confirmation" data-order-success-close>
+        <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <div class="order-success-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="38" height="38"><path d="m5 12 4.2 4.2L19.5 6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="section-kicker">Order received</span>
+      <h2 id="orderSuccessTitle">Your makhana is on its way.</h2>
+      <p id="orderSuccessCopy">Thank you for choosing Pulps &amp; Leaves. We will confirm your order soon.</p>
+      <div class="order-success-number">
+        <span>Order number</span>
+        <strong data-order-success-id>Confirmed</strong>
+      </div>
+      <button class="primary-button order-success-action" type="button" data-order-success-close>Continue shopping</button>
+      {% if customer_authenticated %}
+      <a class="order-success-history" href="/profile#orders">View order history</a>
+      {% endif %}
+    </section>
+  </div>
+
   <div class="toast" data-toast role="status" aria-live="polite"></div>
 
   <script id="storefrontConfig" type="application/json">{{ {
@@ -502,6 +558,6 @@
     "customer": customer or {},
     "couponOffers": coupon_offers
   } | tojson }}</script>
-  <script src="{{ url_for('static', filename='js/storefront-v2.js') }}?v=20260730f" defer></script>
+  <script src="{{ url_for('static', filename='js/storefront-v2.js') }}?v=20260730g" defer></script>
 </body>
 </html>

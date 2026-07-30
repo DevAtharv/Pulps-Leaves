@@ -292,13 +292,35 @@ class SecurityTests(unittest.TestCase):
         self.assertEqual(clean_data["total_amount"], 700)
         self.assertIn("Roasted Makhana with 3 Masala Packs x 1", clean_data["product_summary"])
 
-    def test_homepage_renders_both_products_and_two_slides(self):
+    def test_flavoured_makhana_is_available_at_the_server_validated_price(self):
+        manager = OrderManager(sheets_handler=FakeSheets([]))
+        clean_data, errors = manager.validate_new_order(
+            {
+                "name": "Test Customer",
+                "phone": "9876543210",
+                "city": "bangalore",
+                "address": "12 Test Road",
+                "cart_items": [{"id": "flavoured-makhana-trio", "quantity": 1}],
+                "payment_method": "cod",
+            }
+        )
+        self.assertEqual(errors, {})
+        self.assertEqual(clean_data["subtotal"], 350)
+        self.assertEqual(clean_data["total_amount"], 380)
+        self.assertIn("Flavoured Makhana Trio x 1", clean_data["product_summary"])
+
+    def test_homepage_renders_three_products_three_slides_and_order_celebration(self):
         page = self.client.get("/").get_data(as_text=True)
         self.assertIn('data-id="roasted-makhana-masala-combo"', page)
         self.assertIn("naivedyam-masala-pack-cutout-200g-20260730.png", page)
+        self.assertIn('data-id="flavoured-makhana-trio"', page)
+        self.assertIn("naivedyam-flavour-trio-200g-20260730.png", page)
         self.assertIn("pl-lotus-hero-desktop-20260730.avif", page)
         self.assertIn("hero-product--masala", page)
-        self.assertEqual(page.count("data-hero-slide "), 2)
+        self.assertIn("hero-product--flavours", page)
+        self.assertEqual(page.count("data-hero-slide "), 3)
+        self.assertIn("data-order-success-modal", page)
+        self.assertIn("data-order-success-id", page)
 
     def test_homepage_keeps_original_copy_and_uses_maps_for_delivery_address(self):
         page = self.client.get("/").get_data(as_text=True)
@@ -316,7 +338,7 @@ class SecurityTests(unittest.TestCase):
         self.assertIn("data-address-map", page)
         self.assertIn("google.com/maps/search/", storefront_script)
         self.assertNotIn("roots-map-section", page)
-        self.assertNotIn("data-order-success-number", page)
+        self.assertIn("data-order-success-id", page)
 
     def test_category_and_privacy_pages_are_available(self):
         mango = self.client.get("/mango")

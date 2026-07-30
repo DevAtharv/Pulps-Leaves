@@ -32,6 +32,9 @@
   const deliveryAddress = document.querySelector("[data-delivery-address]");
   const addressMapButton = document.querySelector("[data-address-map]");
   const accountModal = document.querySelector("[data-account-modal]");
+  const orderSuccessModal = document.querySelector("[data-order-success-modal]");
+  const orderSuccessId = document.querySelector("[data-order-success-id]");
+  const orderSuccessCloseButton = document.querySelector("[data-order-success-close]");
   const accountTitle = document.querySelector("[data-account-title]");
   const accountCopy = document.querySelector("[data-account-copy]");
   const googleLoginButton = document.querySelector("[data-google-login]");
@@ -56,6 +59,7 @@
   let razorpayCheckoutPromise = null;
   let appliedCouponCode = "";
   let checkoutBusy = false;
+  let orderSuccessReturnFocus = null;
 
   const products = new Map(
     Array.from(document.querySelectorAll("[data-product]")).map((card) => [
@@ -350,6 +354,25 @@
     document.body.classList.toggle("modal-open", open);
   }
 
+  function setOrderSuccessOpen(open) {
+    orderSuccessModal?.classList.toggle("is-open", open);
+    orderSuccessModal?.setAttribute("aria-hidden", open ? "false" : "true");
+    document.body.classList.toggle("order-success-open", open);
+    if (open) {
+      window.setTimeout(() => orderSuccessCloseButton?.focus(), 0);
+    } else if (orderSuccessReturnFocus?.isConnected) {
+      orderSuccessReturnFocus.focus();
+    }
+  }
+
+  function openOrderSuccessModal(order) {
+    if (!orderSuccessModal) return;
+    orderSuccessReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    if (orderSuccessId) orderSuccessId.textContent = order?.["Order ID"] || "Confirmed";
+    setDrawerOpen(false);
+    setOrderSuccessOpen(true);
+  }
+
   function openAccountModal(message = "", showHistory = false) {
     if (message && accountCopy) accountCopy.textContent = message;
     setAccountOpen(true);
@@ -581,6 +604,7 @@
     restoreCustomerFields();
     renderCart();
     showToast(`${message}${orderId ? ` · ${orderId}` : ""}`);
+    openOrderSuccessModal(order);
   }
 
   async function submitOrder(event) {
@@ -718,6 +742,7 @@
     const buyNowButton = event.target.closest("[data-buy-now]");
     const accountOpen = event.target.closest("[data-account-open]");
     const accountClose = event.target.closest("[data-account-close]");
+    const orderSuccessClose = event.target.closest("[data-order-success-close]");
 
     if (addButton) {
       const productId = addButton.dataset.addProduct;
@@ -742,11 +767,15 @@
     }
     if (accountOpen) openAccountModal();
     if (accountClose) setAccountOpen(false);
+    if (orderSuccessClose) setOrderSuccessOpen(false);
   });
 
   drawerBackdrop?.addEventListener("click", () => setDrawerOpen(false));
   accountModal?.addEventListener("click", (event) => {
     if (event.target === accountModal) setAccountOpen(false);
+  });
+  orderSuccessModal?.addEventListener("click", (event) => {
+    if (event.target === orderSuccessModal) setOrderSuccessOpen(false);
   });
 
   couponButtons.forEach((button) => {
@@ -802,7 +831,8 @@
 
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
-    if (accountModal?.classList.contains("is-open")) setAccountOpen(false);
+    if (orderSuccessModal?.classList.contains("is-open")) setOrderSuccessOpen(false);
+    else if (accountModal?.classList.contains("is-open")) setAccountOpen(false);
     else if (drawer?.classList.contains("is-open")) setDrawerOpen(false);
     else closeMenu();
   });

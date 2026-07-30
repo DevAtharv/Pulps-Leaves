@@ -71,6 +71,28 @@ PRODUCTS = [
         "available_months": list(range(1, 13)),
         "availability_label": "Available now",
     },
+    {
+        "name": "Flavoured Makhana Trio 200g Pack",
+        "display_title": "Flavoured Makhana",
+        "slug": "flavoured-makhana-trio",
+        "category": "Makhana",
+        "price": 350,
+        "mrp": 350,
+        "unit": "200g Pack",
+        "pieces_label": "Peri Peri, Cream & Onion, or Tangy Tomato",
+        "description": "Premium flavoured makhana 200g pack",
+        "details": "Choose the crunch that fits your mood: bold Peri Peri, creamy Cream & Onion, or bright Tangy Tomato. Every pack stays roasted, never fried.",
+        "kicker": "Three flavour choices - 200g pack",
+        "secondary_title": "Flavoured Makhana Trio",
+        "cart_badge": "Three flavour choices",
+        "image": "img/naivedyam-flavour-trio-200g-20260730.png",
+        "image_alt": "Pulps and Leaves Peri Peri, Cream and Onion, and Tangy Tomato flavoured makhana jars",
+        "image_width": 1022,
+        "image_height": 1140,
+        "highlights": ["Roasted, not fried", "Gluten free", "No preservatives"],
+        "available_months": list(range(1, 13)),
+        "availability_label": "Available now",
+    },
 ]
 
 COMING_SOON_PRODUCTS = [

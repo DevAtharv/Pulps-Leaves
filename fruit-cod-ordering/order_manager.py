@@ -21,10 +21,15 @@ WEB_CART_PRODUCTS = {
         "name": "Roasted Makhana with 3 Masala Packs",
         "price": 350,
     },
+    "flavoured-makhana-trio": {
+        "name": "Flavoured Makhana Trio",
+        "price": 350,
+    },
 }
 ACTIVE_WEB_PRODUCT_IDS = {
     "roasted-himalayan-makhana",
     "roasted-makhana-masala-combo",
+    "flavoured-makhana-trio",
 }
 DELIVERY_FREE_ABOVE = 699
 DELIVERY_CHARGE = 30
