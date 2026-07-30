@@ -1,0 +1,61 @@
+{% extends "site_page_base.html" %}
+
+{% block title %}{{ page.title }} | Pulps &amp; Leaves{% endblock %}
+{% block description %}{{ page.description }}{% endblock %}
+
+{% block content %}
+<section class="catalog-product catalog-product--{{ page.theme }}">
+  <div class="catalog-visual">
+    <span class="catalog-status">{{ page.status }}</span>
+    <img src="{{ url_for('static', filename=page.image) }}" alt="{{ page.image_alt }}" width="420" height="420">
+  </div>
+  <div class="catalog-copy">
+    <nav class="page-breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span>/</span><span>{{ page.title }}</span>
+    </nav>
+    <span class="section-kicker">{{ page.eyebrow }}</span>
+    <h1>{{ page.headline }}</h1>
+    <p class="catalog-lead">{{ page.description }}</p>
+    <ul class="catalog-highlights">
+      {% for highlight in page.highlights %}
+      <li>{{ highlight }}</li>
+      {% endfor %}
+    </ul>
+    <div class="catalog-availability">
+      <strong>{{ page.status_title }}</strong>
+      <p>{{ page.status_copy }}</p>
+    </div>
+    <div class="catalog-actions">
+      <a class="primary-button" href="/#shop">Shop Naivedyam</a>
+      {% if not customer_authenticated %}
+      <a class="secondary-button" href="/?account=1">Sign in for updates</a>
+      {% else %}
+      <a class="secondary-button" href="/profile">Open my account</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="category-links" aria-label="Explore Pulps and Leaves">
+  <div class="section-shell">
+    <header class="section-heading">
+      <span class="section-kicker">Explore the collection</span>
+      <h2>Rooted products, thoughtfully prepared.</h2>
+    </header>
+    <div class="category-link-grid">
+      <a href="/#shop">
+        <img src="{{ url_for('static', filename='img/naivedyam-front-200g-cutout-20260729.png') }}" alt="Naivedyam Makhana pouch" width="1024" height="1537" loading="lazy">
+        <span><strong>Naivedyam Makhana</strong><small>Available now</small></span>
+      </a>
+      <a href="/mango">
+        <img src="{{ url_for('static', filename='img/5kg-420.webp') }}" alt="Malda Mangoes box" width="420" height="280" loading="lazy">
+        <span><strong>Malda Mangoes</strong><small>Next harvest</small></span>
+      </a>
+      <a href="/tea">
+        <img src="{{ url_for('static', filename='img/tea-420.webp') }}" alt="Husk and Dew tea tin" width="420" height="420" loading="lazy">
+        <span><strong>Husk &amp; Dew</strong><small>Coming soon</small></span>
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

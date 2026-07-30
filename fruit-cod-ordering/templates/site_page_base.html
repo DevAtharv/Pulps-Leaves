@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123f2a">
+  <meta name="description" content="{% block description %}Pulps & Leaves brings premium makhana, seasonal mangoes, and tea from Indian roots to modern homes.{% endblock %}">
+  <title>{% block title %}Pulps &amp; Leaves{% endblock %}</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/logo-favicon.png') }}" type="image/png">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/apple-touch-icon.png') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront-v2.css') }}?v=20260730f">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/site-pages.css') }}?v=20260730a">
+</head>
+<body class="site-page">
+  <a class="skip-link" href="#mainContent">Skip to content</a>
+
+  <header class="site-header is-scrolled page-site-header" data-page-header>
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="Pulps and Leaves home">
+        <img class="brand-logo" src="{{ url_for('static', filename='img/logo-120.webp') }}" alt="Pulps and Leaves" width="120" height="120">
+        <span class="brand-copy">
+          <strong>Pulps &amp; Leaves</strong>
+          <small>From Indian roots</small>
+        </span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary navigation" data-page-nav>
+        <a href="/#shop">Makhana</a>
+        <a href="/mango">Mango</a>
+        <a href="/tea">Tea</a>
+        <a href="/#instagram">Instagram</a>
+        <a href="/privacy-and-policy">Privacy</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="menu-trigger" type="button" aria-label="Open navigation" aria-expanded="false" data-page-menu>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+        </button>
+        {% if customer_authenticated %}
+        <a class="account-trigger" href="/profile" aria-label="Profile">
+          {% if customer.get("picture") %}
+          <img src="{{ customer.get('picture') }}" alt="" width="24" height="24" referrerpolicy="no-referrer">
+          {% else %}
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm7 8a7 7 0 0 0-14 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          {% endif %}
+          <span>{{ customer.get("name", "Account").split(" ")[0] if customer.get("name") else "Account" }}</span>
+        </a>
+        {% else %}
+        <a class="account-trigger" href="/?account=1" aria-label="Login with Google">
+          <span class="google-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="17" height="17"><path d="M21.6 12.23c0-.72-.06-1.25-.2-1.8H12v3.4h5.52a4.74 4.74 0 0 1-2.05 3.02v2.2h2.84c1.66-1.53 3.29-3.97 3.29-6.82Z" fill="#4285F4"/><path d="M12 22c2.7 0 4.97-.9 6.63-2.45l-3.16-2.7c-.85.58-1.98.98-3.47.98-2.61 0-4.83-1.76-5.62-4.14H3.47v2.27A10 10 0 0 0 12 22Z" fill="#34A853"/><path d="M6.38 13.69A6 6 0 0 1 6.05 12c0-.59.11-1.16.33-1.69V8.04H3.47A10 10 0 0 0 2 12c0 1.43.31 2.78.87 4l3.51-2.31Z" fill="#FBBC05"/><path d="M12 6.17c1.84 0 3.07.8 3.78 1.46l2.91-2.84A9.76 9.76 0 0 0 12 2 10 10 0 0 0 3.47 8.04l2.91 2.27C7.17 7.93 9.39 6.17 12 6.17Z" fill="#EA4335"/></svg>
+          </span>
+          <span>Login</span>
+        </a>
+        {% endif %}
+        <a class="header-icon page-shop-link" href="/#shop" aria-label="Shop makhana">
+          <svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="mainContent">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="section-shell">
+      <div class="footer-main">
+        <div class="footer-brand">
+          <a class="brand" href="/">
+            <img class="brand-logo" src="{{ url_for('static', filename='img/logo-120.webp') }}" alt="Pulps and Leaves" width="120" height="120" loading="lazy">
+            <span class="brand-copy"><strong>Pulps &amp; Leaves</strong><small>From Indian roots</small></span>
+          </a>
+          <p>Premium makhana, seasonal mangoes, and tea created for modern Indian homes.</p>
+        </div>
+        <div class="footer-column">
+          <strong>Explore</strong>
+          <a href="/#shop">Naivedyam Makhana</a>
+          <a href="/mango">Malda Mangoes</a>
+          <a href="/tea">Husk &amp; Dew Tea</a>
+          <a href="/privacy-and-policy">Privacy &amp; policy</a>
+        </div>
+        <div class="footer-column">
+          <strong>Contact</strong>
+          <a href="mailto:pulpsandleaves@gmail.com">pulpsandleaves@gmail.com</a>
+          <a href="tel:+919835496666">+91 98354 96666</a>
+          <span>Bengaluru, India</span>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Pulps &amp; Leaves. All rights reserved.</span>
+        <span>Made in India · Secure checkout · Easy support</span>
+      </div>
+    </div>
+  </footer>
+
+  <a class="whatsapp-button" href="https://wa.me/919835496666" target="_blank" rel="noopener noreferrer" aria-label="Chat with Pulps and Leaves on WhatsApp">
+    <svg viewBox="0 0 24 24" width="25" height="25" aria-hidden="true"><path d="M20 11.6a8 8 0 0 1-11.8 7L4 20l1.4-4A8 8 0 1 1 20 11.6Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 8c.4 3 2 4.5 5 5l1-1c.7.2 1.3.5 2 .9-.3 1.5-1.2 2.3-2.6 2.1C10.6 14.5 8 12 7.5 8.2 7.3 6.8 8 6 9.5 5.7c.4.7.7 1.3.9 2L9 8Z" fill="currentColor"/></svg>
+  </a>
+
+  <script src="{{ url_for('static', filename='js/site-pages.js') }}?v=20260730a" defer></script>
+</body>
+</html>

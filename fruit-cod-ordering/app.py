@@ -534,6 +534,73 @@ def index():
     )
 
 
+def category_page_customer():
+    customer = customer_payload(current_customer())
+    return customer, bool(customer and (customer.get("google_subject") or customer.get("email")))
+
+
+@app.get("/mango")
+def mango_page():
+    customer, customer_authenticated = category_page_customer()
+    return render_template(
+        "catalog_page.html",
+        page={
+            "theme": "mango",
+            "title": "Malda Mangoes",
+            "eyebrow": "Bihar summer harvest",
+            "headline": "Malda Mangoes. The taste you grew up with.",
+            "description": (
+                "Authentic Bihar Malda mangoes with the sweetness, aroma, and nostalgia of Indian summers, "
+                "naturally ripened and selected for careful farm-to-home delivery."
+            ),
+            "image": "img/5kg-420.webp",
+            "image_alt": "Pulps and Leaves premium Malda mango 5kg boxes",
+            "status": "Season closed",
+            "status_title": "Mango season has ended.",
+            "status_copy": "The orchard is resting now. Malda mangoes will return with the next summer harvest.",
+            "highlights": ["Naturally ripened", "Handpicked quality", "Premium 5kg box"],
+        },
+        customer=customer,
+        customer_authenticated=customer_authenticated,
+    )
+
+
+@app.get("/tea")
+def tea_page():
+    customer, customer_authenticated = category_page_customer()
+    return render_template(
+        "catalog_page.html",
+        page={
+            "theme": "tea",
+            "title": "Husk & Dew",
+            "eyebrow": "Premium Assam tea",
+            "headline": "A richer morning ritual is coming soon.",
+            "description": (
+                "Rich, aromatic, and refreshing Assam tea created for unhurried mornings, warm conversations, "
+                "and a clean everyday cup."
+            ),
+            "image": "img/tea-420.webp",
+            "image_alt": "Pulps and Leaves Husk and Dew premium Assam tea tin",
+            "status": "Coming soon",
+            "status_title": "Tea is almost ready.",
+            "status_copy": "Husk & Dew is in its final preparation. Sign in now and stay connected for the launch.",
+            "highlights": ["100% pure Assam tea", "Rich and aromatic", "Premium 250g tin"],
+        },
+        customer=customer,
+        customer_authenticated=customer_authenticated,
+    )
+
+
+@app.get("/privacy-and-policy")
+def privacy_and_policy_page():
+    customer, customer_authenticated = category_page_customer()
+    return render_template(
+        "privacy_and_policy.html",
+        customer=customer,
+        customer_authenticated=customer_authenticated,
+    )
+
+
 @app.get("/profile")
 def profile():
     customer = customer_payload(current_customer())

@@ -295,25 +295,42 @@ class SecurityTests(unittest.TestCase):
     def test_homepage_renders_both_products_and_two_slides(self):
         page = self.client.get("/").get_data(as_text=True)
         self.assertIn('data-id="roasted-makhana-masala-combo"', page)
-        self.assertIn("naivedyam-masala-pack-cutout-200g-20260729.webp", page)
-        self.assertIn("naivedyam-masala-hero-20260729.webp", page)
+        self.assertIn("naivedyam-masala-pack-cutout-200g-20260730.png", page)
+        self.assertIn("pl-lotus-hero-desktop-20260730.avif", page)
         self.assertIn("hero-product--masala", page)
-        self.assertNotIn("जय बिहार", page)
         self.assertEqual(page.count("data-hero-slide "), 2)
 
     def test_homepage_keeps_original_copy_and_uses_maps_for_delivery_address(self):
         page = self.client.get("/").get_data(as_text=True)
+        storefront_script = (PROJECT_ROOT / "static" / "js" / "storefront-v2.js").read_text(encoding="utf-8")
         self.assertIn("Plain roasted - 200g pack", page)
-        self.assertIn("सादा भुना मखाना", page)
-        self.assertIn("3 मसाला पैक के साथ भुना मखाना", page)
-        self.assertIn("पल्प्स एंड लीव्स", page)
-        self.assertIn('node.textContent = quantity > 0 ? "Add Another" : "Add to Bag";', page)
-        self.assertIn("Instagram", page)
-        self.assertIn("instagram.com/reel/", page)
+        self.assertNotRegex(page, r"[\u0900-\u097F]")
+        self.assertIn('node.textContent = quantity > 0 ? "Go to Cart" : "Add to Bag";', storefront_script)
+        self.assertIn("data-feature-plus", page)
+        self.assertIn("data-buy-now", page)
+        self.assertIn("Instagram feed", page)
+        self.assertNotIn("Our story", page)
+        self.assertNotIn("social-card", page)
+        self.assertEqual(page.count('class="instagram-reel"'), 4)
+        self.assertEqual(page.count("/embed/"), 4)
         self.assertIn("data-address-map", page)
-        self.assertIn("google.com/maps/search/", page)
+        self.assertIn("google.com/maps/search/", storefront_script)
         self.assertNotIn("roots-map-section", page)
         self.assertNotIn("data-order-success-number", page)
+
+    def test_category_and_privacy_pages_are_available(self):
+        mango = self.client.get("/mango")
+        tea = self.client.get("/tea")
+        policy = self.client.get("/privacy-and-policy")
+
+        self.assertEqual(mango.status_code, 200)
+        self.assertIn("Mango season has ended.", mango.get_data(as_text=True))
+        self.assertIn("5kg-420.webp", mango.get_data(as_text=True))
+        self.assertEqual(tea.status_code, 200)
+        self.assertIn("Tea is almost ready.", tea.get_data(as_text=True))
+        self.assertIn("tea-420.webp", tea.get_data(as_text=True))
+        self.assertEqual(policy.status_code, 200)
+        self.assertIn("Privacy &amp; policy", policy.get_data(as_text=True))
 
     def test_google_callback_stays_on_the_current_live_host(self):
         with patch.dict(os.environ, {"GOOGLE_OAUTH_REDIRECT_URI": "https://pulpsandleaves.com/auth/google/callback"}, clear=False):
