@@ -301,17 +301,19 @@ class SecurityTests(unittest.TestCase):
         self.assertNotIn("जय बिहार", page)
         self.assertEqual(page.count("data-hero-slide "), 2)
 
-    def test_homepage_uses_updated_product_and_social_copy(self):
+    def test_homepage_keeps_original_copy_and_uses_maps_for_delivery_address(self):
         page = self.client.get("/").get_data(as_text=True)
-        self.assertIn("Plain Makhana - 200g pack", page)
-        self.assertNotIn("सादा भुना मखाना", page)
-        self.assertNotIn("3 मसाला पैक के साथ भुना मखाना", page)
-        self.assertNotIn("पल्प्स एंड लीव्स", page)
-        self.assertIn('node.textContent = quantity > 0 ? "Go to Cart" : "Add to Bag";', page)
-        self.assertIn("Follow Our", page)
-        self.assertNotIn("instagram.com/reel/", page)
-        self.assertIn("google.com/maps?q=Darbhanga", page)
-        self.assertIn("data-order-success-number", page)
+        self.assertIn("Plain roasted - 200g pack", page)
+        self.assertIn("सादा भुना मखाना", page)
+        self.assertIn("3 मसाला पैक के साथ भुना मखाना", page)
+        self.assertIn("पल्प्स एंड लीव्स", page)
+        self.assertIn('node.textContent = quantity > 0 ? "Add Another" : "Add to Bag";', page)
+        self.assertIn("Instagram", page)
+        self.assertIn("instagram.com/reel/", page)
+        self.assertIn("data-address-map", page)
+        self.assertIn("google.com/maps/search/", page)
+        self.assertNotIn("roots-map-section", page)
+        self.assertNotIn("data-order-success-number", page)
 
     def test_google_callback_stays_on_the_current_live_host(self):
         with patch.dict(os.environ, {"GOOGLE_OAUTH_REDIRECT_URI": "https://pulpsandleaves.com/auth/google/callback"}, clear=False):
