@@ -61,21 +61,55 @@
   let checkoutBusy = false;
   let orderSuccessReturnFocus = null;
 
-  const products = new Map(
-    Array.from(document.querySelectorAll("[data-product]")).map((card) => [
-      card.dataset.id,
-      {
-        id: card.dataset.id,
-        name: card.dataset.name,
-        variant: card.dataset.variant,
-        price: Number(card.dataset.price || 0),
-        mrp: Number(card.dataset.mrp || 0),
-        image: card.dataset.image,
-        badge: card.dataset.cartBadge,
-        secondaryTitle: card.dataset.secondaryTitle,
-      },
-    ])
+  const productCards = Array.from(document.querySelectorAll("[data-product]"));
+
+  function productFromCard(card) {
+    return {
+      id: card.dataset.id,
+      name: card.dataset.name,
+      variant: card.dataset.variant,
+      price: Number(card.dataset.price || 0),
+      mrp: Number(card.dataset.mrp || 0),
+      image: card.dataset.image,
+      badge: card.dataset.cartBadge,
+      secondaryTitle: card.dataset.secondaryTitle,
+    };
+  }
+
+  function readProductVariants(card) {
+    const node = card.querySelector("[data-product-variants]");
+    if (!node) return [];
+    try {
+      const variants = JSON.parse(node.textContent || "[]");
+      return Array.isArray(variants) ? variants : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  const productVariantsByCard = new Map(
+    productCards.map((card) => [card, readProductVariants(card)])
   );
+
+  const products = new Map();
+  productCards.forEach((card) => {
+    const baseProduct = productFromCard(card);
+    products.set(baseProduct.id, baseProduct);
+    (productVariantsByCard.get(card) || []).forEach((variant) => {
+      if (!variant?.id || variant.inquiryOnly) return;
+      products.set(String(variant.id), {
+        ...baseProduct,
+        id: String(variant.id),
+        name: String(variant.name || baseProduct.name),
+        variant: String(variant.unit || baseProduct.variant),
+        price: Number(variant.price || 0),
+        mrp: Number(variant.mrp || variant.price || baseProduct.mrp || 0),
+        image: String(variant.image || baseProduct.image),
+        badge: String(variant.badge || baseProduct.badge || "Makhana"),
+        secondaryTitle: String(variant.secondaryTitle || baseProduct.secondaryTitle || baseProduct.name),
+      });
+    });
+  });
   const cart = restoreCart();
 
   function money(value) {
@@ -230,6 +264,95 @@
       const quantity = cart.get(node.dataset.featureAddLabel)?.quantity || 0;
       node.textContent = quantity > 0 ? "Go to Cart" : "Add to Bag";
     });
+  }
+
+  function setProductVariant(card, productId) {
+    const variants = productVariantsByCard.get(card) || [];
+    const variant = variants.find((item) => String(item?.id || "") === String(productId || ""));
+    if (!variant) return;
+
+    const inquiryOnly = Boolean(variant.inquiryOnly);
+    const productMedia = card.querySelector(".product-media");
+    const productImage = card.querySelector("[data-product-image]");
+    const title = card.querySelector("[data-product-title]");
+    const kicker = card.querySelector("[data-product-kicker]");
+    const subtitle = card.querySelector("[data-product-subtitle]");
+    const description = card.querySelector("[data-product-description]");
+    const price = card.querySelector("[data-product-price]");
+    const unit = card.querySelector("[data-product-unit]");
+    const highlights = card.querySelector("[data-product-highlights]");
+    const actions = card.querySelector("[data-product-actions]");
+    const stepper = actions?.querySelector(".product-stepper");
+    const addButton = actions?.querySelector("[data-add-product]");
+    const addLabel = actions?.querySelector("[data-feature-add-label]");
+    const buyNowButton = actions?.querySelector("[data-buy-now]");
+    const enquiryButton = actions?.querySelector("[data-product-enquiry]");
+
+    card.dataset.id = String(variant.id || "");
+    card.dataset.name = String(variant.name || "Naivedyam Makhana");
+    card.dataset.variant = String(variant.unit || "");
+    card.dataset.price = String(variant.price || 0);
+    card.dataset.mrp = String(variant.mrp || variant.price || 0);
+    card.dataset.image = String(variant.image || "");
+    card.dataset.cartBadge = String(variant.badge || "Makhana");
+    card.dataset.secondaryTitle = String(variant.secondaryTitle || variant.name || "Naivedyam Makhana");
+
+    if (productImage) {
+      productImage.src = String(variant.image || productImage.src);
+      productImage.alt = String(variant.imageAlt || variant.name || "Naivedyam Makhana");
+      productImage.width = Number(variant.imageWidth || productImage.width || 1024);
+      productImage.height = Number(variant.imageHeight || productImage.height || 1024);
+    }
+    productMedia?.classList.toggle("product-media--one-kg", String(variant.id).endsWith("-1kg"));
+    productMedia?.classList.toggle("product-media--bulk", inquiryOnly);
+    if (title) title.textContent = String(variant.displayTitle || variant.name || "Naivedyam Makhana");
+    if (kicker) kicker.textContent = String(variant.kicker || "");
+    if (subtitle) subtitle.textContent = String(variant.subtitle || "");
+    if (description) description.textContent = String(variant.details || "");
+    if (price) price.textContent = String(variant.priceLabel || money(variant.price));
+    if (unit) unit.textContent = String(variant.unit || "");
+    if (highlights) {
+      highlights.innerHTML = (Array.isArray(variant.highlights) ? variant.highlights : [])
+        .map((highlight) => `<li>${escapeHtml(highlight)}</li>`)
+        .join("");
+    }
+
+    card.querySelectorAll("[data-product-variant]").forEach((button) => {
+      const selected = button.dataset.productVariant === String(variant.id);
+      button.classList.toggle("is-selected", selected);
+      button.setAttribute("aria-pressed", selected ? "true" : "false");
+    });
+
+    if (stepper) {
+      stepper.hidden = inquiryOnly;
+      stepper.setAttribute("aria-label", `${variant.displayTitle || variant.name || "Naivedyam Makhana"} ${variant.unit || ""} quantity`.trim());
+    }
+    if (addButton) {
+      addButton.hidden = inquiryOnly;
+      addButton.dataset.addProduct = String(variant.id || "");
+    }
+    if (addLabel) addLabel.dataset.featureAddLabel = String(variant.id || "");
+    if (buyNowButton) {
+      buyNowButton.hidden = inquiryOnly;
+      buyNowButton.dataset.buyNow = String(variant.id || "");
+    }
+    [
+      ["[data-feature-minus]", "featureMinus", "Decrease"],
+      ["[data-feature-plus]", "featurePlus", "Increase"],
+    ].forEach(([selector, datasetName, action]) => {
+      const button = actions?.querySelector(selector);
+      if (!button) return;
+      button.dataset[datasetName] = String(variant.id || "");
+      button.setAttribute("aria-label", `${action} ${variant.displayTitle || variant.name || "Naivedyam Makhana"}`);
+    });
+    const quantity = actions?.querySelector("[data-feature-quantity]");
+    if (quantity) quantity.dataset.featureQuantity = String(variant.id || "");
+    if (enquiryButton) {
+      enquiryButton.hidden = !inquiryOnly;
+      enquiryButton.href = inquiryOnly ? String(variant.inquiryUrl || "https://wa.me/919835496666") : "#";
+    }
+
+    syncProductQuantityDisplays();
   }
 
   function renderCartItems() {
@@ -743,6 +866,7 @@
     const accountOpen = event.target.closest("[data-account-open]");
     const accountClose = event.target.closest("[data-account-close]");
     const orderSuccessClose = event.target.closest("[data-order-success-close]");
+    const productVariantButton = event.target.closest("[data-product-variant]");
 
     if (addButton) {
       const productId = addButton.dataset.addProduct;
@@ -768,6 +892,10 @@
     if (accountOpen) openAccountModal();
     if (accountClose) setAccountOpen(false);
     if (orderSuccessClose) setOrderSuccessOpen(false);
+    if (productVariantButton) {
+      const productCard = productVariantButton.closest("[data-product]");
+      if (productCard) setProductVariant(productCard, productVariantButton.dataset.productVariant);
+    }
   });
 
   drawerBackdrop?.addEventListener("click", () => setDrawerOpen(false));

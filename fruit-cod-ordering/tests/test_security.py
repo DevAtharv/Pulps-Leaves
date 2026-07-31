@@ -271,6 +271,39 @@ class SecurityTests(unittest.TestCase):
         self.assertEqual(clean_data["discount"], 0)
         self.assertEqual(clean_data["total_amount"], 380)
 
+    def test_one_kg_plain_makhana_uses_the_server_validated_price(self):
+        manager = OrderManager(sheets_handler=FakeSheets([]))
+        clean_data, errors = manager.validate_new_order(
+            {
+                "name": "Test Customer",
+                "phone": "9876543210",
+                "city": "bangalore",
+                "address": "12 Test Road",
+                "cart_items": [{"id": "roasted-himalayan-makhana-1kg", "quantity": 1}],
+                "payment_method": "cod",
+            }
+        )
+        self.assertEqual(errors, {})
+        self.assertEqual(clean_data["subtotal"], 1750)
+        self.assertEqual(clean_data["delivery_charge"], 0)
+        self.assertEqual(clean_data["total_amount"], 1750)
+        self.assertIn("Naivedyam Makhana 1kg x 1", clean_data["product_summary"])
+
+    def test_bulk_plain_makhana_cannot_be_submitted_as_a_checkout_item(self):
+        manager = OrderManager(sheets_handler=FakeSheets([]))
+        clean_data, errors = manager.validate_new_order(
+            {
+                "name": "Test Customer",
+                "phone": "9876543210",
+                "city": "bangalore",
+                "address": "12 Test Road",
+                "cart_items": [{"id": "roasted-himalayan-makhana-100kg", "quantity": 1}],
+                "payment_method": "cod",
+            }
+        )
+        self.assertEqual(clean_data["subtotal"], 0)
+        self.assertIn("product", errors)
+
     def test_masala_makhana_is_available_at_the_server_validated_price(self):
         manager = OrderManager(sheets_handler=FakeSheets([]))
         clean_data, errors = manager.validate_new_order(

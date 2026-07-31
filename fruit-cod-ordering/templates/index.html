@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="preload" href="{{ url_for('static', filename='img/pl-lotus-hero-desktop-20260730.avif') }}" as="image" type="image/avif" media="(min-width: 821px)" fetchpriority="high">
   <link rel="preload" href="{{ url_for('static', filename='img/pl-lotus-hero-mobile-20260730.avif') }}" as="image" type="image/avif" media="(max-width: 820px)" fetchpriority="high">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront-v2.css') }}?v=20260730j">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront-v2.css') }}?v=20260730k">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Skip to content</a>
@@ -82,10 +82,7 @@
           <div class="hero-shade" aria-hidden="true"></div>
           <div class="hero-inner">
             <div class="hero-copy">
-              <span class="eyebrow">Bihar to every home</span>
-              <h1><span>Pulps &amp; Leaves</span>Naivedyam Makhana</h1>
-              <p>Premium plain makhana, gently roasted for a clean crunch. Simple ingredients, generous 200g packs.</p>
-              <div class="hero-price"><strong>Rs 350</strong><span>200g pack</span></div>
+              <h1>Naivedyam Makhana</h1>
               <div class="hero-actions">
                 <button class="primary-button" type="button" data-add-product="roasted-himalayan-makhana">
                   <span data-feature-add-label="roasted-himalayan-makhana">Add to bag</span>
@@ -112,10 +109,7 @@
           <div class="hero-shade" aria-hidden="true"></div>
           <div class="hero-inner">
             <div class="hero-copy">
-              <span class="eyebrow">Three flavours, your way</span>
-              <h1><span>Pulps &amp; Leaves</span>Season the crunch</h1>
-              <p>Plain roasted makhana with Peri Peri, Cheese Blast, and Cream &amp; Onion sachets inside.</p>
-              <div class="hero-price"><strong>Rs 350</strong><span>200g pack</span></div>
+              <h1>Season the crunch</h1>
               <div class="hero-actions">
                 <button class="primary-button" type="button" data-add-product="roasted-makhana-masala-combo">
                   <span data-feature-add-label="roasted-makhana-masala-combo">Add to bag</span>
@@ -142,10 +136,7 @@
           <div class="hero-shade" aria-hidden="true"></div>
           <div class="hero-inner">
             <div class="hero-copy">
-              <span class="eyebrow">Three flavours to explore</span>
-              <h1><span>Pulps &amp; Leaves</span>Pick your crunch</h1>
-              <p>Peri Peri, Cream &amp; Onion, and Tangy Tomato makhana: three bright takes on our clean roasted crunch.</p>
-              <div class="hero-price"><strong>Rs 350</strong><span>200g pack</span></div>
+              <h1>Pick your crunch</h1>
               <div class="hero-actions">
                 <button class="primary-button" type="button" data-add-product="flavoured-makhana-trio">
                   <span data-feature-add-label="flavoured-makhana-trio">Add to bag</span>
@@ -210,24 +201,66 @@
           data-cart-badge="{{ product.cart_badge }}"
           data-secondary-title="{{ product.secondary_title }}"
         >
+          {% if product.get("variants") %}
+          <script type="application/json" data-product-variants>
+            [
+              {% for variant in product.variants %}
+              {{ {
+                "id": variant.slug,
+                "name": variant.name,
+                "displayTitle": variant.display_title,
+                "optionLabel": variant.option_label,
+                "price": variant.get("price", 0),
+                "priceLabel": variant.price_label,
+                "unit": variant.unit,
+                "subtitle": variant.pieces_label,
+                "details": variant.details,
+                "kicker": variant.kicker,
+                "secondaryTitle": variant.secondary_title,
+                "badge": variant.cart_badge,
+                "image": url_for("static", filename=variant.image),
+                "imageAlt": variant.image_alt,
+                "imageWidth": variant.image_width,
+                "imageHeight": variant.image_height,
+                "highlights": variant.highlights,
+                "inquiryOnly": variant.get("inquiry_only", false),
+                "inquiryUrl": variant.get("inquiry_url", "")
+              } | tojson }}{% if not loop.last %},{% endif %}
+              {% endfor %}
+            ]
+          </script>
+          {% endif %}
           <div class="product-media {% if product.slug == 'roasted-makhana-masala-combo' %}product-media--dark{% elif product.slug == 'flavoured-makhana-trio' %}product-media--flavours{% endif %}" data-reveal="{% if loop.index is odd %}left{% else %}right{% endif %}">
-            <img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.image_alt }}" width="{{ product.image_width }}" height="{{ product.image_height }}" loading="lazy" decoding="async">
+            <img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.image_alt }}" width="{{ product.image_width }}" height="{{ product.image_height }}" loading="lazy" decoding="async" data-product-image>
           </div>
           <div class="product-copy" data-reveal="{% if loop.index is odd %}right{% else %}left{% endif %}">
-            <span class="section-kicker">{{ product.kicker }}</span>
-            <h3>{{ product.display_title }}</h3>
-            <p class="product-subtitle">{{ product.pieces_label }}</p>
-            <p class="product-description">{{ product.details }}</p>
+            <span class="section-kicker" data-product-kicker>{{ product.kicker }}</span>
+            <h3 data-product-title>{{ product.display_title }}</h3>
+            <p class="product-subtitle" data-product-subtitle>{{ product.pieces_label }}</p>
+            <p class="product-description" data-product-description>{{ product.details }}</p>
             <div class="product-meta">
-              <strong class="product-price">Rs {{ product.price }}</strong>
-              <span class="product-unit">{{ product.unit }}</span>
+              <strong class="product-price" data-product-price>Rs {{ product.price }}</strong>
+              <span class="product-unit" data-product-unit>{{ product.unit }}</span>
             </div>
-            <ul class="product-highlights">
+            {% if product.get("variants") %}
+            <div class="product-variant-options">
+              <span>Choose pack size</span>
+              <div class="product-variant-buttons" role="group" aria-label="Choose Naivedyam Makhana pack size">
+                {% for variant in product.variants %}
+                <button class="product-variant-button{% if loop.first %} is-selected{% endif %}" type="button" data-product-variant="{{ variant.slug }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">
+                  <strong>{{ variant.option_label }}</strong>
+                  <small>{{ 'Enquire' if variant.get('inquiry_only') else variant.price_label }}</small>
+                </button>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+            <ul class="product-highlights" data-product-highlights>
               {% for highlight in product.highlights %}
               <li>{{ highlight }}</li>
               {% endfor %}
             </ul>
-            <div class="product-actions">
+            <div class="product-actions" data-product-actions>
               <div class="product-stepper" aria-label="{{ product.display_title }} quantity">
                 <button type="button" data-feature-minus="{{ product.slug }}" aria-label="Decrease {{ product.display_title }}">-</button>
                 <span data-feature-quantity="{{ product.slug }}">0</span>
@@ -241,6 +274,10 @@
                 <span>Buy now</span>
                 <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </button>
+              <a class="bulk-enquiry-button" href="#" target="_blank" rel="noopener noreferrer" data-product-enquiry hidden>
+                <span>Enquire about 100kg</span>
+                <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-8.7 8.5 9.2 9.2 0 0 1-4.1-1L3 20l1.2-4A8.4 8.4 0 1 1 21 11.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </a>
             </div>
           </div>
         </article>
