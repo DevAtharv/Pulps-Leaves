@@ -32,8 +32,8 @@ PRODUCTS = [
         "display_title": "Naivedyam Makhana",
         "slug": "roasted-himalayan-makhana",
         "category": "Makhana",
-        "price": 350,
-        "mrp": 350,
+        "price": 399,
+        "mrp": 399,
         "unit": "200g Pack",
         "pieces_label": "Light, crunchy, nutritious",
         "description": "Premium roasted makhana 200g pouch",
@@ -45,7 +45,7 @@ PRODUCTS = [
         "image_alt": "Pulps and Leaves Naivedyam plain roasted makhana 200g pouch",
         "image_width": 1024,
         "image_height": 1537,
-        "highlights": ["100% natural", "Gluten free", "Roasted, not fried"],
+        "highlights": ["6+ Suta Makhana", "100% natural", "Gluten free", "Roasted, not fried"],
         "available_months": list(range(1, 13)),
         "availability_label": "Available now",
         "variants": [
@@ -54,8 +54,8 @@ PRODUCTS = [
                 "name": "Naivedyam Makhana",
                 "display_title": "Naivedyam Makhana",
                 "option_label": "200 g",
-                "price": 350,
-                "price_label": "Rs 350",
+                "price": 399,
+                "price_label": "Rs 399",
                 "unit": "200g Pack",
                 "pieces_label": "Light, crunchy, nutritious",
                 "details": "Premium plain roasted makhana that is light, crunchy, nutritious, and prepared without frying or preservatives.",
@@ -66,7 +66,7 @@ PRODUCTS = [
                 "image_alt": "Pulps and Leaves Naivedyam plain roasted makhana 200g pouch",
                 "image_width": 1024,
                 "image_height": 1537,
-                "highlights": ["100% natural", "Gluten free", "Roasted, not fried"],
+                "highlights": ["6+ Suta Makhana", "100% natural", "Gluten free", "Roasted, not fried"],
             },
             {
                 "slug": "roasted-himalayan-makhana-1kg",
@@ -85,7 +85,7 @@ PRODUCTS = [
                 "image_alt": "Pulps and Leaves plain phool makhana 1kg pack",
                 "image_width": 896,
                 "image_height": 1200,
-                "highlights": ["100% natural", "Gluten free", "Roasted, not fried"],
+                "highlights": ["6+ Suta Makhana", "100% natural", "Gluten free", "Roasted, not fried"],
             },
             {
                 "slug": "roasted-himalayan-makhana-100kg",
@@ -103,7 +103,7 @@ PRODUCTS = [
                 "image_alt": "Pulps and Leaves premium makhana bulk collection",
                 "image_width": 1033,
                 "image_height": 1024,
-                "highlights": ["Wholesale support", "Tailored quotation", "Delivery planning"],
+                "highlights": ["6+ Suta Makhana", "Wholesale support", "Tailored quotation", "Delivery planning"],
                 "inquiry_only": True,
                 "inquiry_url": "https://wa.me/919835496666?text=Hello%20Pulps%20%26%20Leaves%2C%20I%20would%20like%20a%20quote%20for%20100kg%20plain%20makhana.",
             },
@@ -129,7 +129,8 @@ PRODUCTS = [
         "image_height": 612,
         "highlights": ["Gluten free", "Rich in protein", "No preservatives"],
         "available_months": list(range(1, 13)),
-        "availability_label": "Available now",
+        "availability_label": "Out of stock",
+        "in_stock": False,
     },
     {
         "name": "Flavoured Makhana 200g Pack",
@@ -151,7 +152,8 @@ PRODUCTS = [
         "image_height": 795,
         "highlights": ["Roasted, not fried", "Gluten free", "No preservatives"],
         "available_months": list(range(1, 13)),
-        "availability_label": "Available now",
+        "availability_label": "Out of stock",
+        "in_stock": False,
         "variant_label": "Choose a flavour",
         "variant_aria_label": "Choose a flavoured makhana jar or combo",
         "variants": [
@@ -327,9 +329,14 @@ def city_menu_text():
 def product_menu_text():
     lines = []
     for index, product in enumerate(PRODUCTS, start=1):
-        lines.append(
-            f"{index} - {product['display_title']} ({product['unit']}) - Rs {product['price']} - {product['availability_label']}"
-        )
+        if product.get("in_stock", True):
+            lines.append(
+                f"{index} - {product['display_title']} ({product['unit']}) - Rs {product['price']} - {product['availability_label']}"
+            )
+        else:
+            lines.append(
+                f"{index} - {product['display_title']} ({product['unit']}) - {product['availability_label']}"
+            )
     return "\n".join(lines)
 
 
@@ -367,7 +374,7 @@ def is_product_available(product_value, on_date=None):
     product = product_record(product_value)
     if not product:
         return False
-    return on_date.month in product.get("available_months", [])
+    return product.get("in_stock", True) and on_date.month in product.get("available_months", [])
 
 
 def availability_message(product_value, on_date=None):

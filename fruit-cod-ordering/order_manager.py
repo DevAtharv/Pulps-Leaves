@@ -16,7 +16,7 @@ WEB_CART_PRODUCTS = {
     "malda-mango-5kg-box": {"name": "Malda Mango 5Kg Box", "price": 1155},
     "malda-mango-3kg-box": {"name": "Malda Mango 3Kg Box", "price": 693},
     "assam-breakfast-tea": {"name": "Husk and Dew", "price": 449},
-    "roasted-himalayan-makhana": {"name": "Naivedyam Makhana", "price": 350},
+    "roasted-himalayan-makhana": {"name": "Naivedyam Makhana", "price": 399},
     "roasted-himalayan-makhana-1kg": {"name": "Naivedyam Makhana 1kg", "price": 1750},
     "roasted-himalayan-makhana-100kg": {"name": "Naivedyam Makhana 100kg Bulk Order", "price": 0},
     "roasted-makhana-masala-combo": {
@@ -51,31 +51,16 @@ WEB_CART_PRODUCTS = {
 ACTIVE_WEB_PRODUCT_IDS = {
     "roasted-himalayan-makhana",
     "roasted-himalayan-makhana-1kg",
-    "roasted-makhana-masala-combo",
-    "flavoured-makhana-peri-peri",
-    "flavoured-makhana-cream-onion",
-    "flavoured-makhana-tangy-tomato",
-    "flavoured-makhana-cheese-blast",
-    "flavoured-makhana-four-flavour-combo",
 }
-DELIVERY_FREE_ABOVE = 699
-DELIVERY_CHARGE = 30
+DELIVERY_CHARGE = 40
 ONLINE_PAYMENT_MINIMUM_SUBTOTAL = 699
 ONLINE_PAYMENT_DISCOUNT = 40
 COUPON_DEFINITIONS = {
-    "NAIVEDYAM10": {
-        "label": "10% off",
-        "description": "Save 10% on makhana, up to Rs 70.",
-        "rate_bps": 1000,
-        "minimum_subtotal": 350,
-        "max_discount": 70,
-        "waives_delivery": False,
-    },
     "FREESHIP": {
         "label": "Free delivery",
-        "description": "Get free delivery on any makhana order.",
+        "description": "Remove the Rs 40 delivery charge.",
         "rate_bps": 0,
-        "minimum_subtotal": 350,
+        "minimum_subtotal": 399,
         "max_discount": 0,
         "waives_delivery": True,
     },
@@ -328,7 +313,7 @@ class OrderManager:
 
     @staticmethod
     def _delivery_charge(subtotal, coupon_codes=None):
-        if subtotal == 0 or subtotal > DELIVERY_FREE_ABOVE:
+        if subtotal <= 0:
             return 0
         if any(COUPON_DEFINITIONS.get(code, {}).get("waives_delivery") for code in (coupon_codes or [])):
             return 0

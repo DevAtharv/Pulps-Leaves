@@ -219,12 +219,14 @@ class SecurityTests(unittest.TestCase):
 
     def test_coupon_offers_are_visible_and_server_validated(self):
         page = self.client.get("/").get_data(as_text=True)
-        self.assertIn("Coupon offers", page)
-        self.assertIn('data-coupon-apply="NAIVEDYAM10"', page)
+        self.assertIn("Coupon offer", page)
         self.assertIn('data-coupon-apply="FREESHIP"', page)
-        preview = self.client.post("/api/coupons/preview", json={"code": "NAIVEDYAM10"})
+        self.assertNotIn('data-coupon-apply="NAIVEDYAM10"', page)
+        self.assertEqual(page.count("data-coupon-apply="), 1)
+        preview = self.client.post("/api/coupons/preview", json={"code": "FREESHIP"})
         self.assertEqual(preview.status_code, 200)
-        self.assertEqual(preview.get_json()["coupon"]["rate_bps"], 1000)
+        self.assertTrue(preview.get_json()["coupon"]["waives_delivery"])
+        self.assertEqual(self.client.post("/api/coupons/preview", json={"code": "NAIVEDYAM10"}).status_code, 404)
         self.assertEqual(self.client.post("/api/coupons/preview", json={"code": "PL99FS022E"}).status_code, 404)
 
     def test_coupon_totals_are_calculated_on_the_server(self):
@@ -237,13 +239,11 @@ class SecurityTests(unittest.TestCase):
             "cart_items": [{"id": "roasted-himalayan-makhana", "quantity": 1}],
             "payment_method": "cod",
         }
-        percentage, percentage_errors = manager.validate_new_order(
-            {**base_payload, "coupon_codes": ["NAIVEDYAM10"]}
-        )
-        self.assertEqual(percentage_errors, {})
-        self.assertEqual(percentage["coupon_discount"], 35)
-        self.assertEqual(percentage["delivery_charge"], 30)
-        self.assertEqual(percentage["total_amount"], 345)
+        standard, standard_errors = manager.validate_new_order(base_payload)
+        self.assertEqual(standard_errors, {})
+        self.assertEqual(standard["subtotal"], 399)
+        self.assertEqual(standard["delivery_charge"], 40)
+        self.assertEqual(standard["total_amount"], 439)
 
         free_ship, free_ship_errors = manager.validate_new_order(
             {**base_payload, "coupon_codes": ["FREESHIP"]}
@@ -251,9 +251,9 @@ class SecurityTests(unittest.TestCase):
         self.assertEqual(free_ship_errors, {})
         self.assertEqual(free_ship["coupon_discount"], 0)
         self.assertEqual(free_ship["delivery_charge"], 0)
-        self.assertEqual(free_ship["total_amount"], 350)
+        self.assertEqual(free_ship["total_amount"], 399)
 
-    def test_makhana_cart_uses_the_public_rs_350_price(self):
+    def test_makhana_cart_uses_the_public_rs_399_price(self):
         manager = OrderManager(sheets_handler=FakeSheets([]))
         clean_data, errors = manager.validate_new_order(
             {
@@ -267,9 +267,10 @@ class SecurityTests(unittest.TestCase):
             }
         )
         self.assertEqual(errors, {})
-        self.assertEqual(clean_data["subtotal"], 350)
+        self.assertEqual(clean_data["subtotal"], 399)
         self.assertEqual(clean_data["discount"], 0)
-        self.assertEqual(clean_data["total_amount"], 380)
+        self.assertEqual(clean_data["delivery_charge"], 40)
+        self.assertEqual(clean_data["total_amount"], 439)
 
     def test_one_kg_plain_makhana_uses_the_server_validated_price(self):
         manager = OrderManager(sheets_handler=FakeSheets([]))
@@ -285,8 +286,8 @@ class SecurityTests(unittest.TestCase):
         )
         self.assertEqual(errors, {})
         self.assertEqual(clean_data["subtotal"], 1750)
-        self.assertEqual(clean_data["delivery_charge"], 0)
-        self.assertEqual(clean_data["total_amount"], 1750)
+        self.assertEqual(clean_data["delivery_charge"], 40)
+        self.assertEqual(clean_data["total_amount"], 1790)
         self.assertIn("Naivedyam Makhana 1kg x 1", clean_data["product_summary"])
 
     def test_bulk_plain_makhana_cannot_be_submitted_as_a_checkout_item(self):
@@ -304,7 +305,7 @@ class SecurityTests(unittest.TestCase):
         self.assertEqual(clean_data["subtotal"], 0)
         self.assertIn("product", errors)
 
-    def test_masala_makhana_is_available_at_the_server_validated_price(self):
+    def test_masala_makhana_is_blocked_while_out_of_stock(self):
         manager = OrderManager(sheets_handler=FakeSheets([]))
         clean_data, errors = manager.validate_new_order(
             {
@@ -312,20 +313,16 @@ class SecurityTests(unittest.TestCase):
                 "phone": "9876543210",
                 "city": "bangalore",
                 "address": "12 Test Road",
-                "cart_items": [
-                    {"id": "roasted-himalayan-makhana", "quantity": 1},
-                    {"id": "roasted-makhana-masala-combo", "quantity": 1},
-                ],
+                "cart_items": [{"id": "roasted-makhana-masala-combo", "quantity": 1}],
                 "payment_method": "cod",
             }
         )
-        self.assertEqual(errors, {})
-        self.assertEqual(clean_data["subtotal"], 700)
+        self.assertIn("product", errors)
+        self.assertEqual(clean_data["subtotal"], 0)
         self.assertEqual(clean_data["delivery_charge"], 0)
-        self.assertEqual(clean_data["total_amount"], 700)
-        self.assertIn("Roasted Makhana with 3 Masala Packs x 1", clean_data["product_summary"])
+        self.assertEqual(clean_data["total_amount"], 0)
 
-    def test_flavoured_makhana_is_available_at_the_server_validated_price(self):
+    def test_flavoured_makhana_is_blocked_while_out_of_stock(self):
         manager = OrderManager(sheets_handler=FakeSheets([]))
         clean_data, errors = manager.validate_new_order(
             {
@@ -337,10 +334,9 @@ class SecurityTests(unittest.TestCase):
                 "payment_method": "cod",
             }
         )
-        self.assertEqual(errors, {})
-        self.assertEqual(clean_data["subtotal"], 350)
-        self.assertEqual(clean_data["total_amount"], 380)
-        self.assertIn("Peri Peri Makhana x 1", clean_data["product_summary"])
+        self.assertIn("product", errors)
+        self.assertEqual(clean_data["subtotal"], 0)
+        self.assertEqual(clean_data["total_amount"], 0)
 
     def test_homepage_renders_three_products_three_slides_and_order_celebration(self):
         page = self.client.get("/").get_data(as_text=True)
@@ -353,6 +349,12 @@ class SecurityTests(unittest.TestCase):
         self.assertIn("hero-product--masala", page)
         self.assertIn("hero-product--flavours", page)
         self.assertEqual(page.count("data-hero-slide "), 3)
+        self.assertIn('data-price="399"', page)
+        self.assertIn("6+ Suta Makhana", page)
+        self.assertIn("is-featured-highlight", page)
+        self.assertEqual(page.count('data-in-stock="false"'), 2)
+        self.assertIn("is-price-hidden", page)
+        self.assertGreaterEqual(page.count("Out of stock"), 4)
         self.assertIn("data-order-success-modal", page)
         self.assertIn("data-order-success-id", page)
 

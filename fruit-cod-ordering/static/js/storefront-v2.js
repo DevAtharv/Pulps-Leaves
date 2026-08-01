@@ -45,8 +45,7 @@
   const orderHistoryList = document.querySelector("[data-order-history-list]");
   const paymentInputs = Array.from(document.querySelectorAll("input[name='payment_method']"));
 
-  const DELIVERY_FREE_ABOVE = 699;
-  const DELIVERY_CHARGE = 30;
+  const DELIVERY_CHARGE = 40;
   const ONLINE_PAYMENT_MINIMUM_SUBTOTAL = 699;
   const ONLINE_PAYMENT_DISCOUNT = 40;
   const CART_STORAGE_KEY = "pulps-leaves-cart-v4";
@@ -73,6 +72,7 @@
       image: card.dataset.image,
       badge: card.dataset.cartBadge,
       secondaryTitle: card.dataset.secondaryTitle,
+      inStock: card.dataset.inStock !== "false",
     };
   }
 
@@ -94,9 +94,9 @@
   const products = new Map();
   productCards.forEach((card) => {
     const baseProduct = productFromCard(card);
-    products.set(baseProduct.id, baseProduct);
+    if (baseProduct.inStock) products.set(baseProduct.id, baseProduct);
     (productVariantsByCard.get(card) || []).forEach((variant) => {
-      if (!variant?.id || variant.inquiryOnly) return;
+      if (!variant?.id || variant.inquiryOnly || variant.inStock === false) return;
       products.set(String(variant.id), {
         ...baseProduct,
         id: String(variant.id),
@@ -184,7 +184,7 @@
       subtotal >= ONLINE_PAYMENT_MINIMUM_SUBTOTAL
     ) ? ONLINE_PAYMENT_DISCOUNT : 0;
     const discount = Math.min(subtotal, couponDiscount + onlineDiscount);
-    const freeDelivery = subtotal >= DELIVERY_FREE_ABOVE || (couponEligible && coupon.waives_delivery);
+    const freeDelivery = couponEligible && coupon.waives_delivery;
     const delivery = count && !freeDelivery ? DELIVERY_CHARGE : 0;
 
     return {
@@ -272,6 +272,7 @@
     if (!variant) return;
 
     const inquiryOnly = Boolean(variant.inquiryOnly);
+    const outOfStock = variant.inStock === false;
     const productMedia = card.querySelector(".product-media");
     const productImage = card.querySelector("[data-product-image]");
     const title = card.querySelector("[data-product-title]");
@@ -279,6 +280,8 @@
     const subtitle = card.querySelector("[data-product-subtitle]");
     const description = card.querySelector("[data-product-description]");
     const price = card.querySelector("[data-product-price]");
+    const productMeta = card.querySelector("[data-product-meta]");
+    const stockStatus = card.querySelector("[data-product-stock-status]");
     const unit = card.querySelector("[data-product-unit]");
     const highlights = card.querySelector("[data-product-highlights]");
     const actions = card.querySelector("[data-product-actions]");
@@ -287,6 +290,7 @@
     const addLabel = actions?.querySelector("[data-feature-add-label]");
     const buyNowButton = actions?.querySelector("[data-buy-now]");
     const enquiryButton = actions?.querySelector("[data-product-enquiry]");
+    const outOfStockButton = actions?.querySelector("[data-out-of-stock-action]");
 
     card.dataset.id = String(variant.id || "");
     card.dataset.name = String(variant.name || "Naivedyam Makhana");
@@ -296,6 +300,8 @@
     card.dataset.image = String(variant.image || "");
     card.dataset.cartBadge = String(variant.badge || "Makhana");
     card.dataset.secondaryTitle = String(variant.secondaryTitle || variant.name || "Naivedyam Makhana");
+    card.dataset.inStock = outOfStock ? "false" : "true";
+    card.classList.toggle("is-out-of-stock", outOfStock);
 
     if (productImage) {
       productImage.src = String(variant.image || productImage.src);
@@ -310,11 +316,13 @@
     if (kicker) kicker.textContent = String(variant.kicker || "");
     if (subtitle) subtitle.textContent = String(variant.subtitle || "");
     if (description) description.textContent = String(variant.details || "");
-    if (price) price.textContent = String(variant.priceLabel || money(variant.price));
+    if (price) price.textContent = outOfStock ? "Rs ---" : String(variant.priceLabel || money(variant.price));
+    productMeta?.classList.toggle("is-price-hidden", outOfStock);
+    if (stockStatus) stockStatus.hidden = !outOfStock;
     if (unit) unit.textContent = String(variant.unit || "");
     if (highlights) {
       highlights.innerHTML = (Array.isArray(variant.highlights) ? variant.highlights : [])
-        .map((highlight) => `<li>${escapeHtml(highlight)}</li>`)
+        .map((highlight) => `<li class="${highlight === "6+ Suta Makhana" ? "is-featured-highlight" : ""}">${escapeHtml(highlight)}</li>`)
         .join("");
     }
 
@@ -325,16 +333,16 @@
     });
 
     if (stepper) {
-      stepper.hidden = inquiryOnly;
+      stepper.hidden = inquiryOnly || outOfStock;
       stepper.setAttribute("aria-label", `${variant.displayTitle || variant.name || "Naivedyam Makhana"} ${variant.unit || ""} quantity`.trim());
     }
     if (addButton) {
-      addButton.hidden = inquiryOnly;
+      addButton.hidden = inquiryOnly || outOfStock;
       addButton.dataset.addProduct = String(variant.id || "");
     }
     if (addLabel) addLabel.dataset.featureAddLabel = String(variant.id || "");
     if (buyNowButton) {
-      buyNowButton.hidden = inquiryOnly;
+      buyNowButton.hidden = inquiryOnly || outOfStock;
       buyNowButton.dataset.buyNow = String(variant.id || "");
     }
     [
@@ -349,9 +357,10 @@
     const quantity = actions?.querySelector("[data-feature-quantity]");
     if (quantity) quantity.dataset.featureQuantity = String(variant.id || "");
     if (enquiryButton) {
-      enquiryButton.hidden = !inquiryOnly;
+      enquiryButton.hidden = !inquiryOnly || outOfStock;
       enquiryButton.href = inquiryOnly ? String(variant.inquiryUrl || "https://wa.me/919835496666") : "#";
     }
+    if (outOfStockButton) outOfStockButton.hidden = !outOfStock;
 
     syncProductQuantityDisplays();
   }
@@ -423,9 +432,10 @@
     }
     if (couponFeedback) {
       if (!count) couponFeedback.textContent = "Add a product to use a coupon.";
+      else if (coupon && couponEligible && coupon.waives_delivery) couponFeedback.textContent = `${coupon.code} applied. Rs 40 delivery removed.`;
       else if (coupon && couponEligible) couponFeedback.textContent = `${coupon.code} applied to this order.`;
       else if (coupon) couponFeedback.textContent = `${coupon.code} needs a minimum order of ${money(coupon.minimum_subtotal)}.`;
-      else couponFeedback.textContent = "Select an offer for this order.";
+      else couponFeedback.textContent = "Apply the coupon to remove the Rs 40 delivery charge.";
     }
 
     if (cartInput) {
