@@ -2782,14 +2782,22 @@ img {
   }
 
   .hero-product--flavours img {
-    height: 280px;
-    max-width: calc(100% + 20px);
-    bottom: 0;
+    width: min(92vw, 395px);
+    max-width: none;
+    height: auto;
+    bottom: 4px;
+    filter: drop-shadow(0 18px 18px rgba(26, 43, 31, 0.14));
+    mix-blend-mode: multiply;
   }
 
   .hero-product--flavours {
-    height: 290px;
-    flex-basis: 290px;
+    height: 288px;
+    flex-basis: 288px;
+  }
+
+  .hero-slide--flavours .hero-copy h1 {
+    font-size: 3.65rem;
+    line-height: 0.94;
   }
 
   @keyframes product-drift-mobile {
@@ -2990,24 +2998,32 @@ img {
   }
 
   .hero-product {
-    height: 300px;
-    flex-basis: 300px;
+    height: 350px;
+    flex-basis: 350px;
   }
 
   .hero-product img,
   .hero-product--masala img {
-    height: 290px;
+    height: 340px;
     bottom: 0;
   }
 
   .hero-product--flavours img {
-    height: 250px;
-    bottom: 0;
+    width: min(90vw, 312px);
+    height: auto;
+    bottom: 4px;
   }
 
   .hero-product--flavours {
-    height: 260px;
-    flex-basis: 260px;
+    height: 234px;
+    flex-basis: 234px;
+  }
+
+  .hero-slide--flavours .hero-copy h1 {
+    max-width: 310px;
+    margin-inline: auto;
+    font-size: 2.72rem;
+    line-height: 0.96;
   }
 
   .hero-pagination {
