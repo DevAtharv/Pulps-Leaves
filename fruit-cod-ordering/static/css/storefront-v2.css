@@ -842,6 +842,12 @@ img {
   mix-blend-mode: normal;
 }
 
+.product-media--wide img {
+  width: min(94%, 600px);
+  height: auto;
+  max-height: 410px;
+}
+
 .product-media--one-kg {
   background: var(--surface-warm);
 }
@@ -1235,6 +1241,24 @@ img {
   padding: 94px 0 82px;
   border-top: 1px solid rgba(21, 35, 27, 0.08);
   background: var(--surface-blush);
+}
+
+.worldwide-section {
+  padding: 82px 0;
+  border-top: 1px solid rgba(21, 35, 27, 0.08);
+  background: var(--ivory);
+}
+
+.worldwide-map {
+  width: min(1360px, calc(100% - 48px));
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.worldwide-map img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .social-heading {
@@ -2738,19 +2762,19 @@ img {
 
   .hero-product {
     width: 100%;
-    height: 310px;
+    height: 350px;
     position: relative;
     right: auto;
     bottom: auto;
     order: -1;
-    flex: 0 0 310px;
+    flex: 0 0 350px;
     margin: 0;
     align-self: center;
   }
 
   .hero-product img,
   .hero-product--masala img {
-    height: 300px;
+    height: 340px;
     right: 50%;
     bottom: 0;
     transform: translateX(50%);
@@ -2758,13 +2782,14 @@ img {
   }
 
   .hero-product--flavours img {
-    height: 246px;
+    height: 280px;
+    max-width: calc(100% + 20px);
     bottom: 0;
   }
 
   .hero-product--flavours {
-    height: 250px;
-    flex-basis: 250px;
+    height: 290px;
+    flex-basis: 290px;
   }
 
   @keyframes product-drift-mobile {
@@ -2803,6 +2828,12 @@ img {
 
   .product-media--flavours img {
     height: 390px;
+  }
+
+  .product-media--wide img {
+    width: min(94%, 520px);
+    height: auto;
+    max-height: 360px;
   }
 
   .product-media--one-kg img {
@@ -2959,24 +2990,24 @@ img {
   }
 
   .hero-product {
-    height: 258px;
-    flex-basis: 258px;
+    height: 300px;
+    flex-basis: 300px;
   }
 
   .hero-product img,
   .hero-product--masala img {
-    height: 250px;
+    height: 290px;
     bottom: 0;
   }
 
   .hero-product--flavours img {
-    height: 204px;
+    height: 250px;
     bottom: 0;
   }
 
   .hero-product--flavours {
-    height: 210px;
-    flex-basis: 210px;
+    height: 260px;
+    flex-basis: 260px;
   }
 
   .hero-pagination {
@@ -3006,6 +3037,14 @@ img {
 
   .social-section {
     padding: 72px 0 52px;
+  }
+
+  .worldwide-section {
+    padding: 54px 0;
+  }
+
+  .worldwide-map {
+    width: calc(100% - 28px);
   }
 
   .section-heading {
@@ -3040,6 +3079,12 @@ img {
 
   .product-media--flavours img {
     height: 340px;
+  }
+
+  .product-media--wide img {
+    width: min(94%, 440px);
+    height: auto;
+    max-height: 300px;
   }
 
   .product-media--one-kg img {

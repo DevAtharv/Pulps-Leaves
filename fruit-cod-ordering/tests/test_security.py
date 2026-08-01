@@ -333,21 +333,22 @@ class SecurityTests(unittest.TestCase):
                 "phone": "9876543210",
                 "city": "bangalore",
                 "address": "12 Test Road",
-                "cart_items": [{"id": "flavoured-makhana-trio", "quantity": 1}],
+                "cart_items": [{"id": "flavoured-makhana-peri-peri", "quantity": 1}],
                 "payment_method": "cod",
             }
         )
         self.assertEqual(errors, {})
         self.assertEqual(clean_data["subtotal"], 350)
         self.assertEqual(clean_data["total_amount"], 380)
-        self.assertIn("Flavoured Makhana Trio x 1", clean_data["product_summary"])
+        self.assertIn("Peri Peri Makhana x 1", clean_data["product_summary"])
 
     def test_homepage_renders_three_products_three_slides_and_order_celebration(self):
         page = self.client.get("/").get_data(as_text=True)
         self.assertIn('data-id="roasted-makhana-masala-combo"', page)
         self.assertIn("naivedyam-masala-pack-cutout-200g-20260730.png", page)
-        self.assertIn('data-id="flavoured-makhana-trio"', page)
-        self.assertIn("naivedyam-flavour-trio-200g-20260730.png", page)
+        self.assertIn('data-id="flavoured-makhana-peri-peri"', page)
+        self.assertIn("naivedyam-four-flavours-cutout-20260801.png", page)
+        self.assertIn("pulps-leaves-worldwide-map-20260801.webp", page)
         self.assertIn("pl-lotus-hero-desktop-20260730.avif", page)
         self.assertIn("hero-product--masala", page)
         self.assertIn("hero-product--flavours", page)

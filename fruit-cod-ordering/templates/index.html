@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="preload" href="{{ url_for('static', filename='img/pl-lotus-hero-desktop-20260730.avif') }}" as="image" type="image/avif" media="(min-width: 821px)" fetchpriority="high">
   <link rel="preload" href="{{ url_for('static', filename='img/pl-lotus-hero-mobile-20260730.avif') }}" as="image" type="image/avif" media="(max-width: 820px)" fetchpriority="high">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront-v2.css') }}?v=20260731b">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront-v2.css') }}?v=20260801a">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Skip to content</a>
@@ -84,10 +84,6 @@
             <div class="hero-copy">
               <h1>Naivedyam Makhana</h1>
               <div class="hero-actions">
-                <button class="primary-button" type="button" data-add-product="roasted-himalayan-makhana">
-                  <span data-feature-add-label="roasted-himalayan-makhana">Add to bag</span>
-                  <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
                 <a class="secondary-button" href="#shop">Explore the pack</a>
               </div>
             </div>
@@ -111,10 +107,6 @@
             <div class="hero-copy">
               <h1>Season the crunch</h1>
               <div class="hero-actions">
-                <button class="primary-button" type="button" data-add-product="roasted-makhana-masala-combo">
-                  <span data-feature-add-label="roasted-makhana-masala-combo">Add to bag</span>
-                  <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
                 <a class="secondary-button" href="#shop">See both packs</a>
               </div>
             </div>
@@ -138,15 +130,11 @@
             <div class="hero-copy">
               <h1>Pick your crunch</h1>
               <div class="hero-actions">
-                <button class="primary-button" type="button" data-add-product="flavoured-makhana-trio">
-                  <span data-feature-add-label="flavoured-makhana-trio">Add to bag</span>
-                  <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
                 <a class="secondary-button" href="#shop">Choose a flavour</a>
               </div>
             </div>
             <div class="hero-product hero-product--flavours" aria-hidden="true">
-              <img src="{{ url_for('static', filename='img/naivedyam-flavour-trio-200g-20260730.png') }}" alt="" width="1022" height="1140">
+              <img src="{{ url_for('static', filename='img/naivedyam-four-flavours-cutout-20260801.png') }}" alt="" width="1126" height="795">
             </div>
           </div>
         </article>
@@ -189,17 +177,18 @@
         </header>
 
         {% for product in products %}
+        {% set selected_product = product["variants"][0] if product.get("variants") else product %}
         <article
           class="product-showcase"
           data-product
-          data-id="{{ product.slug }}"
-          data-name="{{ product.display_title }}"
-          data-variant="{{ product.unit }}"
-          data-price="{{ product.price }}"
-          data-mrp="{{ product.mrp }}"
-          data-image="{{ url_for('static', filename=product.image) }}"
-          data-cart-badge="{{ product.cart_badge }}"
-          data-secondary-title="{{ product.secondary_title }}"
+          data-id="{{ selected_product.slug }}"
+          data-name="{{ selected_product.display_title }}"
+          data-variant="{{ selected_product.unit }}"
+          data-price="{{ selected_product.price }}"
+          data-mrp="{{ selected_product.get('mrp', selected_product.price) }}"
+          data-image="{{ url_for('static', filename=selected_product.image) }}"
+          data-cart-badge="{{ selected_product.cart_badge }}"
+          data-secondary-title="{{ selected_product.secondary_title }}"
         >
           {% if product.get("variants") %}
           <script type="application/json" data-product-variants>
@@ -230,22 +219,22 @@
             ]
           </script>
           {% endif %}
-          <div class="product-media {% if product.slug == 'roasted-makhana-masala-combo' %}product-media--dark{% elif product.slug == 'flavoured-makhana-trio' %}product-media--flavours{% endif %}" data-reveal="{% if loop.index is odd %}left{% else %}right{% endif %}">
-            <img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.image_alt }}" width="{{ product.image_width }}" height="{{ product.image_height }}" loading="lazy" decoding="async" data-product-image>
+          <div class="product-media {% if product.slug == 'roasted-makhana-masala-combo' %}product-media--dark{% elif product.slug == 'flavoured-makhana' %}product-media--flavours{% endif %}" data-reveal="{% if loop.index is odd %}left{% else %}right{% endif %}">
+            <img src="{{ url_for('static', filename=selected_product.image) }}" alt="{{ selected_product.image_alt }}" width="{{ selected_product.image_width }}" height="{{ selected_product.image_height }}" loading="lazy" decoding="async" data-product-image>
           </div>
           <div class="product-copy" data-reveal="{% if loop.index is odd %}right{% else %}left{% endif %}">
-            <span class="section-kicker" data-product-kicker>{{ product.kicker }}</span>
-            <h3 data-product-title>{{ product.display_title }}</h3>
-            <p class="product-subtitle" data-product-subtitle>{{ product.pieces_label }}</p>
-            <p class="product-description" data-product-description>{{ product.details }}</p>
+            <span class="section-kicker" data-product-kicker>{{ selected_product.kicker }}</span>
+            <h3 data-product-title>{{ selected_product.display_title }}</h3>
+            <p class="product-subtitle" data-product-subtitle>{{ selected_product.pieces_label }}</p>
+            <p class="product-description" data-product-description>{{ selected_product.details }}</p>
             <div class="product-meta">
-              <strong class="product-price" data-product-price>Rs {{ product.price }}</strong>
-              <span class="product-unit" data-product-unit>{{ product.unit }}</span>
+              <strong class="product-price" data-product-price>Rs {{ selected_product.price }}</strong>
+              <span class="product-unit" data-product-unit>{{ selected_product.unit }}</span>
             </div>
             {% if product.get("variants") %}
             <div class="product-variant-options">
-              <span>Choose pack size</span>
-              <div class="product-variant-buttons" role="group" aria-label="Choose Naivedyam Makhana pack size">
+              <span>{{ product.get("variant_label", "Choose pack size") }}</span>
+              <div class="product-variant-buttons" role="group" aria-label="{{ product.get("variant_aria_label", "Choose product option") }}">
                 {% for variant in product.variants %}
                 <button class="product-variant-button{% if loop.first %} is-selected{% endif %}" type="button" data-product-variant="{{ variant.slug }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">
                   <strong>{{ variant.option_label }}</strong>
@@ -256,21 +245,21 @@
             </div>
             {% endif %}
             <ul class="product-highlights" data-product-highlights>
-              {% for highlight in product.highlights %}
+              {% for highlight in selected_product.highlights %}
               <li>{{ highlight }}</li>
               {% endfor %}
             </ul>
             <div class="product-actions" data-product-actions>
-              <div class="product-stepper" aria-label="{{ product.display_title }} quantity">
-                <button type="button" data-feature-minus="{{ product.slug }}" aria-label="Decrease {{ product.display_title }}">-</button>
-                <span data-feature-quantity="{{ product.slug }}">0</span>
-                <button type="button" data-feature-plus="{{ product.slug }}" aria-label="Increase {{ product.display_title }}">+</button>
+              <div class="product-stepper" aria-label="{{ selected_product.display_title }} quantity">
+                <button type="button" data-feature-minus="{{ selected_product.slug }}" aria-label="Decrease {{ selected_product.display_title }}">-</button>
+                <span data-feature-quantity="{{ selected_product.slug }}">0</span>
+                <button type="button" data-feature-plus="{{ selected_product.slug }}" aria-label="Increase {{ selected_product.display_title }}">+</button>
               </div>
-              <button class="primary-button add-product" type="button" data-add-product="{{ product.slug }}">
-                <span data-feature-add-label="{{ product.slug }}">Add to Bag</span>
+              <button class="primary-button add-product" type="button" data-add-product="{{ selected_product.slug }}">
+                <span data-feature-add-label="{{ selected_product.slug }}">Add to Bag</span>
                 <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Zm4 0V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </button>
-              <button class="buy-now-button" type="button" data-buy-now="{{ product.slug }}">
+              <button class="buy-now-button" type="button" data-buy-now="{{ selected_product.slug }}">
                 <span>Buy now</span>
                 <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </button>
@@ -310,6 +299,12 @@
         <article class="instagram-reel" data-reveal style="--reel-index: 3">
           <iframe src="https://www.instagram.com/reel/DY5DhX2IOzl/embed/" title="Pulps and Leaves Instagram reel: Bihar makhana" loading="lazy" frameborder="0" scrolling="no" allowtransparency="true" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
         </article>
+      </div>
+    </section>
+
+    <section class="worldwide-section" aria-label="Pulps and Leaves around the world">
+      <div class="worldwide-map" data-reveal>
+        <img src="{{ url_for('static', filename='img/pulps-leaves-worldwide-map-20260801.webp') }}" alt="Illustrated map showing Pulps and Leaves from India to homes around the world" width="1536" height="1024" loading="lazy" decoding="async">
       </div>
     </section>
 
@@ -595,6 +590,6 @@
     "customer": customer or {},
     "couponOffers": coupon_offers
   } | tojson }}</script>
-  <script src="{{ url_for('static', filename='js/storefront-v2.js') }}?v=20260731b" defer></script>
+  <script src="{{ url_for('static', filename='js/storefront-v2.js') }}?v=20260801a" defer></script>
 </body>
 </html>

@@ -23,6 +23,26 @@ WEB_CART_PRODUCTS = {
         "name": "Roasted Makhana with 3 Masala Packs",
         "price": 350,
     },
+    "flavoured-makhana-peri-peri": {
+        "name": "Peri Peri Makhana",
+        "price": 350,
+    },
+    "flavoured-makhana-cream-onion": {
+        "name": "Cream and Onion Makhana",
+        "price": 350,
+    },
+    "flavoured-makhana-tangy-tomato": {
+        "name": "Tangy Tomato Makhana",
+        "price": 350,
+    },
+    "flavoured-makhana-cheese-blast": {
+        "name": "Cheese Blast Makhana",
+        "price": 350,
+    },
+    "flavoured-makhana-four-flavour-combo": {
+        "name": "Four Flavour Makhana Combo",
+        "price": 1400,
+    },
     "flavoured-makhana-trio": {
         "name": "Flavoured Makhana Trio",
         "price": 350,
@@ -32,7 +52,11 @@ ACTIVE_WEB_PRODUCT_IDS = {
     "roasted-himalayan-makhana",
     "roasted-himalayan-makhana-1kg",
     "roasted-makhana-masala-combo",
-    "flavoured-makhana-trio",
+    "flavoured-makhana-peri-peri",
+    "flavoured-makhana-cream-onion",
+    "flavoured-makhana-tangy-tomato",
+    "flavoured-makhana-cheese-blast",
+    "flavoured-makhana-four-flavour-combo",
 }
 DELIVERY_FREE_ABOVE = 699
 DELIVERY_CHARGE = 30

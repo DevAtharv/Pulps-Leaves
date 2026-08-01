@@ -305,6 +305,7 @@
     }
     productMedia?.classList.toggle("product-media--one-kg", String(variant.id).endsWith("-1kg"));
     productMedia?.classList.toggle("product-media--bulk", inquiryOnly);
+    productMedia?.classList.toggle("product-media--wide", Number(variant.imageWidth || 0) > 700);
     if (title) title.textContent = String(variant.displayTitle || variant.name || "Naivedyam Makhana");
     if (kicker) kicker.textContent = String(variant.kicker || "");
     if (subtitle) subtitle.textContent = String(variant.subtitle || "");
