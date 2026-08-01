@@ -2785,14 +2785,15 @@ img {
     width: min(92vw, 395px);
     max-width: none;
     height: auto;
-    bottom: 4px;
+    right: 50%;
+    bottom: 0;
     filter: drop-shadow(0 18px 18px rgba(26, 43, 31, 0.14));
     mix-blend-mode: multiply;
   }
 
   .hero-product--flavours {
-    height: 288px;
-    flex-basis: 288px;
+    height: 304px;
+    flex-basis: 304px;
   }
 
   .hero-slide--flavours .hero-copy h1 {
@@ -3011,12 +3012,13 @@ img {
   .hero-product--flavours img {
     width: min(90vw, 312px);
     height: auto;
-    bottom: 4px;
+    right: 50%;
+    bottom: 0;
   }
 
   .hero-product--flavours {
-    height: 234px;
-    flex-basis: 234px;
+    height: 250px;
+    flex-basis: 250px;
   }
 
   .hero-slide--flavours .hero-copy h1 {
