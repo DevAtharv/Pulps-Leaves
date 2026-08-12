@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="preload" href="{{ url_for('static', filename='img/pl-lotus-hero-desktop-20260730.avif') }}" as="image" type="image/avif" media="(min-width: 821px)" fetchpriority="high">
   <link rel="preload" href="{{ url_for('static', filename='img/pl-lotus-hero-mobile-20260730.avif') }}" as="image" type="image/avif" media="(max-width: 820px)" fetchpriority="high">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront-v2.css') }}?v=20260801e">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront-v2.css') }}?v=20260812a">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Skip to content</a>
@@ -38,7 +38,7 @@
 
       <div class="header-actions">
         <button class="menu-trigger" type="button" aria-label="Open navigation" aria-expanded="false" data-menu-toggle>
-          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          <span class="menu-trigger-lines" aria-hidden="true"><i></i><i></i><i></i></span>
         </button>
 
         {% if customer_authenticated %}
@@ -312,7 +312,7 @@
 
     <section class="worldwide-section" aria-label="Pulps and Leaves around the world">
       <div class="worldwide-map" data-reveal>
-        <img src="{{ url_for('static', filename='img/pulps-leaves-worldwide-map-20260801.webp') }}" alt="Illustrated map showing Pulps and Leaves from India to homes around the world" width="1536" height="1024" loading="lazy" decoding="async">
+        <img src="{{ url_for('static', filename='img/pulps-leaves-worldwide-map-20260812.png') }}" alt="Illustrated map showing Pulps and Leaves from Patna, Bihar to homes around the world" width="1440" height="1080" loading="lazy" decoding="async">
       </div>
     </section>
 
@@ -598,6 +598,6 @@
     "customer": customer or {},
     "couponOffers": coupon_offers
   } | tojson }}</script>
-  <script src="{{ url_for('static', filename='js/storefront-v2.js') }}?v=20260801e" defer></script>
+  <script src="{{ url_for('static', filename='js/storefront-v2.js') }}?v=20260812a" defer></script>
 </body>
 </html>

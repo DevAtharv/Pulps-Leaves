@@ -344,7 +344,7 @@ class SecurityTests(unittest.TestCase):
         self.assertIn("naivedyam-masala-pack-cutout-200g-20260730.png", page)
         self.assertIn('data-id="flavoured-makhana-peri-peri"', page)
         self.assertIn("naivedyam-four-flavours-cutout-20260801.png", page)
-        self.assertIn("pulps-leaves-worldwide-map-20260801.webp", page)
+        self.assertIn("pulps-leaves-worldwide-map-20260812.png", page)
         self.assertIn("pl-lotus-hero-desktop-20260730.avif", page)
         self.assertIn("hero-product--masala", page)
         self.assertIn("hero-product--flavours", page)

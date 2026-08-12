@@ -215,6 +215,7 @@
   function closeMenu() {
     nav?.classList.remove("is-open");
     menuToggle?.setAttribute("aria-expanded", "false");
+    menuToggle?.setAttribute("aria-label", "Open navigation");
     document.body.classList.remove("menu-open");
   }
 
@@ -222,6 +223,7 @@
     const open = !nav?.classList.contains("is-open");
     nav?.classList.toggle("is-open", open);
     menuToggle?.setAttribute("aria-expanded", open ? "true" : "false");
+    menuToggle?.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
     document.body.classList.toggle("menu-open", open);
   }
 
