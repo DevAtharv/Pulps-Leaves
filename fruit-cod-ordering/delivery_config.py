@@ -129,8 +129,7 @@ PRODUCTS = [
         "image_height": 612,
         "highlights": ["Gluten free", "Rich in protein", "No preservatives"],
         "available_months": list(range(1, 13)),
-        "availability_label": "Out of stock",
-        "in_stock": False,
+        "availability_label": "Available now",
     },
     {
         "name": "Flavoured Makhana 200g Pack",
@@ -152,8 +151,7 @@ PRODUCTS = [
         "image_height": 795,
         "highlights": ["Roasted, not fried", "Gluten free", "No preservatives"],
         "available_months": list(range(1, 13)),
-        "availability_label": "Out of stock",
-        "in_stock": False,
+        "availability_label": "Available now",
         "variant_label": "Choose a flavour",
         "variant_aria_label": "Choose a flavoured makhana jar or combo",
         "variants": [

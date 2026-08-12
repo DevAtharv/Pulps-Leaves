@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="preload" href="{{ url_for('static', filename='img/pl-lotus-hero-desktop-20260730.avif') }}" as="image" type="image/avif" media="(min-width: 821px)" fetchpriority="high">
   <link rel="preload" href="{{ url_for('static', filename='img/pl-lotus-hero-mobile-20260730.avif') }}" as="image" type="image/avif" media="(max-width: 820px)" fetchpriority="high">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront-v2.css') }}?v=20260812a">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront-v2.css') }}?v=20260812b">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Skip to content</a>
@@ -106,7 +106,6 @@
           <div class="hero-inner">
             <div class="hero-copy">
               <h1>Season the crunch</h1>
-              <p class="hero-stock-status">Out of stock</p>
               <div class="hero-actions">
                 <a class="secondary-button" href="#shop">See both packs</a>
               </div>
@@ -130,7 +129,6 @@
           <div class="hero-inner">
             <div class="hero-copy">
               <h1>Pick your crunch</h1>
-              <p class="hero-stock-status">Out of stock</p>
               <div class="hero-actions">
                 <a class="secondary-button" href="#shop">Choose a flavour</a>
               </div>
@@ -236,7 +234,9 @@
               <strong class="product-price" data-product-price>{{ ('Rs ' ~ selected_product.price) if product_in_stock else 'Rs ---' }}</strong>
               <span class="product-unit" data-product-unit>{{ selected_product.unit }}</span>
             </div>
-            <p class="product-stock-status" data-product-stock-status{% if product_in_stock %} hidden{% endif %}>Out of stock</p>
+            {% if not product_in_stock %}
+            <p class="product-stock-status" data-product-stock-status>Out of stock</p>
+            {% endif %}
             {% if product.get("variants") %}
             <div class="product-variant-options">
               <span>{{ product.get("variant_label", "Choose pack size") }}</span>
@@ -274,7 +274,9 @@
                 <span>Enquire about 100kg</span>
                 <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-8.7 8.5 9.2 9.2 0 0 1-4.1-1L3 20l1.2-4A8.4 8.4 0 1 1 21 11.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </a>
-              <button class="out-of-stock-button" type="button" data-out-of-stock-action disabled{% if product_in_stock %} hidden{% endif %}>Out of stock</button>
+              {% if not product_in_stock %}
+              <button class="out-of-stock-button" type="button" data-out-of-stock-action disabled>Out of stock</button>
+              {% endif %}
             </div>
           </div>
         </article>

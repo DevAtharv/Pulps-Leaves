@@ -51,6 +51,12 @@ WEB_CART_PRODUCTS = {
 ACTIVE_WEB_PRODUCT_IDS = {
     "roasted-himalayan-makhana",
     "roasted-himalayan-makhana-1kg",
+    "roasted-makhana-masala-combo",
+    "flavoured-makhana-peri-peri",
+    "flavoured-makhana-cream-onion",
+    "flavoured-makhana-tangy-tomato",
+    "flavoured-makhana-cheese-blast",
+    "flavoured-makhana-four-flavour-combo",
 }
 DELIVERY_CHARGE = 40
 ONLINE_PAYMENT_MINIMUM_SUBTOTAL = 699

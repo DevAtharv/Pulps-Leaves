@@ -305,7 +305,7 @@ class SecurityTests(unittest.TestCase):
         self.assertEqual(clean_data["subtotal"], 0)
         self.assertIn("product", errors)
 
-    def test_masala_makhana_is_blocked_while_out_of_stock(self):
+    def test_masala_makhana_is_available_at_the_server_validated_price(self):
         manager = OrderManager(sheets_handler=FakeSheets([]))
         clean_data, errors = manager.validate_new_order(
             {
@@ -317,12 +317,13 @@ class SecurityTests(unittest.TestCase):
                 "payment_method": "cod",
             }
         )
-        self.assertIn("product", errors)
-        self.assertEqual(clean_data["subtotal"], 0)
-        self.assertEqual(clean_data["delivery_charge"], 0)
-        self.assertEqual(clean_data["total_amount"], 0)
+        self.assertEqual(errors, {})
+        self.assertEqual(clean_data["subtotal"], 350)
+        self.assertEqual(clean_data["delivery_charge"], 40)
+        self.assertEqual(clean_data["total_amount"], 390)
+        self.assertIn("Roasted Makhana with 3 Masala Packs x 1", clean_data["product_summary"])
 
-    def test_flavoured_makhana_is_blocked_while_out_of_stock(self):
+    def test_flavoured_makhana_is_available_at_the_server_validated_price(self):
         manager = OrderManager(sheets_handler=FakeSheets([]))
         clean_data, errors = manager.validate_new_order(
             {
@@ -334,9 +335,11 @@ class SecurityTests(unittest.TestCase):
                 "payment_method": "cod",
             }
         )
-        self.assertIn("product", errors)
-        self.assertEqual(clean_data["subtotal"], 0)
-        self.assertEqual(clean_data["total_amount"], 0)
+        self.assertEqual(errors, {})
+        self.assertEqual(clean_data["subtotal"], 350)
+        self.assertEqual(clean_data["delivery_charge"], 40)
+        self.assertEqual(clean_data["total_amount"], 390)
+        self.assertIn("Peri Peri Makhana x 1", clean_data["product_summary"])
 
     def test_homepage_renders_three_products_three_slides_and_order_celebration(self):
         page = self.client.get("/").get_data(as_text=True)
@@ -352,9 +355,9 @@ class SecurityTests(unittest.TestCase):
         self.assertIn('data-price="399"', page)
         self.assertIn("6+ Suta Makhana", page)
         self.assertIn("is-featured-highlight", page)
-        self.assertEqual(page.count('data-in-stock="false"'), 2)
-        self.assertIn("is-price-hidden", page)
-        self.assertGreaterEqual(page.count("Out of stock"), 4)
+        self.assertEqual(page.count('data-in-stock="false"'), 0)
+        self.assertNotIn('class="product-stock-status"', page)
+        self.assertNotIn("Out of stock", page)
         self.assertIn("data-order-success-modal", page)
         self.assertIn("data-order-success-id", page)
 
