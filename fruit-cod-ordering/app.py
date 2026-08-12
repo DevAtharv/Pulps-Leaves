@@ -297,12 +297,25 @@ def public_order_receipt(order):
     }
 
 
+def customer_reference_fingerprint(google_subject="", email=""):
+    subject = str(google_subject or "").strip()
+    normalized_email = str(email or "").strip().lower()
+    if not subject and not normalized_email:
+        return ""
+    reference = f"{subject}\x1f{normalized_email}".encode()
+    return hmac.new(app.config["SECRET_KEY"].encode(), reference, hashlib.sha256).hexdigest()
+
+
 def order_belongs_to_customer(order, customer):
     identity = customer_payload(customer)
     if not order or not identity:
         return False
     google_subject = str(identity.get("google_subject", "")).strip()
     email = str(identity.get("email", "")).strip().lower()
+    stored_fingerprint = str(order.get("_Customer Fingerprint", "")).strip()
+    if stored_fingerprint:
+        expected_fingerprint = customer_reference_fingerprint(google_subject, email)
+        return bool(expected_fingerprint and hmac.compare_digest(stored_fingerprint, expected_fingerprint))
     order_subject = str(order.get("Google Subject", "")).strip()
     order_email = str(order.get("Customer Email", "")).strip().lower()
     return bool(
@@ -371,10 +384,67 @@ def current_customer():
 
 
 def remember_completed_order(order):
-    # Remove legacy cookie payloads. Orders now live only in persistent storage.
+    # Remove legacy cookie payloads, but retain a compact signed reference so a
+    # browser retry does not have to read the full order sheet before responding.
     session.pop("completed_checkout_orders", None)
     session.pop("pending_razorpay_orders", None)
     session.pop("order_history_cache", None)
+    checkout_token = str(order.get("Checkout Token", "")).strip()
+    order_id = str(order.get("Order ID", "")).strip()
+    if not checkout_token or not order_id:
+        return
+
+    completed = session.get("completed_checkout_refs", {})
+    if not isinstance(completed, dict):
+        completed = {}
+    reference = {
+        "Order ID": order_id,
+        "Timestamp": str(order.get("Timestamp", "")),
+        "Product": str(order.get("Product", "")),
+        "Quantity": str(order.get("Quantity", "")),
+        "Total Amount": str(order.get("Total Amount", "")),
+        "Payment Mode": str(order.get("Payment Mode", "")),
+        "Payment Status": str(order.get("Payment Status", "")),
+        "Order Status": str(order.get("Order Status", "")),
+        "_Customer Fingerprint": customer_reference_fingerprint(
+            order.get("Google Subject", ""),
+            order.get("Customer Email", ""),
+        ),
+    }
+    completed[checkout_token] = reference
+    # A checkout can only be retried shortly after completion; keep the cookie
+    # small while allowing a few recent purchases to be safely retried.
+    while len(completed) > 6:
+        completed.pop(next(iter(completed)))
+    session["completed_checkout_refs"] = completed
+
+    payment_id = str(order.get("Razorpay Payment ID", "")).strip()
+    if payment_id:
+        completed_payments = session.get("completed_payment_refs", {})
+        if not isinstance(completed_payments, dict):
+            completed_payments = {}
+        completed_payments[payment_id] = reference
+        while len(completed_payments) > 6:
+            completed_payments.pop(next(iter(completed_payments)))
+        session["completed_payment_refs"] = completed_payments
+
+
+def recent_completed_order_by_checkout_token(checkout_token):
+    checkout_token = str(checkout_token or "").strip()
+    completed = session.get("completed_checkout_refs", {})
+    if not checkout_token or not isinstance(completed, dict):
+        return None
+    order = completed.get(checkout_token)
+    return dict(order) if isinstance(order, dict) else None
+
+
+def recent_completed_order_by_payment_id(payment_id):
+    payment_id = str(payment_id or "").strip()
+    completed = session.get("completed_payment_refs", {})
+    if not payment_id or not isinstance(completed, dict):
+        return None
+    order = completed.get(payment_id)
+    return dict(order) if isinstance(order, dict) else None
 
 
 def find_completed_order_by_checkout_token(checkout_token):
@@ -673,7 +743,7 @@ def create_order():
         return jsonify({"ok": False, "error": "Please complete Razorpay payment verification before placing this order."}), 400
 
     if checkout_token:
-        existing_order = find_completed_order_by_checkout_token(checkout_token)
+        existing_order = recent_completed_order_by_checkout_token(checkout_token)
         if existing_order:
             if not order_belongs_to_customer(existing_order, customer):
                 return jsonify({"ok": False, "error": "This checkout reference is already in use."}), 409
@@ -800,7 +870,7 @@ def create_razorpay_order():
     payload["source"] = "Website"
 
     if checkout_token:
-        existing_order = find_completed_order_by_checkout_token(checkout_token)
+        existing_order = recent_completed_order_by_checkout_token(checkout_token)
         if existing_order:
             if not order_belongs_to_customer(existing_order, customer):
                 return jsonify({"ok": False, "error": "This checkout reference is already in use."}), 409
@@ -894,7 +964,7 @@ def verify_razorpay_payment():
     if not razorpay_order_id or not razorpay_payment_id or not razorpay_signature:
         log_checkout("payment_verify_missing_fields", razorpay_order_id=razorpay_order_id)
         return jsonify({"ok": False, "error": "Missing payment verification fields."}), 400
-    duplicate_order = find_completed_order_by_payment_id(razorpay_payment_id)
+    duplicate_order = recent_completed_order_by_payment_id(razorpay_payment_id)
     if duplicate_order:
         if not order_belongs_to_customer(duplicate_order, customer):
             return jsonify({"ok": False, "error": "This payment is already linked to another order."}), 409

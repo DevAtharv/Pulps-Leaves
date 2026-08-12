@@ -792,6 +792,9 @@
 
   menuToggle?.addEventListener("click", toggleMenu);
   nav?.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
+  siteHeader?.addEventListener("pointerleave", () => {
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) closeMenu();
+  });
 
   document.querySelector("[data-hero-prev]")?.addEventListener("click", () => selectHeroSlide(activeHeroSlide - 1));
   document.querySelector("[data-hero-next]")?.addEventListener("click", () => selectHeroSlide(activeHeroSlide + 1));

@@ -2215,6 +2215,7 @@ img {
 .order-success-modal {
   width: min(458px, 100%);
   position: relative;
+  z-index: 1;
   overflow: hidden;
   padding: 50px 42px 38px;
   border: 1px solid rgba(18, 63, 42, 0.12);
@@ -2355,6 +2356,64 @@ img {
   0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(0deg); }
   20% { opacity: 1; }
   100% { opacity: 0; transform: translate3d(var(--burst-x), var(--burst-y), 0) rotate(220deg); }
+}
+
+.makhana-burst {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.makhana-burst i {
+  width: clamp(19px, 2.2vw, 34px);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  aspect-ratio: 1;
+  border: 1px solid rgba(118, 86, 45, 0.34);
+  border-radius: 45% 55% 48% 52%;
+  background:
+    radial-gradient(circle at 28% 34%, rgba(103, 73, 39, 0.86) 0 5%, transparent 6%),
+    radial-gradient(circle at 66% 30%, rgba(103, 73, 39, 0.78) 0 5%, transparent 6%),
+    radial-gradient(circle at 59% 68%, rgba(103, 73, 39, 0.7) 0 4%, transparent 5%),
+    radial-gradient(circle at 43% 53%, #fffdf4 0 42%, #e9d9b8 72%, #c7aa7e 100%);
+  box-shadow: 0 7px 13px rgba(52, 34, 16, 0.22);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.3) rotate(0deg);
+}
+
+.order-success-overlay.is-open .makhana-burst i {
+  animation: makhana-bombard 1.55s cubic-bezier(0.16, 0.86, 0.25, 1) both;
+  animation-delay: var(--makhana-delay, 0ms);
+}
+
+.makhana-burst i:nth-child(1) { --makhana-x: -43vw; --makhana-y: -38vh; --makhana-spin: 190deg; --makhana-scale: 1; --makhana-delay: 0ms; }
+.makhana-burst i:nth-child(2) { --makhana-x: -30vw; --makhana-y: -47vh; --makhana-spin: -250deg; --makhana-scale: 0.8; --makhana-delay: 70ms; }
+.makhana-burst i:nth-child(3) { --makhana-x: -12vw; --makhana-y: -42vh; --makhana-spin: 320deg; --makhana-scale: 1.15; --makhana-delay: 35ms; }
+.makhana-burst i:nth-child(4) { --makhana-x: 13vw; --makhana-y: -48vh; --makhana-spin: -220deg; --makhana-scale: 0.85; --makhana-delay: 125ms; }
+.makhana-burst i:nth-child(5) { --makhana-x: 34vw; --makhana-y: -38vh; --makhana-spin: 270deg; --makhana-scale: 1; --makhana-delay: 55ms; }
+.makhana-burst i:nth-child(6) { --makhana-x: 45vw; --makhana-y: -21vh; --makhana-spin: -180deg; --makhana-scale: 0.78; --makhana-delay: 95ms; }
+.makhana-burst i:nth-child(7) { --makhana-x: -46vw; --makhana-y: -12vh; --makhana-spin: 220deg; --makhana-scale: 1.1; --makhana-delay: 145ms; }
+.makhana-burst i:nth-child(8) { --makhana-x: -37vw; --makhana-y: 20vh; --makhana-spin: -310deg; --makhana-scale: 0.88; --makhana-delay: 85ms; }
+.makhana-burst i:nth-child(9) { --makhana-x: -19vw; --makhana-y: 39vh; --makhana-spin: 250deg; --makhana-scale: 1.05; --makhana-delay: 20ms; }
+.makhana-burst i:nth-child(10) { --makhana-x: 2vw; --makhana-y: 44vh; --makhana-spin: -220deg; --makhana-scale: 0.8; --makhana-delay: 150ms; }
+.makhana-burst i:nth-child(11) { --makhana-x: 21vw; --makhana-y: 38vh; --makhana-spin: 300deg; --makhana-scale: 1.12; --makhana-delay: 45ms; }
+.makhana-burst i:nth-child(12) { --makhana-x: 39vw; --makhana-y: 25vh; --makhana-spin: -270deg; --makhana-scale: 0.9; --makhana-delay: 115ms; }
+.makhana-burst i:nth-child(13) { --makhana-x: 46vw; --makhana-y: 7vh; --makhana-spin: 180deg; --makhana-scale: 1; --makhana-delay: 175ms; }
+.makhana-burst i:nth-child(14) { --makhana-x: -28vw; --makhana-y: 9vh; --makhana-spin: -210deg; --makhana-scale: 0.76; --makhana-delay: 105ms; }
+.makhana-burst i:nth-child(15) { --makhana-x: 28vw; --makhana-y: -7vh; --makhana-spin: 260deg; --makhana-scale: 1.08; --makhana-delay: 65ms; }
+.makhana-burst i:nth-child(16) { --makhana-x: -7vw; --makhana-y: -32vh; --makhana-spin: -320deg; --makhana-scale: 0.84; --makhana-delay: 160ms; }
+.makhana-burst i:nth-child(17) { --makhana-x: 8vw; --makhana-y: 25vh; --makhana-spin: 230deg; --makhana-scale: 0.96; --makhana-delay: 130ms; }
+.makhana-burst i:nth-child(18) { --makhana-x: -2vw; --makhana-y: 5vh; --makhana-spin: -180deg; --makhana-scale: 1.2; --makhana-delay: 190ms; }
+
+@keyframes makhana-bombard {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(0deg); }
+  14% { opacity: 1; }
+  82% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--makhana-x)), calc(-50% + var(--makhana-y))) scale(var(--makhana-scale)) rotate(var(--makhana-spin)); }
 }
 
 .account-modal {

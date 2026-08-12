@@ -168,7 +168,6 @@ class SheetsHandler:
         if self._worksheet:
             worksheet = self._active_order_worksheet()
             self._worksheet = worksheet
-            self._ensure_order_header_best_effort(worksheet)
             headers = self._headers or ORDER_HEADERS.copy()
             row = [order.get(header, "") for header in headers]
             self._retry_sheet_write(
@@ -464,6 +463,9 @@ class SheetsHandler:
 
     def _active_order_worksheet(self):
         if not self.daily_worksheets:
+            return self._worksheet
+        expected_title = self._worksheet_title_for_date(today_local())
+        if self._worksheet and self._worksheet.title == expected_title:
             return self._worksheet
         return self._today_worksheet()
 

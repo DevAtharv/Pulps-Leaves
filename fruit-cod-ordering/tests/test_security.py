@@ -63,6 +63,7 @@ class FakeManager:
         self.sheets = FakeSheets(orders)
         self.updates = []
         self.last_order_payload = None
+        self.create_order_calls = 0
 
     def validate_order_id(self, order_id):
         normalized = str(order_id).upper()
@@ -81,8 +82,11 @@ class FakeManager:
         return {"quantity": 1, "total_amount": 379}, {}
 
     def create_order(self, payload, source="Website", address_required=True):
+        self.create_order_calls += 1
         self.last_order_payload = {**payload, "source": source}
-        return {"ok": True, "duplicate": False, "order": order("PLNEW001", payload.get("google_subject", ""), payload.get("customer_email", ""))}
+        created = order("PLNEW001", payload.get("google_subject", ""), payload.get("customer_email", ""))
+        created["Checkout Token"] = payload.get("checkout_token", "")
+        return {"ok": True, "duplicate": False, "order": created}
 
     def update_address(self, order_id, address):
         self.updates.append((order_id, "Address", address))
@@ -163,6 +167,39 @@ class SecurityTests(unittest.TestCase):
         self.assertEqual(self.manager.last_order_payload["customer_email"], "owner@example.com")
         self.assertEqual(self.manager.last_order_payload["google_subject"], "google-own")
         self.assertEqual(self.manager.last_order_payload["source"], "Website")
+
+    def test_checkout_retry_uses_signed_session_reference_without_sheet_read(self):
+        self.login()
+        payload = {
+            "checkout_token": "checkout-retry",
+            "payment_method": "cod",
+            "name": "Test Customer",
+            "phone": "9876543210",
+            "city": "bangalore",
+            "address": "12 Test Road",
+            "cart_items": [{"id": "roasted-himalayan-makhana", "quantity": 1}],
+        }
+        with patch.object(app_module, "find_completed_order_by_checkout_token", side_effect=AssertionError("sheet lookup should not run")):
+            first = self.client.post("/api/orders", json=payload)
+            retry = self.client.post("/api/orders", json=payload)
+
+        self.assertEqual(first.status_code, 200)
+        self.assertEqual(retry.status_code, 200)
+        self.assertTrue(retry.get_json()["duplicate"])
+        self.assertEqual(retry.get_json()["order"]["Order ID"], "PLNEW001")
+        self.assertEqual(self.manager.create_order_calls, 1)
+        with self.client.session_transaction() as session:
+            stored_reference = session["completed_checkout_refs"]["checkout-retry"]
+        self.assertNotIn("owner@example.com", json.dumps(stored_reference))
+        self.assertNotIn("google-own", json.dumps(stored_reference))
+
+    def test_new_order_id_does_not_query_persistent_order_storage(self):
+        class NoLookupSheets(FakeSheets):
+            def find_order(self, order_id):
+                raise AssertionError("new order IDs must not read the full order store")
+
+        manager = OrderManager(sheets_handler=NoLookupSheets([]))
+        self.assertRegex(manager.generate_order_id(), r"^PL[A-Z0-9]{6}$")
 
     def test_logout_clears_the_customer_session(self):
         self.login()
@@ -343,6 +380,7 @@ class SecurityTests(unittest.TestCase):
 
     def test_homepage_renders_three_products_three_slides_and_order_celebration(self):
         page = self.client.get("/").get_data(as_text=True)
+        hero = page.split('<section class="hero"', 1)[1].split('<div class="hero-pagination"', 1)[0]
         self.assertIn('data-id="roasted-makhana-masala-combo"', page)
         self.assertIn("naivedyam-masala-pack-cutout-200g-20260730.png", page)
         self.assertIn('data-id="flavoured-makhana-peri-peri"', page)
@@ -360,6 +398,9 @@ class SecurityTests(unittest.TestCase):
         self.assertNotIn("Out of stock", page)
         self.assertIn("data-order-success-modal", page)
         self.assertIn("data-order-success-id", page)
+        self.assertIn('class="makhana-burst"', page)
+        self.assertNotIn('class="hero-actions"', hero)
+        self.assertIn("Patna, Bihar", page)
 
     def test_homepage_keeps_original_copy_and_uses_maps_for_delivery_address(self):
         page = self.client.get("/").get_data(as_text=True)

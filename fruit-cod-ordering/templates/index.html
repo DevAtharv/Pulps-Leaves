@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="preload" href="{{ url_for('static', filename='img/pl-lotus-hero-desktop-20260730.avif') }}" as="image" type="image/avif" media="(min-width: 821px)" fetchpriority="high">
   <link rel="preload" href="{{ url_for('static', filename='img/pl-lotus-hero-mobile-20260730.avif') }}" as="image" type="image/avif" media="(max-width: 820px)" fetchpriority="high">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront-v2.css') }}?v=20260812b">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront-v2.css') }}?v=20260812c">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Skip to content</a>
@@ -83,9 +83,6 @@
           <div class="hero-inner">
             <div class="hero-copy">
               <h1>Naivedyam Makhana</h1>
-              <div class="hero-actions">
-                <a class="secondary-button" href="#shop">Explore the pack</a>
-              </div>
             </div>
             <div class="hero-product hero-product--plain" aria-hidden="true">
               <img src="{{ url_for('static', filename='img/naivedyam-front-200g-cutout-20260729.png') }}" alt="" width="1024" height="1537">
@@ -106,9 +103,6 @@
           <div class="hero-inner">
             <div class="hero-copy">
               <h1>Season the crunch</h1>
-              <div class="hero-actions">
-                <a class="secondary-button" href="#shop">See both packs</a>
-              </div>
             </div>
             <div class="hero-product hero-product--masala" aria-hidden="true">
               <img src="{{ url_for('static', filename='img/naivedyam-masala-pack-cutout-200g-20260730.png') }}" alt="" width="408" height="612">
@@ -129,9 +123,6 @@
           <div class="hero-inner">
             <div class="hero-copy">
               <h1>Pick your crunch</h1>
-              <div class="hero-actions">
-                <a class="secondary-button" href="#shop">Choose a flavour</a>
-              </div>
             </div>
             <div class="hero-product hero-product--flavours" aria-hidden="true">
               <img src="{{ url_for('static', filename='img/naivedyam-four-flavours-cutout-20260801.png') }}" alt="" width="1126" height="795">
@@ -388,7 +379,7 @@
           <strong>Contact</strong>
           <a href="mailto:pulpsandleaves@gmail.com">pulpsandleaves@gmail.com</a>
           <a href="tel:+919835496666">+91 98354 96666</a>
-          <span>Bengaluru, India</span>
+          <span>Patna, Bihar</span>
         </div>
       </div>
       <div class="footer-bottom">
@@ -564,6 +555,10 @@
   </div>
 
   <div class="order-success-overlay" data-order-success-modal aria-hidden="true">
+    <div class="makhana-burst" aria-hidden="true">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
     <section class="order-success-modal" role="dialog" aria-modal="true" aria-labelledby="orderSuccessTitle" aria-describedby="orderSuccessCopy">
       <div class="celebration-confetti" aria-hidden="true">
         <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
@@ -600,6 +595,6 @@
     "customer": customer or {},
     "couponOffers": coupon_offers
   } | tojson }}</script>
-  <script src="{{ url_for('static', filename='js/storefront-v2.js') }}?v=20260812a" defer></script>
+  <script src="{{ url_for('static', filename='js/storefront-v2.js') }}?v=20260812c" defer></script>
 </body>
 </html>

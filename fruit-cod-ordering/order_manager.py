@@ -341,16 +341,15 @@ class OrderManager:
         ]
 
     def generate_order_id(self):
-        while True:
+        for _ in range(128):
             candidate = "PL" + "".join(secrets.choice(ORDER_ID_ALPHABET) for _ in range(6))
             if candidate in self._recent_order_ids:
-                continue
-            if self.sheets.find_order(candidate):
                 continue
             if len(self._recent_order_ids) >= 512:
                 self._recent_order_ids = set()
             self._recent_order_ids.add(candidate)
             return candidate
+        raise RuntimeError("Could not generate a unique order reference. Please try again.")
 
     def validate_order_id(self, order_id):
         normalized = str(order_id or "").strip().upper()

@@ -3,6 +3,7 @@
 
   const menuButton = document.querySelector("[data-page-menu]");
   const navigation = document.querySelector("[data-page-nav]");
+  const pageHeader = document.querySelector("[data-page-header]");
 
   function setMenuOpen(open) {
     document.body.classList.toggle("menu-open", open);
@@ -17,6 +18,10 @@
 
   navigation?.addEventListener("click", (event) => {
     if (event.target.closest("a")) setMenuOpen(false);
+  });
+
+  pageHeader?.addEventListener("pointerleave", () => {
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) setMenuOpen(false);
   });
 
   document.addEventListener("keydown", (event) => {
